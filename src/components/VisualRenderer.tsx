@@ -134,7 +134,7 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
   }, [isFullscreen]);
 
   return (
-    <div className={`flex-1 h-full bg-bg-primary relative overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`flex-1 h-full lg:h-full w-full lg:w-auto flex flex-col bg-bg-primary relative overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Fullscreen Close Button */}
       {isFullscreen && (
         <button

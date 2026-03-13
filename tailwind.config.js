@@ -11,8 +11,8 @@ export default {
         'bg-primary': 'var(--bg-primary)',
         'bg-secondary': 'var(--bg-secondary)',
         'bg-tertiary': 'var(--bg-tertiary)',
-        'accent-primary': '#8b5cf6',
-        'accent-secondary': '#06b6d4',
+        'accent-primary': 'var(--accent-primary, #8b5cf6)',
+        'accent-secondary': 'var(--accent-secondary, #06b6d4)',
         'text-primary': 'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',
         'text-muted': 'var(--text-muted)',
@@ -37,6 +37,9 @@ export default {
         'lg': '1024px',
         'xl': '1280px',
       },
+      minWidth: {
+        '18': '4.5rem',
+      }
     },
   },
   plugins: [],

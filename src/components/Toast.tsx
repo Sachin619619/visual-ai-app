@@ -77,8 +77,8 @@ export function ToastProvider({ children }: ToastProviderProps) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       
-      {/* Toast Container */}
-      <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
+      {/* Toast Container - mobile responsive */}
+      <div className="fixed bottom-4 left-4 right-4 sm:right-4 z-[100] flex flex-col gap-2 sm:items-end">
         <AnimatePresence>
           {toasts.map((toast) => (
             <motion.div
@@ -86,7 +86,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.9 }}
-              className={`flex items-center gap-3 px-4 py-3 bg-bg-secondary rounded-lg border border-white/10 border-l-4 ${getBorderColor(toast.type)} shadow-lg min-w-[280px] max-w-sm`}
+              className={`flex items-center gap-3 px-4 py-3 bg-bg-secondary rounded-lg border border-white/10 border-l-4 ${getBorderColor(toast.type)} shadow-lg w-full sm:min-w-[280px] sm:max-w-sm`}
             >
               {getIcon(toast.type)}
               <p className="text-sm text-text-primary flex-1">{toast.message}</p>
