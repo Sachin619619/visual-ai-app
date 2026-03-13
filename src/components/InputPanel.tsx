@@ -188,7 +188,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       className="w-72 sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
     >
       {/* Header */}
-      <div className="p-3 sm:p-5 border-b border-white/5">
+      <div className="p-3 sm:p-5 border-b border-white/5 sticky top-0 bg-bg-secondary z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg shadow-accent-primary/25">
@@ -234,7 +234,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       {/* Templates Gallery */}
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
         <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start</label>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
           {TEMPLATES.map((template, index) => {
             const Icon = template.icon;
             return (

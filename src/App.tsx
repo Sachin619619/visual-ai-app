@@ -170,7 +170,13 @@ function AppContent() {
 
 
   return (
-    <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary" style={{ paddingTop: 'env(safe-area-inset-top)', paddingRight: 'env(safe-area-inset-right)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}>
+    <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary relative" style={{ paddingTop: 'env(safe-area-inset-top)', paddingRight: 'env(safe-area-inset-right)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}>
+      {/* Ambient background gradient */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent-primary/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-secondary/10 rounded-full blur-3xl" />
+      </div>
+      
       {/* Mobile Menu Toggle Button - always visible on mobile/tablet, top-left fixed */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}

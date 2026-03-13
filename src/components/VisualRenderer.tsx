@@ -161,8 +161,8 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
         </button>
       )}
 
-      {/* Toolbar - optimized for mobile */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 ${isFullscreen ? 'right-16' : ''}`}>
+      {/* Toolbar - optimized for mobile with wrap */}
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-60px)] sm:max-w-none ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -404,7 +404,7 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
                   className="p-3 sm:p-4 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[80px] sm:min-h-[90px] flex flex-col justify-between"
                 >
                   <p className="text-accent-primary text-sm font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
-                  <p className="text-text-muted text-xs">Click to generate</p>
+                  <p className="text-text-muted text-xs hidden sm:block">Click to generate</p>
                 </motion.button>
               ))}
             </div>
