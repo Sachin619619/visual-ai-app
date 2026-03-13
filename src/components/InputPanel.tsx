@@ -531,6 +531,14 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + L</kbd>
               </div>
               <div className="flex items-center justify-between">
+                <span className="text-sm text-text-secondary">Undo</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + Z</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-secondary">Redo</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + Shift + Z</kbd>
+              </div>
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-text-secondary">Exit fullscreen</span>
                 <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">Esc</kbd>
               </div>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2 } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2 } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -10,6 +10,8 @@ interface VisualRendererProps {
   html: string;
   isLoading: boolean;
   onClear: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
   model?: ModelProvider;
   styleFrame?: StyleFrame;
   onStyleFrameChange?: (frame: StyleFrame) => void;
@@ -39,7 +41,7 @@ function highlightHTML(code: string): string {
     .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
 }
 
-export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -159,6 +161,30 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
     }
   };
 
+  // Export as React Component
+  const handleExportReact = () => {
+    if (!html) return;
+    
+    // Convert HTML to a simple React functional component
+    const componentName = 'GeneratedComponent';
+    const reactCode = `import React from 'react';
+
+export default function ${componentName}() {
+  return (
+    <div dangerouslySetInnerHTML={{ __html: \`${html.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\` }} />
+  );
+}
+`;
+    
+    const blob = new Blob([reactCode], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${componentName}.jsx`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     if (html && iframeRef.current) {
       try {
@@ -260,6 +286,30 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
                 </motion.div>
               )}
             </div>
+            {/* Undo Button */}
+            {onUndo && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onUndo}
+                className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Undo (⌘+Z)"
+              >
+                <Undo2 className="w-5 h-5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {/* Redo Button */}
+            {onRedo && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onRedo}
+                className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Redo (⌘+Shift+Z)"
+              >
+                <Redo2 className="w-5 h-5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -297,6 +347,15 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
               title="Export as SVG"
             >
               <span className="w-5 h-5 sm:w-5 sm:h-5 flex items-center justify-center text-xs font-bold">SVG</span>
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleExportReact}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Export as React"
+            >
+              <FileType className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}

@@ -9,6 +9,8 @@ import { Menu, X, Sparkles } from 'lucide-react';
 
 function AppContent() {
   const [html, setHtml] = useState('');
+  const [htmlHistory, setHtmlHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<PromptHistory[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,24 +26,6 @@ function AppContent() {
     const auth = localStorage.getItem('site_auth_visual');
     setSiteAuth(auth === 'true');
   }, []);
-
-  // Keyboard shortcut: Cmd/Ctrl + L to clear
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
-        e.preventDefault();
-        handleClear();
-      }
-      // Cmd/Ctrl + Enter to generate (when prompt has value)
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && prompt.trim() && !isLoading) {
-        e.preventDefault();
-        handleGenerate(prompt, 'openai');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prompt, isLoading]);
 
   const handleSiteLogin = (password: string) => {
     if (password === SITE_PASSWORD) {
@@ -73,6 +57,36 @@ function AppContent() {
     }
   }, [history]);
 
+  // Undo function
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setHtml(htmlHistory[newIndex]);
+      showToast('success', 'Undo successful ↩️');
+    } else if (historyIndex === 0 && htmlHistory.length > 0) {
+      setHistoryIndex(-1);
+      setHtml('');
+      showToast('success', 'Canvas cleared');
+    }
+  }, [historyIndex, htmlHistory, showToast]);
+
+  // Redo function
+  const handleRedo = useCallback(() => {
+    if (historyIndex < htmlHistory.length - 1) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setHtml(htmlHistory[newIndex]);
+      showToast('success', 'Redo successful ↪️');
+    }
+  }, [historyIndex, htmlHistory, showToast]);
+
+  const handleClear = useCallback(() => {
+    setHtml('');
+    setHtmlHistory([]);
+    setHistoryIndex(-1);
+  }, []);
+
   // All useCallbacks must be defined BEFORE any conditional returns
   const handleGenerate = useCallback(async (prompt: string, model: ModelProvider) => {
     setIsLoading(true);
@@ -89,6 +103,13 @@ function AppContent() {
     
     try {
       const generatedHtml = await generateUI(prompt, model);
+      // Add to undo history
+      setHtmlHistory(prev => {
+        // If we're not at the end of history, truncate future history
+        const newHistory = historyIndex >= 0 ? htmlHistory.slice(0, historyIndex + 1) : [...prev];
+        return [...newHistory, generatedHtml];
+      });
+      setHistoryIndex(prev => prev >= 0 ? prev + 1 : 0);
       setHtml(generatedHtml);
       showToast('success', 'UI generated successfully! ✨');
     } catch (error: any) {
@@ -110,11 +131,7 @@ function AppContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [showToast]);
-
-  const handleClear = useCallback(() => {
-    setHtml('');
-  }, []);
+  }, [showToast, historyIndex, htmlHistory]);
 
   const handleQuickGenerate = useCallback((prompt: string) => {
     setPrompt(prompt);
@@ -138,6 +155,34 @@ function AppContent() {
     setPrompt(refinement);
     handleGenerate(refinement, 'openai');
   }, [handleGenerate]);
+
+  // Keyboard shortcut: Cmd/Ctrl + L to clear, Z to undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
+        e.preventDefault();
+        handleClear();
+      }
+      // Cmd/Ctrl + Enter to generate (when prompt has value)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && prompt.trim() && !isLoading) {
+        e.preventDefault();
+        handleGenerate(prompt, 'openai');
+      }
+      // Cmd/Ctrl + Z for undo
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === 'z') {
+        e.preventDefault();
+        handleUndo();
+      }
+      // Cmd/Ctrl + Shift + Z or Cmd/Ctrl + Y for redo
+      if ((e.metaKey || e.ctrlKey) && (e.shiftKey && e.key === 'z' || e.key === 'y')) {
+        e.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate]);
 
   if (siteAuth === null) {
     return (
@@ -236,6 +281,8 @@ function AppContent() {
           html={html}
           isLoading={isLoading}
           onClear={handleClear}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
           model={lastModel}
           styleFrame={styleFrame}
           onStyleFrameChange={setStyleFrame}
