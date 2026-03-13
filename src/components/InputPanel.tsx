@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User } from 'lucide-react';
 import { ModelProvider, PromptHistory } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
@@ -58,6 +58,30 @@ const TEMPLATES = [
     name: 'Hero',
     icon: Monitor,
     prompt: 'Design a stunning hero section with headline, subtext, CTA button, and background gradient or image placeholder'
+  },
+  {
+    id: 'navigation',
+    name: 'Navigation',
+    icon: Navigation,
+    prompt: 'Create a responsive navigation bar with logo, menu links, and mobile hamburger menu'
+  },
+  {
+    id: 'table',
+    name: 'Table',
+    icon: Table,
+    prompt: 'Build a responsive data table with sortable columns, pagination, and search input'
+  },
+  {
+    id: 'testimonials',
+    name: 'Testimonials',
+    icon: MessageSquare,
+    prompt: 'Design a testimonials section with customer quotes, avatars, names and star ratings'
+  },
+  {
+    id: 'login',
+    name: 'Login',
+    icon: User,
+    prompt: 'Create a modern login form with email, password fields, remember me checkbox, and login button'
   }
 ];
 

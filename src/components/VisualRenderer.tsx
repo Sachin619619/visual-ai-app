@@ -21,6 +21,18 @@ const QUICK_PROMPTS = [
   { key: 'forms', prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling', label: '📋 Forms' },
 ];
 
+// Simple syntax highlighting for HTML
+function highlightHTML(code: string): string {
+  return code
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="text-purple-400">$2</span>')
+    .replace(/([\w-]+)=/g, '<span class="text-cyan-400">$1</span>=')
+    .replace(/"([^"]*)"/g, '"<span class="text-green-400">$1</span>"')
+    .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
+}
+
 export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerate }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -185,8 +197,7 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
                 </button>
               </div>
             </div>
-            <pre className="p-2 sm:p-4 overflow-auto max-h-[30vh] sm:max-h-44 text-xs text-text-muted font-mono">
-              {html}
+            <pre className="p-2 sm:p-4 overflow-auto max-h-[30vh] sm:max-h-44 text-xs font-mono whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: highlightHTML(html) }}>
             </pre>
           </motion.div>
         )}
