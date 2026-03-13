@@ -264,7 +264,7 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+              className={`p-2.5 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
                 showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
               }`}
               title="Toggle Code Preview"
