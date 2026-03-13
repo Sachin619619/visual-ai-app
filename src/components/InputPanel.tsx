@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search } from 'lucide-react';
 import { ModelProvider, PromptHistory } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
@@ -94,6 +94,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [historySearch, setHistorySearch] = useState('');
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('visual-ai-dark-mode');
     return saved !== null ? saved === 'true' : true;
@@ -366,6 +367,18 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             animate={{ height: 'auto' }}
             className="px-3 sm:px-4 pb-3 sm:pb-4"
           >
+            {/* Search Input */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+              <input
+                type="text"
+                value={historySearch}
+                onChange={(e) => setHistorySearch(e.target.value)}
+                placeholder="Search history..."
+                className="input-field w-full pl-10 text-xs py-2"
+              />
+            </div>
+            
             {history.length === 0 ? (
               <p className="text-xs text-text-muted text-center py-3 sm:py-4">No history yet</p>
             ) : (
@@ -396,7 +409,12 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   </button>
                 )}
                 
-                {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history).slice(0, 10).map((item) => (
+                {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history).slice(0, 10).map((item) => {
+                  // Filter by search term
+                  if (historySearch && !item.prompt.toLowerCase().includes(historySearch.toLowerCase())) {
+                    return null;
+                  }
+                  return (
                   <div key={item.id} className="flex items-start gap-2">
                     <button
                       onClick={() => setPrompt(item.prompt)}
@@ -420,7 +438,8 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                       <Star className={`w-4 h-4 ${item.isFavorite ? 'fill-yellow-400' : ''}`} />
                     </button>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </motion.div>

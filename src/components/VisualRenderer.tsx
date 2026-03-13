@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, Image } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
+import html2canvas from 'html2canvas';
 
 interface VisualRendererProps {
   html: string;
@@ -58,6 +59,48 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
     navigator.clipboard.writeText(html);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Export as PNG
+  const handleExportPNG = async () => {
+    if (!iframeRef.current) return;
+    try {
+      // Get the iframe document
+      const iframe = iframeRef.current;
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) return;
+      
+      // Clone the body content
+      const bodyContent = iframeDoc.body.cloneNode(true) as HTMLElement;
+      
+      // Create a temporary container
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.background = '#0f0f23';
+      container.appendChild(bodyContent);
+      document.body.appendChild(container);
+      
+      // Use html2canvas on the content
+      const canvas = await html2canvas(container, {
+        backgroundColor: '#0f0f23',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      // Clean up
+      document.body.removeChild(container);
+      
+      // Download
+      const link = document.createElement('a');
+      link.download = `visual-ai-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('Failed to export PNG:', err);
+    }
   };
 
   useEffect(() => {
@@ -138,6 +181,15 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
               title={copied ? "Copied!" : "Copy HTML"}
             >
               {copied ? <Check className="w-5 h-5 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-5 h-5 sm:w-5 sm:h-5" />}
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleExportPNG}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Export as PNG"
+            >
+              <Image className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
