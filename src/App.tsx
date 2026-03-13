@@ -71,6 +71,54 @@ function AppContent() {
       localStorage.setItem('visual-ai-history', JSON.stringify(history));
     }
   }, [history]);
+
+  // All useCallbacks must be defined BEFORE any conditional returns
+  const handleGenerate = useCallback(async (prompt: string, model: ModelProvider) => {
+    setIsLoading(true);
+    setLastModel(model);
+    
+    // Add to history
+    const historyItem: PromptHistory = {
+      id: Date.now().toString(),
+      prompt,
+      model,
+      timestamp: new Date()
+    };
+    setHistory(prev => [historyItem, ...prev]);
+    
+    try {
+      const generatedHtml = await generateUI(prompt, model);
+      setHtml(generatedHtml);
+      showToast('success', 'UI generated successfully! ✨');
+    } catch (error) {
+      console.error('Error generating UI:', error);
+      showToast('error', 'Failed to generate UI. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [showToast]);
+
+  const handleClear = useCallback(() => {
+    setHtml('');
+  }, []);
+
+  const handleQuickGenerate = useCallback((prompt: string) => {
+    setPrompt(prompt);
+    handleGenerate(prompt, 'openai');
+  }, [handleGenerate]);
+
+  const handleToggleFavorite = useCallback((id: string) => {
+    setHistory(prev => prev.map(item => 
+      item.id === id ? { ...item, isFavorite: !item.isFavorite } : item
+    ));
+  }, []);
+
+  const handleClearHistory = useCallback(() => {
+    setHistory([]);
+    localStorage.removeItem('visual-ai-history');
+    showToast('success', 'History cleared');
+  }, [showToast]);
+
   if (siteAuth === null) {
     return (
       <div style={{ 
@@ -153,40 +201,6 @@ function AppContent() {
     );
   }
 
-  const handleGenerate = useCallback(async (prompt: string, model: ModelProvider) => {
-    setIsLoading(true);
-    setLastModel(model);
-    
-    // Add to history
-    const historyItem: PromptHistory = {
-      id: Date.now().toString(),
-      prompt,
-      model,
-      timestamp: new Date()
-    };
-    setHistory(prev => [historyItem, ...prev]);
-    
-    try {
-      const generatedHtml = await generateUI(prompt, model);
-      setHtml(generatedHtml);
-      showToast('success', 'UI generated successfully! ✨');
-    } catch (error) {
-      console.error('Error generating UI:', error);
-      showToast('error', 'Failed to generate UI. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [showToast]);
-
-  const handleClear = useCallback(() => {
-    setHtml('');
-  }, []);
-
-  const handleToggleFavorite = useCallback((id: string) => {
-    setHistory(prev => prev.map(item => 
-      item.id === id ? { ...item, isFavorite: !item.isFavorite } : item
-    ));
-  }, []);
 
   return (
     <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary">
@@ -220,6 +234,7 @@ function AppContent() {
           prompt={prompt}
           onPromptChange={setPrompt}
           onToggleFavorite={handleToggleFavorite}
+          onClearHistory={handleClearHistory}
         />
       </div>
 
@@ -239,6 +254,7 @@ function AppContent() {
           isLoading={isLoading}
           onClear={handleClear}
           model={lastModel}
+          onQuickGenerate={handleQuickGenerate}
         />
       </div>
 

@@ -12,6 +12,7 @@ interface InputPanelProps {
   prompt?: string;
   onPromptChange?: (prompt: string) => void;
   onToggleFavorite?: (id: string) => void;
+  onClearHistory?: () => void;
 }
 
 // Template definitions
@@ -60,7 +61,7 @@ const TEMPLATES = [
   }
 ];
 
-export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite }: InputPanelProps) {
+export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [showHistory, setShowHistory] = useState(false);
@@ -354,6 +355,19 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   <Star className={`w-3.5 h-3.5 ${showFavoritesOnly ? 'fill-yellow-400' : ''}`} />
                   {showFavoritesOnly ? 'Showing Favorites' : 'Show Favorites Only'}
                 </button>
+                
+                {history.length > 0 && (
+                  <button
+                    onClick={() => {
+                      if (confirm('Clear all history?')) {
+                        onClearHistory?.();
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                  >
+                    Clear All History
+                  </button>
+                )}
                 
                 {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history).slice(0, 10).map((item) => (
                   <div key={item.id} className="flex items-start gap-2">

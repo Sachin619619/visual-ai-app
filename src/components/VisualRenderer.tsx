@@ -10,9 +10,18 @@ interface VisualRendererProps {
   isLoading: boolean;
   onClear: () => void;
   model?: ModelProvider;
+  onQuickGenerate?: (prompt: string) => void;
 }
 
-export function VisualRenderer({ html, isLoading, onClear, model }: VisualRendererProps) {
+// Quick start prompts for empty state cards
+const QUICK_PROMPTS = [
+  { key: 'charts', prompt: 'Create a beautiful interactive line chart showing monthly revenue data for 2024 with tooltips and a legend', label: '📈 Charts' },
+  { key: 'timeline', prompt: 'Build a vertical timeline component showing a product launch roadmap with milestones and dates', label: '🗓️ Timelines' },
+  { key: 'cards', prompt: 'Design a responsive grid of stat cards showing KPI metrics with icons, numbers and trend indicators', label: '📊 Cards' },
+  { key: 'forms', prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling', label: '📋 Forms' },
+];
+
+export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerate }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -261,22 +270,17 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
             <div className="grid grid-cols-2 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
-              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
-                <p className="text-accent-primary text-sm font-medium mb-1">📈 Charts</p>
-                <p className="text-text-muted text-xs">Line, bar, pie</p>
-              </div>
-              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
-                <p className="text-accent-secondary text-sm font-medium mb-1">🗓️ Timelines</p>
-                <p className="text-text-muted text-xs">Roadmaps</p>
-              </div>
-              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
-                <p className="text-green-500 text-sm font-medium mb-1">📊 Cards</p>
-                <p className="text-text-muted text-xs">Stats & KPIs</p>
-              </div>
-              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
-                <p className="text-yellow-500 text-sm font-medium mb-1">📋 Forms</p>
-                <p className="text-text-muted text-xs">Inputs</p>
-              </div>
+              {QUICK_PROMPTS.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => onQuickGenerate?.(item.prompt)}
+                  disabled={isLoading}
+                  className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50"
+                >
+                  <p className="text-accent-primary text-sm font-medium mb-1">{item.label}</p>
+                  <p className="text-text-muted text-xs">Click to generate</p>
+                </button>
+              ))}
             </div>
           </motion.div>
         )}
