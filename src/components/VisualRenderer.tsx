@@ -141,6 +141,7 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
           onClick={() => setIsFullscreen(false)}
           className="absolute top-4 right-16 z-50 p-2.5 bg-bg-secondary/80 backdrop-blur-glass rounded-lg text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
           title="Exit Fullscreen (Esc)"
+          style={{ top: 'env(safe-area-inset-top, 16px)' }}
         >
           <Minimize2 className="w-4 h-4" />
         </button>
@@ -345,9 +346,9 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
                   transition={{ delay: index * 0.1 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-3 sm:p-4 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98]"
+                  className="p-3 sm:p-4 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[80px] sm:min-h-[90px] flex flex-col justify-between"
                 >
-                  <p className="text-accent-primary text-sm font-medium mb-1 group-hover:text-accent-secondary transition-colors">{item.label}</p>
+                  <p className="text-accent-primary text-sm font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
                   <p className="text-text-muted text-xs">Click to generate</p>
                 </motion.button>
               ))}

@@ -121,11 +121,12 @@ function AppContent() {
 
   if (siteAuth === null) {
     return (
-      <div className="min-h-[100dvh] bg-bg-primary flex items-center justify-center flex-col gap-5 p-5 pt-20 w-full relative overflow-x-hidden">
+      <div className="min-h-[100dvh] bg-bg-primary flex items-center justify-center flex-col gap-5 p-5 pt-20 w-full relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 60px)' }}>
         {/* Mobile menu button - always visible on login screen */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="fixed top-3 left-3 z-50 p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          style={{ top: 'env(safe-area-inset-top, 12px)', left: 'env(safe-area-inset-left, 12px)' }}
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
         >
           <Menu className="w-6 h-6 text-white" />
@@ -155,11 +156,12 @@ function AppContent() {
 
 
   return (
-    <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary">
+    <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary" style={{ paddingTop: 'env(safe-area-inset-top)', paddingRight: 'env(safe-area-inset-right)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}>
       {/* Mobile Menu Toggle Button - always visible on mobile/tablet, top-left fixed */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="fixed top-3 left-3 z-50 lg:hidden p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+        style={{ top: 'env(safe-area-inset-top, 12px)', left: 'env(safe-area-inset-left, 12px)' }}
         aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >
         {sidebarOpen ? (
@@ -178,7 +180,7 @@ function AppContent() {
         w-72 sm:w-80 max-w-[85vw] xs:max-w-[360px]
         pt-16 lg:pt-0
         overflow-y-auto
-      `}>
+      `} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <InputPanel
           onGenerate={handleGenerate}
           isLoading={isLoading}

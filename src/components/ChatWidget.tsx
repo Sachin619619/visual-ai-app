@@ -114,7 +114,8 @@ export function ChatWidget() {
       {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed top-20 sm:top-4 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
+        className="fixed top-24 sm:top-4 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
+        style={{ top: 'calc(env(safe-area-inset-top, 12px) + 80px)', right: 'calc(env(safe-area-inset-right, 16px) + 16px)' }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         initial={{ scale: 0 }}
@@ -132,6 +133,7 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed inset-4 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
+            style={{ top: 'calc(env(safe-area-inset-top, 16px) + 16px)', right: 'calc(env(safe-area-inset-right, 16px) + 16px)', bottom: 'calc(env(safe-area-inset-bottom, 16px) + 16px)' }}
           >
             {/* Header */}
             <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-accent-primary/10 to-transparent">
