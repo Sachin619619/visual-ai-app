@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search } from 'lucide-react';
-import { ModelProvider, PromptHistory } from '../types';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2 } from 'lucide-react';
+import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
 interface InputPanelProps {
@@ -13,6 +13,8 @@ interface InputPanelProps {
   onPromptChange?: (prompt: string) => void;
   onToggleFavorite?: (id: string) => void;
   onClearHistory?: () => void;
+  styleFrame?: StyleFrame;
+  onStyleFrameChange?: (frame: StyleFrame) => void;
 }
 
 // Template definitions
@@ -85,7 +87,16 @@ const TEMPLATES = [
   }
 ];
 
-export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory }: InputPanelProps) {
+// Style frame definitions
+const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ElementType }[] = [
+  { id: 'card', label: 'Card', icon: Square },
+  { id: 'modal', label: 'Modal', icon: Layers },
+  { id: 'fullwidth', label: 'Full Width', icon: Maximize2 },
+  { id: 'floating', label: 'Floating', icon: Sparkles },
+  { id: 'glass', label: 'Glass', icon: Layout },
+];
+
+export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [showHistory, setShowHistory] = useState(false);
@@ -258,6 +269,32 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm text-text-secondary mb-2 block font-medium">Style Frame</label>
+          <div className="grid grid-cols-5 gap-2">
+            {STYLE_FRAMES.map((frame) => {
+              const Icon = frame.icon;
+              return (
+                <button
+                  key={frame.id}
+                  type="button"
+                  onClick={() => onStyleFrameChange?.(frame.id)}
+                  disabled={isLoading}
+                  className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all min-h-[52px] ${
+                    styleFrame === frame.id
+                      ? 'bg-accent-primary/20 text-accent-primary border border-accent-primary/50'
+                      : 'bg-bg-tertiary text-text-secondary hover:bg-white/10 border border-transparent'
+                  }`}
+                  title={frame.label}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="text-[10px]">{frame.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

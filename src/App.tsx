@@ -3,7 +3,7 @@ import { InputPanel } from './components/InputPanel';
 import { VisualRenderer } from './components/VisualRenderer';
 import { ChatWidget } from './components/ChatWidget';
 import { ToastProvider, useToast } from './components/Toast';
-import { ModelProvider, PromptHistory } from './types';
+import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI } from './lib/ai-providers';
 import { Menu, X, Sparkles } from 'lucide-react';
 
@@ -15,6 +15,7 @@ function AppContent() {
   const [siteAuth, setSiteAuth] = useState<boolean | null>(null);
   const [prompt, setPrompt] = useState('');
   const [lastModel, setLastModel] = useState<ModelProvider>('openai');
+  const [styleFrame, setStyleFrame] = useState<StyleFrame>('card');
   const { showToast } = useToast();
   
   const SITE_PASSWORD = 'visual2026';
@@ -190,6 +191,8 @@ function AppContent() {
           onPromptChange={setPrompt}
           onToggleFavorite={handleToggleFavorite}
           onClearHistory={handleClearHistory}
+          styleFrame={styleFrame}
+          onStyleFrameChange={setStyleFrame}
         />
       </div>
 
@@ -209,6 +212,8 @@ function AppContent() {
           isLoading={isLoading}
           onClear={handleClear}
           model={lastModel}
+          styleFrame={styleFrame}
+          onStyleFrameChange={setStyleFrame}
           onQuickGenerate={handleQuickGenerate}
         />
       </div>

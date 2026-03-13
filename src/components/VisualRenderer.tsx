@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, Image } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, Image, Layout, Square, Layers, Sparkles } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
-import { ModelProvider } from '../types';
+import { ModelProvider, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
 import html2canvas from 'html2canvas';
 
@@ -11,6 +11,8 @@ interface VisualRendererProps {
   isLoading: boolean;
   onClear: () => void;
   model?: ModelProvider;
+  styleFrame?: StyleFrame;
+  onStyleFrameChange?: (frame: StyleFrame) => void;
   onQuickGenerate?: (prompt: string) => void;
 }
 
@@ -34,12 +36,22 @@ function highlightHTML(code: string): string {
     .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
 }
 
-export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerate }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showStyleFrames, setShowStyleFrames] = useState(false);
+
+  // Style frame options with icons and labels
+  const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ReactNode }[] = [
+    { id: 'card', label: 'Card', icon: <Square className="w-4 h-4" /> },
+    { id: 'modal', label: 'Modal', icon: <Layers className="w-4 h-4" /> },
+    { id: 'fullwidth', label: 'Full', icon: <Maximize2 className="w-4 h-4" /> },
+    { id: 'floating', label: 'Float', icon: <Sparkles className="w-4 h-4" /> },
+    { id: 'glass', label: 'Glass', icon: <Layout className="w-4 h-4" /> },
+  ];
 
   // Handle download HTML file
   const handleDownload = () => {
@@ -163,6 +175,47 @@ export function VisualRenderer({ html, isLoading, onClear, model, onQuickGenerat
                 <span className="hidden sm:inline">{AI_PROVIDERS[model]?.name || model}</span>
               </motion.div>
             )}
+            {/* Style Frame Selector */}
+            <div className="relative">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={() => setShowStyleFrames(!showStyleFrames)}
+                className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  showStyleFrames ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
+                }`}
+                title="Style Frame"
+              >
+                <Layout className="w-5 h-5 sm:w-5 sm:h-5" />
+              </motion.button>
+              {/* Style Frame Dropdown */}
+              {showStyleFrames && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-20 min-w-[140px]"
+                >
+                  <p className="text-xs text-text-muted px-2 pb-2 mb-2 border-b border-white/5">Style Frame</p>
+                  {STYLE_FRAMES.map((frame) => (
+                    <button
+                      key={frame.id}
+                      onClick={() => {
+                        onStyleFrameChange?.(frame.id);
+                        setShowStyleFrames(false);
+                      }}
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        styleFrame === frame.id 
+                          ? 'bg-accent-primary/20 text-accent-primary' 
+                          : 'text-text-secondary hover:bg-white/5 hover:text-text-primary'
+                      }`}
+                    >
+                      {frame.icon}
+                      {frame.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </div>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}

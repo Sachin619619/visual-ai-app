@@ -1,11 +1,15 @@
 export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'openrouter' | 'local';
 
+// Style/frame options for generated UI
+export type StyleFrame = 'card' | 'modal' | 'fullwidth' | 'floating' | 'glass';
+
 export interface PromptHistory {
   id: string;
   prompt: string;
   model: ModelProvider;
   timestamp: Date;
   isFavorite?: boolean;
+  styleFrame?: StyleFrame;
 }
 
 export interface ChatMessage {
