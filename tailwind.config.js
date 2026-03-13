@@ -4,17 +4,18 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        'bg-primary': '#0a0a0f',
-        'bg-secondary': '#12121a',
-        'bg-tertiary': '#1a1a24',
+        'bg-primary': 'var(--bg-primary)',
+        'bg-secondary': 'var(--bg-secondary)',
+        'bg-tertiary': 'var(--bg-tertiary)',
         'accent-primary': '#8b5cf6',
         'accent-secondary': '#06b6d4',
-        'text-primary': '#f8fafc',
-        'text-secondary': '#94a3b8',
-        'text-muted': '#64748b',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
       },
       fontFamily: {
         'heading': ['Outfit', 'system-ui', 'sans-serif'],

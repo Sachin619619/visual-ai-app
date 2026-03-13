@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor } from 'lucide-react';
 import { ModelProvider, PromptHistory } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
@@ -38,6 +38,24 @@ const TEMPLATES = [
     name: 'Dashboard',
     icon: Activity,
     prompt: 'Create a dark-themed analytics dashboard with multiple widgets, charts and data tables'
+  },
+  {
+    id: 'form',
+    name: 'Form',
+    icon: FileText,
+    prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling'
+  },
+  {
+    id: 'pricing',
+    name: 'Pricing',
+    icon: CreditCard,
+    prompt: 'Create a responsive pricing table with 3 tiers, monthly/yearly toggle, feature lists and CTA buttons'
+  },
+  {
+    id: 'hero',
+    name: 'Hero',
+    icon: Monitor,
+    prompt: 'Design a stunning hero section with headline, subtext, CTA button, and background gradient or image placeholder'
   }
 ];
 
@@ -49,6 +67,16 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('visual-ai-dark-mode');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  // Apply dark/light mode to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('visual-ai-dark-mode', String(darkMode));
+  }, [darkMode]);
 
   // Use external prompt if provided, otherwise use internal
   const prompt = externalPrompt !== undefined ? externalPrompt : internalPrompt;
@@ -115,6 +143,14 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[40px] sm:min-h-[44px] min-w-[40px] sm:min-w-[44px] flex items-center justify-center"
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {darkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />}
+            </button>
             <button
               type="button"
               onClick={() => setShowShortcuts(true)}
