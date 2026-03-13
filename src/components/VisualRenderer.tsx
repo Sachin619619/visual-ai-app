@@ -82,16 +82,16 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
         </button>
       )}
 
-      {/* Toolbar */}
-      <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 flex items-center gap-2 sm:gap-2.5 ${isFullscreen ? 'right-16' : ''}`}>
+      {/* Toolbar - optimized for mobile */}
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex items-center gap-1 sm:gap-2.5 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
-            {/* Model Indicator Badge */}
+            {/* Model Indicator Badge - hidden on very small screens */}
             {model && (
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="px-3 py-2 sm:py-1.5 rounded-lg bg-bg-secondary/90 backdrop-blur-md text-xs text-text-muted flex items-center gap-1.5 min-h-[44px] sm:min-h-[36px]"
+                className="hidden xs:flex px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-bg-secondary/90 backdrop-blur-md text-xs text-text-muted items-center gap-1.5"
                 title={`Generated with ${AI_PROVIDERS[model]?.name || model}`}
               >
                 <span>{AI_PROVIDERS[model]?.icon}</span>
@@ -102,48 +102,48 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
+              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
                 showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
               }`}
               title="Toggle Code Preview"
             >
-              <Code className="w-5 h-5" />
+              <Code className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleCopyCode}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={copied ? "Copied!" : "Copy HTML"}
             >
-              {copied ? <Check className="w-5 h-5 text-green-400" /> : <FileCode className="w-5 h-5" />}
+              {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-4 h-4 sm:w-5 sm:h-5" />}
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleDownload}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Download HTML"
             >
-              <Download className="w-5 h-5" />
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
             >
-              {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+              {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={onClear}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Clear (⌘+L)"
             >
-              <Trash2 className="w-5 h-5" />
+              <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
           </>
         )}

@@ -103,34 +103,34 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       className="w-72 sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
     >
       {/* Header */}
-      <div className="p-4 sm:p-5 border-b border-white/5">
+      <div className="p-3 sm:p-5 border-b border-white/5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
-              <Sparkles className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-heading text-lg font-semibold gradient-text">Visual AI</h1>
-              <p className="text-xs text-text-muted">Generate stunning UIs</p>
+              <h1 className="font-heading text-base sm:text-lg font-semibold gradient-text">Visual AI</h1>
+              <p className="text-xs text-text-muted hidden xs:block">Generate stunning UIs</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={() => setShowShortcuts(true)}
-              className="p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[40px] sm:min-h-[44px] min-w-[40px] sm:min-w-[44px] flex items-center justify-center"
               title="Keyboard Shortcuts"
             >
-              <Keyboard className="w-5 h-5 text-text-muted" />
+              <Keyboard className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
             </button>
             {onClose && (
               <button
                 type="button"
                 onClick={onClose}
-                className="lg:hidden p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[48px] min-w-[48px] flex items-center justify-center"
+                className="lg:hidden p-2 sm:p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[40px] sm:min-h-[48px] min-w-[40px] sm:min-w-[48px] flex items-center justify-center"
                 aria-label="Close sidebar"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             )}
           </div>
@@ -138,9 +138,9 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       </div>
 
       {/* Templates Gallery */}
-      <div className="px-4 sm:px-5 py-4 border-b border-white/5">
-        <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start Templates</label>
-        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+      <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
+        <label className="text-xs text-text-muted mb-2 sm:mb-3 block font-medium">Quick Start</label>
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
           {TEMPLATES.map((template) => {
             const Icon = template.icon;
             return (
@@ -151,11 +151,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   setPrompt(template.prompt);
                 }}
                 disabled={isLoading}
-                className="flex flex-col items-center gap-1.5 p-3 sm:p-3.5 rounded-xl bg-bg-tertiary hover:bg-white/10 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 min-h-[64px] sm:min-h-[60px]"
+                className="flex flex-col items-center gap-1 p-2 sm:p-3.5 rounded-xl bg-bg-tertiary hover:bg-white/10 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 min-h-[56px] sm:min-h-[60px]"
                 title={template.name}
               >
-                <Icon className="w-5 h-5 text-accent-primary" />
-                <span className="text-[10px] text-text-secondary font-medium">{template.name}</span>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-accent-primary" />
+                <span className="text-[9px] sm:text-[10px] text-text-secondary font-medium">{template.name}</span>
               </button>
             );
           })}
@@ -163,26 +163,26 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="p-4 sm:p-5 flex-1 flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="p-3 sm:p-5 flex-1 flex flex-col gap-4 sm:gap-5">
         <div>
-          <label className="text-sm text-text-secondary mb-2.5 block font-medium">Describe what you want</label>
+          <label className="text-sm text-text-secondary mb-2 block font-medium">Describe what you want</label>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="e.g., Show me a line chart of sales data, Create a timeline for my project, Display stats cards..."
-            className="input-field h-32 sm:h-44 resize-none"
+            placeholder="e.g., Show me a line chart of sales data..."
+            className="input-field h-28 sm:h-44 resize-none text-sm"
             disabled={isLoading}
           />
         </div>
 
         <div>
-          <label className="text-sm text-text-secondary mb-2.5 block font-medium">AI Model</label>
+          <label className="text-sm text-text-secondary mb-2 block font-medium">AI Model</label>
           <div className="relative">
             <select
               value={model}
               onChange={(e) => setModel(e.target.value as ModelProvider)}
-              className="select-field w-full"
+              className="select-field w-full text-sm"
               disabled={isLoading}
             >
               {Object.entries(AI_PROVIDERS).map(([key, { name, icon }]) => (
@@ -197,16 +197,17 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
-          className="btn-primary w-full flex items-center justify-center gap-2.5 min-h-[52px] text-base"
+          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] text-sm sm:text-base"
         >
           {isLoading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Generating...
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="hidden sm:inline">Generating...</span>
+              <span className="sm:hidden">Generating</span>
             </>
           ) : (
             <>
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
               Generate
             </>
           )}
@@ -221,11 +222,12 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       <div className="border-t border-white/5">
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="w-full p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="w-full p-3 sm:p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"
         >
           <div className="flex items-center gap-2">
             <Key className="w-4 h-4" />
-            API Settings
+            <span className="hidden sm:inline">API Settings</span>
+            <span className="sm:hidden">Settings</span>
           </div>
           <ChevronDown className={`w-4 h-4 transition-transform ${showSettings ? 'rotate-180' : ''}`} />
         </button>
@@ -234,10 +236,10 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           <motion.div
             initial={{ height: 0 }}
             animate={{ height: 'auto' }}
-            className="px-4 pb-4"
+            className="px-3 sm:px-4 pb-3 sm:pb-4"
           >
-            <p className="text-xs text-text-muted mb-3">
-              Add your API key to enable real AI generation. Your key is stored locally.
+            <p className="text-xs text-text-muted mb-2 sm:mb-3">
+              Add your API key to enable real AI generation.
             </p>
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -246,7 +248,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
                   placeholder="sk-..."
-                  className="input-field w-full pr-10"
+                  className="input-field w-full pr-10 text-sm"
                 />
                 <button
                   type="button"
@@ -260,19 +262,19 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             <div className="flex gap-2 mt-2">
               <button
                 onClick={handleSaveApiKey}
-                className="btn-primary flex-1 text-sm py-2.5 min-h-[44px]"
+                className="btn-primary flex-1 text-xs sm:text-sm py-2 sm:py-2.5 min-h-[40px] sm:min-h-[44px]"
               >
-                Save Key
+                Save
               </button>
               <button
                 onClick={handleClearApiKey}
-                className="px-3 py-2.5 text-sm text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[44px]"
+                className="px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[40px] sm:min-h-[44px]"
               >
                 Clear
               </button>
             </div>
             <p className="text-xs text-text-muted mt-2">
-              Supported: OpenAI, Anthropic, Gemini
+              OpenAI, Anthropic, Gemini
             </p>
           </motion.div>
         )}
@@ -282,11 +284,12 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       <div className="border-t border-white/5">
         <button
           onClick={() => setShowHistory(!showHistory)}
-          className="w-full p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="w-full p-3 sm:p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"
         >
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            Recent prompts
+            <span className="hidden sm:inline">Recent prompts</span>
+            <span className="sm:hidden">History</span>
           </div>
           <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
         </button>
@@ -295,17 +298,17 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           <motion.div
             initial={{ height: 0 }}
             animate={{ height: 'auto' }}
-            className="px-4 pb-4"
+            className="px-3 sm:px-4 pb-3 sm:pb-4"
           >
             {history.length === 0 ? (
-              <p className="text-xs text-text-muted text-center py-4">No history yet</p>
+              <p className="text-xs text-text-muted text-center py-3 sm:py-4">No history yet</p>
             ) : (
-              <div className="flex flex-col gap-2 max-h-48 overflow-y-auto">
+              <div className="flex flex-col gap-2 max-h-40 sm:max-h-48 overflow-y-auto">
                 {history.slice(0, 10).map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setPrompt(item.prompt)}
-                    className="text-left p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-xs"
+                    className="text-left p-2.5 sm:p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-xs"
                   >
                     <p className="text-text-primary line-clamp-2">{item.prompt}</p>
                     <p className="text-text-muted mt-1">{AI_PROVIDERS[item.model].icon} {item.model}</p>

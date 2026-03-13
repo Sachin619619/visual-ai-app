@@ -111,33 +111,33 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
+        className="fixed top-4 right-4 z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
       </motion.button>
 
-      {/* Chat Dialog */}
+      {/* Chat Dialog - responsive width for mobile */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed top-16 right-4 w-96 h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
+            className="fixed inset-4 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
           >
             {/* Header */}
-            <div className="p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-accent-primary/10 to-transparent">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
+            <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-accent-primary/10 to-transparent">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-semibold">AI Assistant</h3>
+                  <h3 className="font-heading font-semibold text-sm sm:text-base">AI Assistant</h3>
                   <p className="text-xs text-green-400">Online</p>
                 </div>
               </div>
@@ -159,7 +159,7 @@ export function ChatWidget() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -167,33 +167,33 @@ export function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     message.role === 'user' 
                       ? 'bg-bg-tertiary' 
                       : 'bg-gradient-to-br from-accent-primary to-accent-secondary'
                   }`}>
                     {message.role === 'user' ? (
-                      <User className="w-4 h-4 text-text-secondary" />
+                      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-secondary" />
                     ) : (
-                      <Bot className="w-4 h-4 text-white" />
+                      <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                     )}
                   </div>
-                  <div className={`max-w-[75%] ${
+                  <div className={`max-w-[80%] ${
                     message.role === 'user' 
                       ? 'bg-bg-tertiary rounded-2xl rounded-br-sm' 
                       : 'bg-white/5 rounded-2xl rounded-bl-sm'
-                  } p-3`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  } p-2.5 sm:p-3`}>
+                    <p className="text-xs sm:text-sm whitespace-pre-wrap">{message.content}</p>
                   </div>
                 </motion.div>
               ))}
               
               {isLoading && (
-                <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-white" />
+                <div className="flex gap-2 sm:gap-3">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <div className="bg-white/5 rounded-2xl rounded-bl-sm p-3">
+                  <div className="bg-white/5 rounded-2xl rounded-bl-sm p-2.5 sm:p-3">
                     <div className="flex gap-1">
                       <span className="w-2 h-2 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '0ms' }} />
                       <span className="w-2 h-2 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -212,20 +212,21 @@ export function ChatWidget() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="px-4 pb-2"
+                  className="px-3 sm:px-4 pb-2"
                 >
                   <p className="text-xs text-text-muted mb-2">Quick actions:</p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {QUICK_ACTIONS.map((action) => {
                       const Icon = action.icon;
                       return (
                         <button
                           key={action.id}
                           onClick={() => handleSend(action.prompt)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-tertiary hover:bg-accent-primary/20 text-xs text-text-secondary hover:text-accent-primary transition-colors"
+                          className="flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-lg bg-bg-tertiary hover:bg-accent-primary/20 text-xs text-text-secondary hover:text-accent-primary transition-colors"
                         >
-                          <Icon className="w-3.5 h-3.5" />
-                          {action.label}
+                          <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                          <span className="hidden sm:inline">{action.label}</span>
+                          <span className="sm:hidden">{action.label.charAt(0)}</span>
                         </button>
                       );
                     })}
@@ -235,7 +236,7 @@ export function ChatWidget() {
             </AnimatePresence>
 
             {/* Input */}
-            <div className="p-4 border-t border-white/5">
+            <div className="p-3 sm:p-4 border-t border-white/5">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -243,15 +244,15 @@ export function ChatWidget() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Type a message..."
-                  className="input-field flex-1"
+                  className="input-field flex-1 text-sm"
                   disabled={isLoading}
                 />
                 <button
                   onClick={() => handleSend()}
                   disabled={!input.trim() || isLoading}
-                  className="p-3 rounded-lg bg-gradient-to-br from-accent-primary to-accent-secondary text-white disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                  className="p-2.5 sm:p-3 rounded-lg bg-gradient-to-br from-accent-primary to-accent-secondary text-white disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
