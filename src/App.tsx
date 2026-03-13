@@ -48,7 +48,25 @@ function App() {
     }
   };
 
-  // Show password gate if not authenticated
+  // Load history from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('visual-ai-history');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setHistory(parsed.map((h: any) => ({ ...h, timestamp: new Date(h.timestamp) })));
+      } catch (e) {
+        console.error('Failed to parse history', e);
+      }
+    }
+  }, []);
+
+  // Save history to localStorage whenever it changes
+  useEffect(() => {
+    if (history.length > 0) {
+      localStorage.setItem('visual-ai-history', JSON.stringify(history));
+    }
+  }, [history]);
   if (siteAuth === null) {
     return (
       <div style={{ 

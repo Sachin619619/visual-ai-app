@@ -63,6 +63,21 @@ export const generateUI = async (
   if (lowerPrompt.includes('table') || lowerPrompt.includes('data')) {
     return generateTable();
   }
+
+  // Form responses
+  if (lowerPrompt.includes('form') || lowerPrompt.includes('input') || lowerPrompt.includes('contact')) {
+    return generateForm();
+  }
+
+  // Pricing responses
+  if (lowerPrompt.includes('pricing') || lowerPrompt.includes('price') || lowerPrompt.includes('plan') || lowerPrompt.includes('subscription')) {
+    return generatePricing();
+  }
+
+  // Hero responses
+  if (lowerPrompt.includes('hero') || lowerPrompt.includes('landing') || lowerPrompt.includes('header') || lowerPrompt.includes('banner')) {
+    return generateHero();
+  }
   
   // Default: generate a sample UI based on prompt
   return generateDefaultUI(prompt);
@@ -301,6 +316,115 @@ const generateTable = () => `
       </tr>
     </tbody>
   </table>
+</div>
+`;
+
+const generateForm = () => `
+<div class="card shadow">
+  <h2 style="margin-bottom: 24px;">📝 Contact Us</h2>
+  <form style="display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #94a3b8;">First Name</label>
+        <input type="text" placeholder="John" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #94a3b8;">Last Name</label>
+        <input type="text" placeholder="Doe" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none;">
+      </div>
+    </div>
+    <div>
+      <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #94a3b8;">Email Address</label>
+      <input type="email" placeholder="john@example.com" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none;">
+    </div>
+    <div>
+      <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #94a3b8;">Subject</label>
+      <select style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none;">
+        <option style="background: #161619;">General Inquiry</option>
+        <option style="background: #161619;">Support Request</option>
+        <option style="background: #161619;">Sales Question</option>
+        <option style="background: #161619;">Partnership</option>
+      </select>
+    </div>
+    <div>
+      <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #94a3b8;">Message</label>
+      <textarea placeholder="Tell us how we can help..." rows="4" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; outline: none; resize: vertical;"></textarea>
+    </div>
+    <button type="button" style="padding: 14px 24px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border: none; border-radius: 8px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px;">
+      Send Message 🚀
+    </button>
+  </form>
+</div>
+`;
+
+const generatePricing = () => `
+<div class="card shadow">
+  <h2 style="margin-bottom: 24px; text-align: center;">💎 Pricing Plans</h2>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: center;">
+      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 8px;">Starter</div>
+      <div style="font-size: 36px; font-weight: 700; margin-bottom: 4px;">$9</div>
+      <div style="font-size: 14px; color: #64748b; margin-bottom: 20px;">per month</div>
+      <ul style="list-style: none; padding: 0; margin: 0 0 20px 0; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+        <li style="font-size: 14px; color: #94a3b8;">✓ 5 Projects</li>
+        <li style="font-size: 14px; color: #94a3b8;">✓ 1GB Storage</li>
+        <li style="font-size: 14px; color: #94a3b8;">✓ Basic Support</li>
+      </ul>
+      <button style="width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; font-size: 14px; cursor: pointer;">Get Started</button>
+    </div>
+    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2)); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 16px; padding: 24px; text-align: center; position: relative;">
+      <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #8b5cf6, #06b6d4); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">POPULAR</div>
+      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 8px;">Pro</div>
+      <div style="font-size: 36px; font-weight: 700; margin-bottom: 4px;">$29</div>
+      <div style="font-size: 14px; color: #64748b; margin-bottom: 20px;">per month</div>
+      <ul style="list-style: none; padding: 0; margin: 0 0 20px 0; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+        <li style="font-size: 14px; color: #fff;">✓ Unlimited Projects</li>
+        <li style="font-size: 14px; color: #fff;">✓ 50GB Storage</li>
+        <li style="font-size: 14px; color: #fff;">✓ Priority Support</li>
+        <li style="font-size: 14px; color: #fff;">✓ Advanced Analytics</li>
+      </ul>
+      <button style="width: 100%; padding: 12px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border: none; border-radius: 8px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;">Get Started</button>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: center;">
+      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 8px;">Enterprise</div>
+      <div style="font-size: 36px; font-weight: 700; margin-bottom: 4px;">$99</div>
+      <div style="font-size: 14px; color: #64748b; margin-bottom: 20px;">per month</div>
+      <ul style="list-style: none; padding: 0; margin: 0 0 20px 0; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+        <li style="font-size: 14px; color: #94a3b8;">✓ Everything in Pro</li>
+        <li style="font-size: 14px; color: #94a3b8;">✓ Unlimited Storage</li>
+        <li style="font-size: 14px; color: #94a3b8;">✓ 24/7 Dedicated Support</li>
+        <li style="font-size: 14px; color: #94a3b8;">✓ Custom Integrations</li>
+      </ul>
+      <button style="width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; font-size: 14px; cursor: pointer;">Contact Sales</button>
+    </div>
+  </div>
+</div>
+`;
+
+const generateHero = () => `
+<div style="text-align: center; padding: 40px 20px;">
+  <div style="display: inline-block; padding: 8px 16px; background: rgba(139, 92, 246, 0.2); border-radius: 20px; margin-bottom: 24px;">
+    <span style="color: #8b5cf6; font-size: 14px; font-weight: 500;">✨ Now with AI-powered features</span>
+  </div>
+  <h1 style="font-size: 48px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+    Build Something <span style="color: #8b5cf6;">Amazing</span>
+  </h1>
+  <p style="font-size: 18px; color: #94a3b8; max-width: 600px; margin: 0 auto 32px; line-height: 1.6;">
+    Create stunning web applications with the power of AI. Fast, intuitive, and designed for developers who care about quality.
+  </p>
+  <div style="display: flex; gap: 16px; justify-content: center;">
+    <button style="padding: 14px 32px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+      Get Started Free 🚀
+    </button>
+    <button style="padding: 14px 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: #fff; font-size: 16px; cursor: pointer;">
+      View Demo
+    </button>
+  </div>
+  <div style="margin-top: 48px; display: flex; justify-content: center; gap: 32px; color: #64748b; font-size: 14px;">
+    <span>✓ No credit card required</span>
+    <span>✓ 14-day free trial</span>
+    <span>✓ Cancel anytime</span>
+  </div>
 </div>
 `;
 
