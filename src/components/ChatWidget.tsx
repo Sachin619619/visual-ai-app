@@ -114,7 +114,7 @@ export function ChatWidget() {
       {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
+        className="fixed top-16 sm:top-4 right-4 z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >

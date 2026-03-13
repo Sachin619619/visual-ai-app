@@ -83,7 +83,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
       )}
 
       {/* Toolbar - optimized for mobile */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex items-center gap-1 sm:gap-2.5 ${isFullscreen ? 'right-16' : ''}`}>
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 sm:gap-2.5 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -102,7 +102,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
+              className={`p-2.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
                 showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
               }`}
               title="Toggle Code Preview"
@@ -113,7 +113,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleCopyCode}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={copied ? "Copied!" : "Copy HTML"}
             >
               {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -122,7 +122,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleDownload}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Download HTML"
             >
               <Download className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -131,7 +131,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -140,7 +140,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={onClear}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Clear (⌘+L)"
             >
               <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -156,27 +156,27 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-4 left-4 right-4 z-20 max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+            className="absolute bottom-4 left-4 right-4 z-20 max-h-48 sm:max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
           >
-            <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
-              <span className="text-sm text-text-secondary">Generated HTML Code</span>
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-white/5">
+              <span className="text-xs sm:text-sm text-text-secondary">Generated HTML Code</span>
+              <div className="flex items-center gap-1 sm:gap-2">
                 <button
                   onClick={handleCopyCode}
                   className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
                   title="Copy Code"
                 >
-                  {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
                 </button>
                 <button
                   onClick={() => setShowCode(false)}
                   className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
-            <pre className="p-4 overflow-auto max-h-44 text-xs text-text-muted font-mono">
+            <pre className="p-2 sm:p-4 overflow-auto max-h-32 sm:max-h-44 text-xs text-text-muted font-mono">
               {html}
             </pre>
           </motion.div>
