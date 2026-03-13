@@ -152,12 +152,12 @@ function AppContent() {
 
   return (
     <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary">
-      {/* Mobile Toggle Button - only show on mobile */}
+      {/* Mobile Toggle Button - always show on mobile */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-3 left-3 z-50 p-2.5 sm:p-3 bg-bg-secondary rounded-lg border border-white/10 shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+        className="lg:hidden fixed top-3 left-3 z-50 p-2.5 bg-bg-secondary rounded-lg border border-white/10 shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
       >
-        {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        {sidebarOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
       </button>
 
       {/* Left Panel - Input */}
@@ -165,6 +165,7 @@ function AppContent() {
         fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 w-72 sm:w-80
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:w-80
+        bg-bg-secondary
       `}>
         <InputPanel
           onGenerate={handleGenerate}
@@ -176,16 +177,16 @@ function AppContent() {
         />
       </div>
 
-      {/* Overlay for mobile */}
+      {/* Overlay for mobile - click to close */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Center - Visual Renderer */}
-      <div className="flex-1">
+      <div className="flex-1 w-full lg:w-auto">
         <VisualRenderer
           html={html}
           isLoading={isLoading}
