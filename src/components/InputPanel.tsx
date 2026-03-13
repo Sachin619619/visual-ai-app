@@ -203,7 +203,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       {/* Templates Gallery */}
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
         <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start</label>
-        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {TEMPLATES.map((template, index) => {
             const Icon = template.icon;
             return (
@@ -217,11 +217,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex flex-col items-center gap-1.5 p-2.5 sm:p-3.5 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[60px] sm:min-h-[64px] group"
+                className="flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[60px] group"
                 title={template.name}
               >
-                <Icon className="w-5 h-5 sm:w-5 sm:h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[10px] sm:text-[10px] text-text-secondary font-medium">{template.name}</span>
+                <Icon className="w-5 h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[10px] text-text-secondary font-medium truncate w-full text-center">{template.name}</span>
               </motion.button>
             );
           })}

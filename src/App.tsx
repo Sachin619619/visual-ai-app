@@ -5,7 +5,7 @@ import { ChatWidget } from './components/ChatWidget';
 import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory } from './types';
 import { generateUI } from './lib/ai-providers';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
 
 function AppContent() {
   const [html, setHtml] = useState('');
@@ -121,78 +121,30 @@ function AppContent() {
 
   if (siteAuth === null) {
     return (
-      <div style={{ 
-        minHeight: '100dvh',
-        background: '#0a0a0b', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        flexDirection: 'column',
-        gap: '20px',
-        padding: '20px',
-        paddingTop: '80px',
-        width: '100vw',
-        position: 'relative',
-        overflowX: 'hidden'
-      }}>
+      <div className="min-h-[100dvh] bg-bg-primary flex items-center justify-center flex-col gap-5 p-5 pt-20 w-full relative overflow-x-hidden">
         {/* Mobile menu button - always visible on login screen */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          style={{
-            position: 'fixed',
-            top: '16px',
-            left: '16px',
-            zIndex: 50,
-            padding: '12px',
-            background: '#1a1a24',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '12px',
-            minHeight: '48px',
-            minWidth: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
-          }}
+          className="fixed top-3 left-3 z-50 p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          aria-label={sidebarOpen ? "Close menu" : "Open menu"}
         >
-          <Menu style={{ width: 24, height: 24, color: 'white' }} />
+          <Menu className="w-6 h-6 text-white" />
         </button>
         
-        <h1 style={{ color: '#8b5cf6', fontSize: '1.75rem', fontWeight: '600' }}>🔒 Visual AI</h1>
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow">
+          <Sparkles className="w-7 h-7 text-white" />
+        </div>
+        <h1 className="text-2xl font-semibold gradient-text font-heading">Visual AI</h1>
         <form onSubmit={(e) => { e.preventDefault(); handleSiteLogin((e.target as HTMLFormElement).password.value); }} className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
           <input 
             type="password" 
             name="password"
             placeholder="Enter site password"
-            style={{ 
-              padding: '14px 20px', 
-              borderRadius: '12px', 
-              border: '1px solid rgba(255,255,255,0.1)',
-              background: '#161619',
-              color: '#fff',
-              fontSize: '16px',
-              outline: 'none',
-              flex: 1,
-              minHeight: '48px',
-              transition: 'all 0.2s ease'
-            }}
+            className="input-field flex-1"
           />
           <button 
             type="submit"
-            style={{ 
-              padding: '14px 28px', 
-              borderRadius: '12px', 
-              border: 'none',
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-              color: '#fff',
-              fontSize: '16px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              minHeight: '48px',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)'
-            }}
+            className="btn-primary whitespace-nowrap"
           >
             Access
           </button>
@@ -223,7 +175,7 @@ function AppContent() {
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
-        w-80 max-w-[85vw]
+        w-72 sm:w-80 max-w-[85vw]
         pt-16 lg:pt-0
       `}>
         <InputPanel
@@ -248,7 +200,7 @@ function AppContent() {
       )}
 
       {/* Center - Visual Renderer */}
-      <div className="flex-1 w-full lg:w-auto lg:pl-0 pl-12">
+      <div className="flex-1 w-full lg:w-auto">
         <VisualRenderer
           html={html}
           isLoading={isLoading}
