@@ -137,7 +137,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       <div className="p-3 sm:p-5 border-b border-white/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg shadow-accent-primary/25">
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
@@ -149,24 +149,24 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             <button
               type="button"
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[40px] sm:min-h-[44px] min-w-[40px] sm:min-w-[44px] flex items-center justify-center"
+              className="p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />}
+              {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-text-muted" />}
             </button>
             <button
               type="button"
               onClick={() => setShowShortcuts(true)}
-              className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[40px] sm:min-h-[44px] min-w-[40px] sm:min-w-[44px] flex items-center justify-center"
+              className="p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
               title="Keyboard Shortcuts"
             >
-              <Keyboard className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              <Keyboard className="w-5 h-5 text-text-muted" />
             </button>
             {onClose && (
               <button
                 type="button"
                 onClick={onClose}
-                className="lg:hidden p-2 sm:p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[40px] sm:min-h-[48px] min-w-[40px] sm:min-w-[48px] flex items-center justify-center"
+                className="lg:hidden p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close sidebar"
               >
                 <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -178,24 +178,27 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
 
       {/* Templates Gallery */}
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
-        <label className="text-xs text-text-muted mb-2 sm:mb-3 block font-medium">Quick Start</label>
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
-          {TEMPLATES.map((template) => {
+        <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start</label>
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          {TEMPLATES.map((template, index) => {
             const Icon = template.icon;
             return (
-              <button
+              <motion.button
                 key={template.id}
                 type="button"
                 onClick={() => {
                   setPrompt(template.prompt);
                 }}
                 disabled={isLoading}
-                className="flex flex-col items-center gap-1 p-2 sm:p-3.5 rounded-xl bg-bg-tertiary hover:bg-white/10 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 min-h-[56px] sm:min-h-[60px]"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                className="flex flex-col items-center gap-1.5 p-2.5 sm:p-3.5 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[60px] sm:min-h-[64px] group"
                 title={template.name}
               >
-                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-accent-primary" />
-                <span className="text-[9px] sm:text-[10px] text-text-secondary font-medium">{template.name}</span>
-              </button>
+                <Icon className="w-5 h-5 sm:w-5 sm:h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[10px] sm:text-[10px] text-text-secondary font-medium">{template.name}</span>
+              </motion.button>
             );
           })}
         </div>
@@ -236,18 +239,18 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
-          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] text-sm sm:text-base"
+          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[52px] sm:min-h-[52px] text-sm sm:text-base relative overflow-hidden group"
         >
           {isLoading ? (
             <>
-              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               <span className="hidden sm:inline">Generating...</span>
               <span className="sm:hidden">Generating</span>
             </>
           ) : (
             <>
-              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-              Generate
+              <Send className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+              <span>Generate</span>
             </>
           )}
         </button>

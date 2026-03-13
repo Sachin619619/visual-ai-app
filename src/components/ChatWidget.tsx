@@ -114,11 +114,14 @@ export function ChatWidget() {
       {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed top-16 sm:top-4 right-4 z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
+        className="fixed top-16 sm:top-4 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
-        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        <MessageCircle className="w-6 h-6 sm:w-6 sm:h-6 text-white" />
       </motion.button>
 
       {/* Chat Dialog - responsive width for mobile */}
