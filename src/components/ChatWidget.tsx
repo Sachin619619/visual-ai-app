@@ -116,7 +116,7 @@ export function ChatWidget() {
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
         style={{ 
-          bottom: 'calc(env(safe-area-inset-bottom, 24px) + 24px)', 
+          bottom: 'calc(env(safe-area-inset-bottom, 20px) + 20px)', 
           right: 'calc(env(safe-area-inset-right, 16px) + 16px)',
           boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)'
         }}
@@ -137,12 +137,13 @@ export function ChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed inset-x-4 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
+            className="fixed sm:absolute inset-x-4 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-2rem)] max-h-[calc(100vh-9rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
             style={{ 
               top: 'auto', 
               left: '16px', 
               right: '16px', 
-              bottom: 'calc(env(safe-area-inset-bottom, 80px) + 80px)',
+              bottom: 'calc(env(safe-area-inset-bottom, 20px) + 70px)',
+              transformOrigin: 'bottom center',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
             }}
           >

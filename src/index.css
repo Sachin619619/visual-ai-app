@@ -298,6 +298,15 @@ button,
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
 .page-transition-enter {
   opacity: 0;
   transform: translateY(10px);

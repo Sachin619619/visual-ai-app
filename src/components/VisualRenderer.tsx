@@ -229,8 +229,8 @@ export default function ${componentName}() {
         </button>
       )}
 
-      {/* Toolbar - optimized for mobile with wrap */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-60px)] sm:max-w-none ${isFullscreen ? 'right-16' : ''}`}>
+      {/* Toolbar - optimized for mobile with wrap and scroll */}
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-60px)] sm:max-w-none overflow-x-auto max-h-[50px] sm:max-h-none ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}

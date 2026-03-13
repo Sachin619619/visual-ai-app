@@ -231,10 +231,10 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         </div>
       </div>
 
-      {/* Templates Gallery */}
+      {/* Templates Gallery - horizontal scroll on mobile */}
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
         <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start</label>
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+        <div className="flex sm:grid sm:grid-cols-4 gap-2 overflow-x-auto sm:overflow-visible pb-2 -mb-2 sm:mb-0 sm:pb-0 scrollbar-hide">
           {TEMPLATES.map((template, index) => {
             const Icon = template.icon;
             return (
@@ -248,7 +248,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[60px] group"
+                className="flex-shrink-0 sm:flex-none flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[60px] group w-16 sm:w-auto"
                 title={template.name}
               >
                 <Icon className="w-5 h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
