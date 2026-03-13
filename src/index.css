@@ -217,9 +217,29 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
+  
+  /* Improve sidebar touch area */
+  .sidebar-panel {
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+  }
 }
 
-/* Smooth page transitions */
+/* Subtle background gradient for depth */
+.bg-gradient-depth {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+}
+
+/* Enhanced focus ring for accessibility */
+*:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users - keep for keyboard */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
 .page-transition-enter {
   opacity: 0;
   transform: translateY(10px);

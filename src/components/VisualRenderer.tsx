@@ -321,12 +321,12 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
             <div className="flex flex-col items-center gap-6 sm:gap-8">
               {/* Polished spinner with multiple rings */}
               <div className="relative">
-                <div className="w-24 h-24 rounded-full border-4 border-bg-tertiary" />
-                <div className="absolute inset-0 w-24 h-24 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" style={{ animationDuration: '1s' }} />
-                <div className="absolute inset-2 w-20 h-20 rounded-full border-4 border-transparent border-b-accent-secondary animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
-                <div className="absolute inset-4 w-16 h-16 rounded-full border-4 border-transparent border-t-cyan-400 animate-spin" style={{ animationDuration: '2s' }} />
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-bg-tertiary" />
+                <div className="absolute inset-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" style={{ animationDuration: '1s' }} />
+                <div className="absolute inset-1.5 w-17 h-17 sm:w-20 sm:h-20 rounded-full border-4 border-transparent border-b-accent-secondary animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
+                <div className="absolute inset-3 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-transparent border-t-cyan-400 animate-spin" style={{ animationDuration: '2s' }} />
                 {/* Center dot */}
-                <div className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-accent-primary animate-pulse" />
+                <div className="absolute inset-0 m-auto w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-accent-primary animate-pulse" />
               </div>
               <div className="text-center px-4">
                 <p className="text-lg sm:text-xl font-medium text-text-primary mb-2">Generating your visualization</p>
@@ -337,7 +337,7 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="w-2.5 h-2.5 rounded-full bg-accent-primary"
+                    className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-accent-primary"
                     style={{
                       animation: 'pulse 1.5s ease-in-out infinite',
                       animationDelay: `${i * 0.2}s`,
@@ -407,12 +407,19 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
               ))}
             </div>
             
-            {/* Keyboard shortcut hint */}
-            <p className="text-xs text-text-muted mt-6 sm:mt-8">
-              <kbd className="px-2 py-1 bg-bg-tertiary rounded text-text-secondary">⌘</kbd>
-              <span className="mx-1">+</span>
-              <kbd className="px-2 py-1 bg-bg-tertiary rounded text-text-secondary">Enter</kbd>
-              <span className="ml-2">to generate</span>
+            {/* Keyboard shortcut hint - always visible on mobile */}
+            <p className="text-xs sm:text-sm text-text-muted mt-6 sm:mt-8 flex items-center justify-center gap-2">
+              <span className="hidden sm:inline">
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-text-secondary">⌘</kbd>
+                <span className="mx-1">+</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-text-secondary">Enter</kbd>
+                <span className="ml-2">to generate</span>
+              </span>
+              <span className="sm:hidden flex items-center gap-1">
+                <kbd className="px-1.5 py-0.5 bg-bg-tertiary rounded text-text-secondary text-[10px]">⌘</kbd>
+                <span className="text-[10px]">+</span>
+                <kbd className="px-1.5 py-0.5 bg-bg-tertiary rounded text-text-secondary text-[10px]">↵</kbd>
+              </span>
             </p>
           </motion.div>
         )}

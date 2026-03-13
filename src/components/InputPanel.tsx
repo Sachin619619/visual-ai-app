@@ -204,8 +204,9 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 onClick={onClose}
                 className="lg:hidden p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close sidebar"
+                aria-hidden="true"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6 text-text-secondary" />
               </button>
             )}
           </div>
@@ -317,8 +318,9 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           )}
         </button>
 
-        <p className="text-xs text-text-muted text-center hidden sm:block">
-          Press ⌘ + Enter to submit
+        <p className="text-xs text-text-muted text-center">
+          <span className="hidden sm:inline">Press ⌘ + Enter to submit</span>
+          <span className="sm:hidden">⌘ + ↵ to submit</span>
         </p>
       </form>
 
