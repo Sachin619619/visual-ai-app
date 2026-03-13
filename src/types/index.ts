@@ -1,5 +1,8 @@
 export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'openrouter' | 'local';
 
+// Theme options for preview
+export type PreviewTheme = 'dark' | 'light';
+
 // Style/frame options for generated UI
 export type StyleFrame = 'card' | 'modal' | 'fullwidth' | 'floating' | 'glass';
 
@@ -22,6 +25,14 @@ export interface ChatMessage {
 export interface GeneratedContent {
   html: string;
   timestamp: Date;
+}
+
+export interface PromptTemplate {
+  id: string;
+  name: string;
+  prompt: string;
+  category?: string;
+  createdAt: Date;
 }
 
 export interface ChartData {

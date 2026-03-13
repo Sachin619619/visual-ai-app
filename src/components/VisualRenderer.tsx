@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2 } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
-import { ModelProvider, StyleFrame } from '../types';
+import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
 import html2canvas from 'html2canvas';
 
@@ -50,6 +50,7 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [showStyleFrames, setShowStyleFrames] = useState(false);
   const [showRefine, setShowRefine] = useState(false);
   const [refinementText, setRefinementText] = useState('');
+  const [previewTheme, setPreviewTheme] = useState<PreviewTheme>('dark');
 
   // Style frame options with icons and labels
   const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ReactNode }[] = [
@@ -188,7 +189,7 @@ export default function ${componentName}() {
   useEffect(() => {
     if (html && iframeRef.current) {
       try {
-        const content = createSandboxContent(html);
+        const content = createSandboxContent(html, previewTheme);
         const iframe = iframeRef.current;
         iframe.srcdoc = content;
         setError(null);
@@ -197,7 +198,7 @@ export default function ${componentName}() {
         console.error(err);
       }
     }
-  }, [html]);
+  }, [html, previewTheme]);
 
   // Handle Escape key to exit fullscreen
   useEffect(() => {
@@ -310,6 +311,16 @@ export default function ${componentName}() {
                 <Redo2 className="w-5 h-5 sm:w-5 sm:h-5" />
               </motion.button>
             )}
+            {/* Theme Toggle Button */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setPreviewTheme(prev => prev === 'dark' ? 'light' : 'dark')}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title={previewTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {previewTheme === 'dark' ? <Sun className="w-5 h-5 sm:w-5 sm:h-5" /> : <Moon className="w-5 h-5 sm:w-5 sm:h-5" />}
+            </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
