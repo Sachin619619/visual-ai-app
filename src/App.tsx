@@ -14,6 +14,7 @@ function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [siteAuth, setSiteAuth] = useState<boolean | null>(null);
   const [prompt, setPrompt] = useState('');
+  const [lastModel, setLastModel] = useState<ModelProvider>('openai');
   const { showToast } = useToast();
   
   const SITE_PASSWORD = 'visual2026';
@@ -154,6 +155,7 @@ function AppContent() {
 
   const handleGenerate = useCallback(async (prompt: string, model: ModelProvider) => {
     setIsLoading(true);
+    setLastModel(model);
     
     // Add to history
     const historyItem: PromptHistory = {
@@ -228,6 +230,7 @@ function AppContent() {
           html={html}
           isLoading={isLoading}
           onClear={handleClear}
+          model={lastModel}
         />
       </div>
 
