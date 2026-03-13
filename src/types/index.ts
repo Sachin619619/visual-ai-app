@@ -1,4 +1,4 @@
-export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'local';
+export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'openrouter' | 'local';
 
 export interface PromptHistory {
   id: string;

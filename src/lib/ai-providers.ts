@@ -1,23 +1,40 @@
 import { ModelProvider } from '../types';
 
 // AI Provider configurations
-// In production, these would use actual API calls
 export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }> = {
   openai: { name: 'OpenAI GPT-4', icon: '🤖' },
   claude: { name: 'Claude 3', icon: '🧠' },
   gemini: { name: 'Gemini Pro', icon: '✨' },
+  openrouter: { name: 'OpenRouter (Free)', icon: '🔗' },
   local: { name: 'Local Model', icon: '💻' },
 };
 
-// Generate UI based on prompt (simulated for demo)
-// In production, this would call actual LLM APIs
+// Global API key storage
+let apiKey = '';
+
+export const setApiKey = (key: string) => {
+  apiKey = key;
+};
+
+export const getApiKey = () => apiKey;
+
+// Generate UI based on prompt
 export const generateUI = async (
   prompt: string,
-  _model: ModelProvider
+  model: ModelProvider
 ): Promise<string> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  // If API key is set, use real AI
+  if (apiKey) {
+    try {
+      const result = await generateWithAI(prompt, model, apiKey);
+      return result;
+    } catch (error) {
+      console.error('AI generation failed, falling back to demo:', error);
+    }
+  }
   
+  // Fallback to demo mode
+  await new Promise(resolve => setTimeout(resolve, 1500));
   const lowerPrompt = prompt.toLowerCase();
   
   // Chart responses
@@ -342,3 +359,96 @@ export const chatWithAI = async (message: string): Promise<string> => {
   
   return "I'm here to help! You can ask me to create charts, timelines, data cards, tables, and more. Just describe what you'd like to see!";
 };
+
+// Real AI generation
+async function generateWithAI(prompt: string, model: ModelProvider, apiKey: string): Promise<string> {
+  const systemPrompt = `You are a UI generator. Generate HTML/CSS code based on the user's request.
+Rules:
+- Return ONLY the HTML code, no explanations
+- Use inline styles with dark theme (background #0a0a0b, text #ffffff)
+- Use Tailwind-like utility classes if needed
+- Include Chart.js for charts (from CDN)
+- Make it look professional
+- Respond with valid HTML that can be rendered in a div`;
+
+  let response;
+  
+  if (model === 'openai') {
+    response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7
+      })
+    });
+    
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || generateDefaultUI(prompt);
+  } 
+  
+  if (model === 'gemini') {
+    response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `${systemPrompt}\n\nUser request: ${prompt}` }] }]
+      })
+    });
+    
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || generateDefaultUI(prompt);
+  }
+  
+  if (model === 'claude') {
+    response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 4000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    
+    const data = await response.json();
+    return data.content?.[0]?.text || generateDefaultUI(prompt);
+  }
+  
+  if (model === 'openrouter') {
+    response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://visual-ai.vercel.app',
+        'X-Title': 'Visual AI App'
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-4o',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7
+      })
+    });
+    
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || generateDefaultUI(prompt);
+  }
+  
+  return generateDefaultUI(prompt);
+}

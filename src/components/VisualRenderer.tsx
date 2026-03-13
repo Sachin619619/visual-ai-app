@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 
 interface VisualRendererProps {
@@ -12,6 +12,28 @@ interface VisualRendererProps {
 export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showCode, setShowCode] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Handle download HTML file
+  const handleDownload = () => {
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `visual-ai-${Date.now()}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Copy code to clipboard
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(html);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (html && iframeRef.current) {
@@ -32,17 +54,73 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
       {/* Toolbar */}
       <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
         {html && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            onClick={onClear}
-            className="p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors"
-            title="Clear"
-          >
-            <Trash2 className="w-4 h-4" />
-          </motion.button>
+          <>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setShowCode(!showCode)}
+              className={`p-2 rounded-lg backdrop-blur-glass transition-colors ${
+                showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/80 text-text-secondary hover:text-text-primary'
+              }`}
+              title="Toggle Code Preview"
+            >
+              <Code className="w-4 h-4" />
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleDownload}
+              className="p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors"
+              title="Download HTML"
+            >
+              <Download className="w-4 h-4" />
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={onClear}
+              className="p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors"
+              title="Clear (⌘+L)"
+            >
+              <Trash2 className="w-4 h-4" />
+            </motion.button>
+          </>
         )}
       </div>
+
+      {/* Code Preview Panel */}
+      <AnimatePresence>
+        {showCode && html && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-4 left-4 right-4 z-20 max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
+              <span className="text-sm text-text-secondary">Generated HTML Code</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopyCode}
+                  className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
+                  title="Copy Code"
+                >
+                  {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <button
+                  onClick={() => setShowCode(false)}
+                  className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <pre className="p-4 overflow-auto max-h-44 text-xs text-text-muted font-mono">
+              {html}
+            </pre>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Loading State */}
       <AnimatePresence>
@@ -53,12 +131,33 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
             exit={{ opacity: 0 }}
             className="absolute inset-0 z-20 flex items-center justify-center bg-bg-primary"
           >
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-6">
+              {/* Polished spinner with multiple rings */}
               <div className="relative">
-                <div className="w-16 h-16 rounded-full border-4 border-bg-tertiary" />
-                <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" />
+                <div className="w-20 h-20 rounded-full border-4 border-bg-tertiary" />
+                <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" style={{ animationDuration: '1s' }} />
+                <div className="absolute inset-2 w-16 h-16 rounded-full border-4 border-transparent border-b-accent-secondary animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
+                <div className="absolute inset-4 w-12 h-12 rounded-full border-4 border-transparent border-t-cyan-400 animate-spin" style={{ animationDuration: '2s' }} />
+                {/* Center dot */}
+                <div className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-accent-primary animate-pulse" />
               </div>
-              <p className="text-text-secondary animate-pulse">Generating your visualization...</p>
+              <div className="text-center">
+                <p className="text-lg font-medium text-text-primary mb-1">Generating your visualization</p>
+                <p className="text-sm text-text-muted animate-pulse">Crafting beautiful UI components...</p>
+              </div>
+              {/* Progress dots */}
+              <div className="flex gap-1.5">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="w-2 h-2 rounded-full bg-accent-primary"
+                    style={{
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                      animationDelay: `${i * 0.2}s`,
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
