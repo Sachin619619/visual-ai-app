@@ -52,14 +52,14 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
   return (
     <div className="flex-1 h-full bg-bg-primary relative overflow-hidden">
       {/* Toolbar */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 sm:gap-2">
         {html && (
           <>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-2 rounded-lg backdrop-blur-glass transition-colors ${
+              className={`p-2.5 sm:p-2 rounded-lg backdrop-blur-glass transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
                 showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/80 text-text-secondary hover:text-text-primary'
               }`}
               title="Toggle Code Preview"
@@ -70,7 +70,7 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleDownload}
-              className="p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors"
+              className="p-2.5 sm:p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               title="Download HTML"
             >
               <Download className="w-4 h-4" />
@@ -79,7 +79,7 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={onClear}
-              className="p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors"
+              className="p-2.5 sm:p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               title="Clear (⌘+L)"
             >
               <Trash2 className="w-4 h-4" />
@@ -190,29 +190,29 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center max-w-md"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center max-w-xs sm:max-w-md px-3"
           >
-            <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center">
-              <span className="text-5xl">🎨</span>
+            <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center">
+              <span className="text-4xl sm:text-5xl">🎨</span>
             </div>
-            <h2 className="font-heading text-2xl font-semibold mb-2">Visual AI Generator</h2>
-            <p className="text-text-secondary mb-6">
+            <h2 className="font-heading text-xl sm:text-2xl font-semibold mb-2">Visual AI Generator</h2>
+            <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 gap-3 text-left">
-              <div className="p-3 rounded-lg bg-bg-secondary border border-white/5">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-left">
+              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-accent-primary text-sm font-medium mb-1">📈 Charts</p>
                 <p className="text-text-muted text-xs">Line, bar, pie charts</p>
               </div>
-              <div className="p-3 rounded-lg bg-bg-secondary border border-white/5">
+              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-accent-secondary text-sm font-medium mb-1">🗓️ Timelines</p>
                 <p className="text-text-muted text-xs">Roadmaps & journeys</p>
               </div>
-              <div className="p-3 rounded-lg bg-bg-secondary border border-white/5">
+              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-green-500 text-sm font-medium mb-1">📊 Cards</p>
                 <p className="text-text-muted text-xs">Stats & dashboards</p>
               </div>
-              <div className="p-3 rounded-lg bg-bg-secondary border border-white/5">
+              <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-yellow-500 text-sm font-medium mb-1">📋 Tables</p>
                 <p className="text-text-muted text-xs">Data tables</p>
               </div>

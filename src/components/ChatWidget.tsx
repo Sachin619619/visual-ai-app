@@ -1,8 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Zap, BarChart3, Calendar, LayoutGrid, Sparkles } from 'lucide-react';
 import { ChatMessage } from '../types';
 import { chatWithAI } from '../lib/ai-providers';
+
+const QUICK_ACTIONS = [
+  { id: 'chart', label: 'Chart', icon: BarChart3, prompt: 'Create a line chart showing monthly revenue data' },
+  { id: 'timeline', label: 'Timeline', icon: Calendar, prompt: 'Build a vertical timeline for project roadmap' },
+  { id: 'cards', label: 'Cards', icon: LayoutGrid, prompt: 'Design stat cards with KPIs and trends' },
+  { id: 'analyze', label: 'Analyze', icon: Zap, prompt: 'Analyze this data and suggest the best visualization' },
+];
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +23,7 @@ export function ChatWidget() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showQuickActions, setShowQuickActions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -26,19 +34,40 @@ export function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  // Persist chat history
+  useEffect(() => {
+    const saved = localStorage.getItem('visual-ai-chat-history');
+    if (saved && isOpen) {
+      try {
+        const parsed = JSON.parse(saved);
+        setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })));
+      } catch (e) {
+        console.error('Failed to parse chat history', e);
+      }
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (messages.length > 1) {
+      localStorage.setItem('visual-ai-chat-history', JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  const handleSend = async (content?: string) => {
+    const messageContent = content || input;
+    if (!messageContent.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: messageContent.trim(),
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    if (!content) setInput('');
     setIsLoading(true);
+    setShowQuickActions(false);
 
     try {
       const response = await chatWithAI(userMessage.content);
@@ -67,6 +96,17 @@ export function ChatWidget() {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleClearChat = () => {
+    setMessages([{
+      id: '1',
+      role: 'assistant',
+      content: "Chat cleared! How can I help you?",
+      timestamp: new Date()
+    }]);
+    localStorage.removeItem('visual-ai-chat-history');
+    setShowQuickActions(true);
   };
 
   return (
@@ -101,12 +141,21 @@ export function ChatWidget() {
                   <p className="text-xs text-green-400">Online</p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-lg hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={handleClearChat}
+                  className="p-2 rounded-lg hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+                  title="Clear Chat"
+                >
+                  <Sparkles className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-lg hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Messages */}
@@ -156,6 +205,35 @@ export function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Quick Actions */}
+            <AnimatePresence>
+              {showQuickActions && messages.length <= 1 && !isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="px-4 pb-2"
+                >
+                  <p className="text-xs text-text-muted mb-2">Quick actions:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {QUICK_ACTIONS.map((action) => {
+                      const Icon = action.icon;
+                      return (
+                        <button
+                          key={action.id}
+                          onClick={() => handleSend(action.prompt)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-tertiary hover:bg-accent-primary/20 text-xs text-text-secondary hover:text-accent-primary transition-colors"
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          {action.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Input */}
             <div className="p-4 border-t border-white/5">
               <div className="flex gap-2">
@@ -169,7 +247,7 @@ export function ChatWidget() {
                   disabled={isLoading}
                 />
                 <button
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   disabled={!input.trim() || isLoading}
                   className="p-3 rounded-lg bg-gradient-to-br from-accent-primary to-accent-secondary text-white disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
                 >

@@ -2,17 +2,19 @@ import { useState, useCallback, useEffect } from 'react';
 import { InputPanel } from './components/InputPanel';
 import { VisualRenderer } from './components/VisualRenderer';
 import { ChatWidget } from './components/ChatWidget';
+import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory } from './types';
 import { generateUI } from './lib/ai-providers';
 import { Menu, X } from 'lucide-react';
 
-function App() {
+function AppContent() {
   const [html, setHtml] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<PromptHistory[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [siteAuth, setSiteAuth] = useState<boolean | null>(null);
   const [prompt, setPrompt] = useState('');
+  const { showToast } = useToast();
   
   const SITE_PASSWORD = 'visual2026';
 
@@ -43,8 +45,9 @@ function App() {
     if (password === SITE_PASSWORD) {
       localStorage.setItem('site_auth_visual', 'true');
       setSiteAuth(true);
+      showToast('success', 'Welcome back! 🎉');
     } else {
-      alert('Incorrect password');
+      showToast('error', 'Incorrect password');
     }
   };
 
@@ -76,10 +79,11 @@ function App() {
         alignItems: 'center', 
         justifyContent: 'center',
         flexDirection: 'column',
-        gap: '20px'
+        gap: '20px',
+        padding: '20px'
       }}>
-        <h1 style={{ color: '#8b5cf6', fontSize: '2rem' }}>🔒 Visual AI</h1>
-        <form onSubmit={(e) => { e.preventDefault(); handleSiteLogin((e.target as HTMLFormElement).password.value); }}>
+        <h1 style={{ color: '#8b5cf6', fontSize: '1.5rem' }}>🔒 Visual AI</h1>
+        <form onSubmit={(e) => { e.preventDefault(); handleSiteLogin((e.target as HTMLFormElement).password.value); }} className="flex flex-col sm:flex-row gap-2 w-full max-w-sm">
           <input 
             type="password" 
             name="password"
@@ -91,21 +95,24 @@ function App() {
               background: '#161619',
               color: '#fff',
               fontSize: '16px',
-              outline: 'none'
+              outline: 'none',
+              flex: 1,
+              minHeight: '44px'
             }}
           />
           <button 
             type="submit"
             style={{ 
               padding: '12px 24px', 
-              marginLeft: '10px',
               borderRadius: '8px', 
               border: 'none',
               background: '#8b5cf6',
               color: '#fff',
               fontSize: '16px',
               cursor: 'pointer',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              minHeight: '44px',
+              whiteSpace: 'nowrap'
             }}
           >
             Access
@@ -130,32 +137,34 @@ function App() {
     try {
       const generatedHtml = await generateUI(prompt, model);
       setHtml(generatedHtml);
+      showToast('success', 'UI generated successfully! ✨');
     } catch (error) {
       console.error('Error generating UI:', error);
+      showToast('error', 'Failed to generate UI. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const handleClear = useCallback(() => {
     setHtml('');
   }, []);
 
   return (
-    <div className="h-screen w-screen flex overflow-hidden bg-bg-primary">
-      {/* Mobile Toggle Button */}
+    <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary">
+      {/* Mobile Toggle Button - only show on mobile */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 bg-bg-secondary rounded-lg border border-white/10 shadow-lg"
+        className="lg:hidden fixed top-3 left-3 z-50 p-2.5 sm:p-3 bg-bg-secondary rounded-lg border border-white/10 shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
       >
         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
       {/* Left Panel - Input */}
       <div className={`
-        fixed lg:relative inset-y-0 left-0 z-40 transform transition-transform duration-300
+        fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 w-72 sm:w-80
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:transform-none
+        lg:relative lg:translate-x-0 lg:w-80
       `}>
         <InputPanel
           onGenerate={handleGenerate}
@@ -187,6 +196,14 @@ function App() {
       {/* Chat Widget */}
       <ChatWidget />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

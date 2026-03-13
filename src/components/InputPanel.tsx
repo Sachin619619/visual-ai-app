@@ -99,7 +99,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     <motion.div 
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
+      className="w-72 sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
     >
       {/* Header */}
       <div className="p-4 border-b border-white/5">
@@ -139,11 +139,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   setPrompt(template.prompt);
                 }}
                 disabled={isLoading}
-                className="flex flex-col items-center gap-1 p-2 rounded-lg bg-bg-tertiary hover:bg-white/10 transition-colors disabled:opacity-50"
+                className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-lg bg-bg-tertiary hover:bg-white/10 transition-colors disabled:opacity-50 min-h-[44px]"
                 title={template.name}
               >
                 <Icon className="w-4 h-4 text-accent-primary" />
-                <span className="text-[10px] text-text-secondary">{template.name}</span>
+                <span className="text-[10px] text-text-secondary hidden sm:block">{template.name}</span>
               </button>
             );
           })}
@@ -159,7 +159,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="e.g., Show me a line chart of sales data, Create a timeline for my project, Display stats cards..."
-            className="input-field h-40 resize-none"
+            className="input-field h-28 sm:h-40 resize-none"
             disabled={isLoading}
           />
         </div>
@@ -185,7 +185,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
-          className="btn-primary w-full flex items-center justify-center gap-2"
+          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[44px] text-sm sm:text-base"
         >
           {isLoading ? (
             <>
@@ -200,7 +200,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           )}
         </button>
 
-        <p className="text-xs text-text-muted text-center">
+        <p className="text-xs text-text-muted text-center hidden sm:block">
           Press ⌘ + Enter to submit
         </p>
       </form>
@@ -248,13 +248,13 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             <div className="flex gap-2 mt-2">
               <button
                 onClick={handleSaveApiKey}
-                className="btn-primary flex-1 text-sm py-2"
+                className="btn-primary flex-1 text-sm py-2.5 min-h-[44px]"
               >
                 Save Key
               </button>
               <button
                 onClick={handleClearApiKey}
-                className="px-3 py-2 text-sm text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors"
+                className="px-3 py-2.5 text-sm text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[44px]"
               >
                 Clear
               </button>
