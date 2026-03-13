@@ -182,6 +182,12 @@ function AppContent() {
     setHtml('');
   }, []);
 
+  const handleToggleFavorite = useCallback((id: string) => {
+    setHistory(prev => prev.map(item => 
+      item.id === id ? { ...item, isFavorite: !item.isFavorite } : item
+    ));
+  }, []);
+
   return (
     <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary">
       {/* Mobile Menu Toggle Button - always visible on mobile/tablet, top-left fixed */}
@@ -212,6 +218,7 @@ function AppContent() {
           onClose={() => setSidebarOpen(false)}
           prompt={prompt}
           onPromptChange={setPrompt}
+          onToggleFavorite={handleToggleFavorite}
         />
       </div>
 

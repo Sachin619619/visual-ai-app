@@ -5,6 +5,7 @@ export interface PromptHistory {
   prompt: string;
   model: ModelProvider;
   timestamp: Date;
+  isFavorite?: boolean;
 }
 
 export interface ChatMessage {

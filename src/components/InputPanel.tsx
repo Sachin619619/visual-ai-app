@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star } from 'lucide-react';
 import { ModelProvider, PromptHistory } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
@@ -11,6 +11,7 @@ interface InputPanelProps {
   onClose?: () => void;
   prompt?: string;
   onPromptChange?: (prompt: string) => void;
+  onToggleFavorite?: (id: string) => void;
 }
 
 // Template definitions
@@ -59,10 +60,11 @@ const TEMPLATES = [
   }
 ];
 
-export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange }: InputPanelProps) {
+export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [showHistory, setShowHistory] = useState(false);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -340,15 +342,43 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               <p className="text-xs text-text-muted text-center py-3 sm:py-4">No history yet</p>
             ) : (
               <div className="flex flex-col gap-2 max-h-40 sm:max-h-48 overflow-y-auto">
-                {history.slice(0, 10).map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setPrompt(item.prompt)}
-                    className="text-left p-2.5 sm:p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-xs"
-                  >
-                    <p className="text-text-primary line-clamp-2">{item.prompt}</p>
-                    <p className="text-text-muted mt-1">{AI_PROVIDERS[item.model].icon} {item.model}</p>
-                  </button>
+                {/* Filter toggle */}
+                <button
+                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                  className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs transition-colors ${
+                    showFavoritesOnly 
+                      ? 'bg-yellow-500/20 text-yellow-400' 
+                      : 'bg-bg-tertiary text-text-muted hover:text-text-secondary'
+                  }`}
+                >
+                  <Star className={`w-3.5 h-3.5 ${showFavoritesOnly ? 'fill-yellow-400' : ''}`} />
+                  {showFavoritesOnly ? 'Showing Favorites' : 'Show Favorites Only'}
+                </button>
+                
+                {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history).slice(0, 10).map((item) => (
+                  <div key={item.id} className="flex items-start gap-2">
+                    <button
+                      onClick={() => setPrompt(item.prompt)}
+                      className="flex-1 text-left p-2.5 sm:p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-xs"
+                    >
+                      <p className="text-text-primary line-clamp-2">{item.prompt}</p>
+                      <p className="text-text-muted mt-1">{AI_PROVIDERS[item.model].icon} {item.model}</p>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorite?.(item.id);
+                      }}
+                      className={`p-2 rounded-lg transition-colors min-w-[36px] flex items-center justify-center ${
+                        item.isFavorite 
+                          ? 'text-yellow-400 hover:text-yellow-300' 
+                          : 'text-text-muted hover:text-yellow-400'
+                      }`}
+                      title={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      <Star className={`w-4 h-4 ${item.isFavorite ? 'fill-yellow-400' : ''}`} />
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
