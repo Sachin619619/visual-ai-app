@@ -83,7 +83,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
       )}
 
       {/* Toolbar - optimized for mobile */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 sm:gap-2.5 ${isFullscreen ? 'right-16' : ''}`}>
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex items-center gap-1 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -156,10 +156,10 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-4 left-4 right-4 z-20 max-h-48 sm:max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+            className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 z-20 max-h-[40vh] sm:max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
           >
             <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-white/5">
-              <span className="text-xs sm:text-sm text-text-secondary">Generated HTML Code</span>
+              <span className="text-xs sm:text-sm text-text-secondary">Generated HTML</span>
               <div className="flex items-center gap-1 sm:gap-2">
                 <button
                   onClick={handleCopyCode}
@@ -176,7 +176,7 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
                 </button>
               </div>
             </div>
-            <pre className="p-2 sm:p-4 overflow-auto max-h-32 sm:max-h-44 text-xs text-text-muted font-mono">
+            <pre className="p-2 sm:p-4 overflow-auto max-h-[30vh] sm:max-h-44 text-xs text-text-muted font-mono">
               {html}
             </pre>
           </motion.div>
@@ -260,22 +260,22 @@ export function VisualRenderer({ html, isLoading, onClear, model }: VisualRender
             <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-left">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
               <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-accent-primary text-sm font-medium mb-1">📈 Charts</p>
-                <p className="text-text-muted text-xs">Line, bar, pie charts</p>
+                <p className="text-text-muted text-xs">Line, bar, pie</p>
               </div>
               <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-accent-secondary text-sm font-medium mb-1">🗓️ Timelines</p>
-                <p className="text-text-muted text-xs">Roadmaps & journeys</p>
+                <p className="text-text-muted text-xs">Roadmaps</p>
               </div>
               <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
                 <p className="text-green-500 text-sm font-medium mb-1">📊 Cards</p>
-                <p className="text-text-muted text-xs">Stats & dashboards</p>
+                <p className="text-text-muted text-xs">Stats & KPIs</p>
               </div>
               <div className="p-2.5 sm:p-3 rounded-lg bg-bg-secondary border border-white/5">
-                <p className="text-yellow-500 text-sm font-medium mb-1">📋 Tables</p>
-                <p className="text-text-muted text-xs">Data tables</p>
+                <p className="text-yellow-500 text-sm font-medium mb-1">📋 Forms</p>
+                <p className="text-text-muted text-xs">Inputs</p>
               </div>
             </div>
           </motion.div>

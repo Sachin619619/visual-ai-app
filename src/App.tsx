@@ -210,6 +210,7 @@ function AppContent() {
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
         w-80 max-w-[85vw]
+        pt-16 lg:pt-0
       `}>
         <InputPanel
           onGenerate={handleGenerate}
@@ -232,7 +233,7 @@ function AppContent() {
       )}
 
       {/* Center - Visual Renderer */}
-      <div className="flex-1 w-full lg:w-auto">
+      <div className="flex-1 w-full lg:w-auto lg:pl-0 pl-12">
         <VisualRenderer
           html={html}
           isLoading={isLoading}
