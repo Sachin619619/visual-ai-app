@@ -73,7 +73,7 @@ function AppContent() {
   if (siteAuth === null) {
     return (
       <div style={{ 
-        minHeight: '100vh', 
+        minHeight: '100dvh',
         background: '#0a0a0b', 
         display: 'flex', 
         alignItems: 'center', 
@@ -81,63 +81,68 @@ function AppContent() {
         flexDirection: 'column',
         gap: '20px',
         padding: '20px',
+        paddingTop: '80px',
         width: '100vw',
-        position: 'relative'
+        position: 'relative',
+        overflowX: 'hidden'
       }}>
-        {/* Mobile menu button - even on login screen */}
+        {/* Mobile menu button - always visible on login screen */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           style={{
             position: 'fixed',
-            top: '12px',
-            left: '12px',
+            top: '16px',
+            left: '16px',
             zIndex: 50,
-            padding: '10px',
+            padding: '12px',
             background: '#1a1a24',
             border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '8px',
-            minHeight: '44px',
-            minWidth: '44px',
+            borderRadius: '12px',
+            minHeight: '48px',
+            minWidth: '48px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
           }}
         >
-          <Menu style={{ width: 20, height: 20, color: 'white' }} />
+          <Menu style={{ width: 24, height: 24, color: 'white' }} />
         </button>
         
-        <h1 style={{ color: '#8b5cf6', fontSize: '1.5rem' }}>🔒 Visual AI</h1>
-        <form onSubmit={(e) => { e.preventDefault(); handleSiteLogin((e.target as HTMLFormElement).password.value); }} className="flex flex-col sm:flex-row gap-2 w-full max-w-sm">
+        <h1 style={{ color: '#8b5cf6', fontSize: '1.75rem', fontWeight: '600' }}>🔒 Visual AI</h1>
+        <form onSubmit={(e) => { e.preventDefault(); handleSiteLogin((e.target as HTMLFormElement).password.value); }} className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
           <input 
             type="password" 
             name="password"
             placeholder="Enter site password"
             style={{ 
-              padding: '12px 20px', 
-              borderRadius: '8px', 
-              border: '1px solid #333',
+              padding: '14px 20px', 
+              borderRadius: '12px', 
+              border: '1px solid rgba(255,255,255,0.1)',
               background: '#161619',
               color: '#fff',
               fontSize: '16px',
               outline: 'none',
               flex: 1,
-              minHeight: '44px'
+              minHeight: '48px',
+              transition: 'all 0.2s ease'
             }}
           />
           <button 
             type="submit"
             style={{ 
-              padding: '12px 24px', 
-              borderRadius: '8px', 
+              padding: '14px 28px', 
+              borderRadius: '12px', 
               border: 'none',
-              background: '#8b5cf6',
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
               color: '#fff',
               fontSize: '16px',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              minHeight: '44px',
-              whiteSpace: 'nowrap'
+              fontWeight: '600',
+              minHeight: '48px',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)'
             }}
           >
             Access
@@ -177,20 +182,26 @@ function AppContent() {
 
   return (
     <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary">
-      {/* Mobile Toggle Button - always show on mobile */}
+      {/* Mobile Menu Toggle Button - always visible on mobile/tablet, top-left fixed */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-3 left-3 z-50 p-2.5 bg-bg-secondary rounded-lg border border-white/10 shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+        className="fixed top-3 left-3 z-50 lg:hidden p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+        aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >
-        {sidebarOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
+        {sidebarOpen ? (
+          <X className="w-6 h-6 text-white" />
+        ) : (
+          <Menu className="w-6 h-6 text-white" />
+        )}
       </button>
 
       {/* Left Panel - Input */}
       <div className={`
-        fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 w-72 sm:w-80
+        fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
+        w-80 max-w-[85vw]
       `}>
         <InputPanel
           onGenerate={handleGenerate}
@@ -202,11 +213,12 @@ function AppContent() {
         />
       </div>
 
-      {/* Overlay for mobile - click to close */}
+      {/* Overlay for mobile - click to close sidebar */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
         />
       )}
 

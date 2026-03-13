@@ -80,46 +80,46 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
       )}
 
       {/* Toolbar */}
-      <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 sm:gap-2 ${isFullscreen ? 'right-16' : ''}`}>
+      <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 flex items-center gap-2 sm:gap-2.5 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-2.5 sm:p-2 rounded-lg backdrop-blur-glass transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
-                showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/80 text-text-secondary hover:text-text-primary'
+              className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
+                showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
               }`}
               title="Toggle Code Preview"
             >
-              <Code className="w-4 h-4" />
+              <Code className="w-5 h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleDownload}
-              className="p-2.5 sm:p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Download HTML"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-5 h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-2.5 sm:p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
             >
-              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={onClear}
-              className="p-2.5 sm:p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[48px] min-w-[48px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Clear (⌘+L)"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-5 h-5" />
             </motion.button>
           </>
         )}

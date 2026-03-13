@@ -103,10 +103,10 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       className="w-72 sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
     >
       {/* Header */}
-      <div className="p-4 border-b border-white/5">
+      <div className="p-4 sm:p-5 border-b border-white/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -118,18 +118,19 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             <button
               type="button"
               onClick={() => setShowShortcuts(true)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
               title="Keyboard Shortcuts"
             >
-              <Keyboard className="w-4 h-4 text-text-muted" />
+              <Keyboard className="w-5 h-5 text-text-muted" />
             </button>
             {onClose && (
               <button
                 type="button"
                 onClick={onClose}
-                className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="lg:hidden p-2.5 hover:bg-white/10 rounded-lg transition-all min-h-[48px] min-w-[48px] flex items-center justify-center"
+                aria-label="Close sidebar"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
             )}
           </div>
@@ -137,9 +138,9 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       </div>
 
       {/* Templates Gallery */}
-      <div className="px-4 py-3 border-b border-white/5">
-        <label className="text-xs text-text-muted mb-2 block">Quick Start Templates</label>
-        <div className="grid grid-cols-4 gap-2">
+      <div className="px-4 sm:px-5 py-4 border-b border-white/5">
+        <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start Templates</label>
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
           {TEMPLATES.map((template) => {
             const Icon = template.icon;
             return (
@@ -150,11 +151,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   setPrompt(template.prompt);
                 }}
                 disabled={isLoading}
-                className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-lg bg-bg-tertiary hover:bg-white/10 transition-colors disabled:opacity-50 min-h-[44px]"
+                className="flex flex-col items-center gap-1.5 p-3 sm:p-3.5 rounded-xl bg-bg-tertiary hover:bg-white/10 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 min-h-[64px] sm:min-h-[60px]"
                 title={template.name}
               >
-                <Icon className="w-4 h-4 text-accent-primary" />
-                <span className="text-[10px] text-text-secondary hidden sm:block">{template.name}</span>
+                <Icon className="w-5 h-5 text-accent-primary" />
+                <span className="text-[10px] text-text-secondary font-medium">{template.name}</span>
               </button>
             );
           })}
@@ -162,21 +163,21 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="p-4 flex-1 flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="p-4 sm:p-5 flex-1 flex flex-col gap-5">
         <div>
-          <label className="text-sm text-text-secondary mb-2 block">Describe what you want</label>
+          <label className="text-sm text-text-secondary mb-2.5 block font-medium">Describe what you want</label>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="e.g., Show me a line chart of sales data, Create a timeline for my project, Display stats cards..."
-            className="input-field h-28 sm:h-40 resize-none"
+            className="input-field h-32 sm:h-44 resize-none"
             disabled={isLoading}
           />
         </div>
 
         <div>
-          <label className="text-sm text-text-secondary mb-2 block">AI Model</label>
+          <label className="text-sm text-text-secondary mb-2.5 block font-medium">AI Model</label>
           <div className="relative">
             <select
               value={model}
@@ -196,16 +197,16 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
-          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[44px] text-sm sm:text-base"
+          className="btn-primary w-full flex items-center justify-center gap-2.5 min-h-[52px] text-base"
         >
           {isLoading ? (
             <>
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               Generating...
             </>
           ) : (
             <>
-              <Send className="w-4 h-4" />
+              <Send className="w-5 h-5" />
               Generate
             </>
           )}
