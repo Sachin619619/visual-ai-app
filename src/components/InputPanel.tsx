@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2 } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
@@ -84,6 +84,24 @@ const TEMPLATES = [
     name: 'Login',
     icon: User,
     prompt: 'Create a modern login form with email, password fields, remember me checkbox, and login button'
+  },
+  {
+    id: 'modal',
+    name: 'Modal',
+    icon: AppWindow,
+    prompt: 'Create a beautiful modal dialog with overlay, header, body content, and action buttons with smooth animations'
+  },
+  {
+    id: 'sidebar',
+    name: 'Sidebar',
+    icon: Sidebar,
+    prompt: 'Build a collapsible sidebar navigation with icons, labels, active states, and smooth expand/collapse animations'
+  },
+  {
+    id: 'landing',
+    name: 'Landing',
+    icon: Layout,
+    prompt: 'Design a complete landing page with hero, features section, pricing, testimonials, and footer'
   }
 ];
 

@@ -91,9 +91,22 @@ function AppContent() {
       const generatedHtml = await generateUI(prompt, model);
       setHtml(generatedHtml);
       showToast('success', 'UI generated successfully! ✨');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating UI:', error);
-      showToast('error', 'Failed to generate UI. Please try again.');
+      let errorMessage = 'Failed to generate UI. Please try again.';
+      
+      // Provide more specific error messages
+      if (error?.message?.includes('API key')) {
+        errorMessage = 'API key missing or invalid. Please check settings.';
+      } else if (error?.message?.includes('rate limit')) {
+        errorMessage = 'Rate limit exceeded. Please wait a moment.';
+      } else if (error?.message?.includes('timeout')) {
+        errorMessage = 'Request timed out. Please try again.';
+      } else if (error?.message?.includes('quota')) {
+        errorMessage = 'API quota exceeded. Check your plan limits.';
+      }
+      
+      showToast('error', errorMessage);
     } finally {
       setIsLoading(false);
     }

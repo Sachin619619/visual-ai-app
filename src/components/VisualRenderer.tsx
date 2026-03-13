@@ -22,6 +22,8 @@ const QUICK_PROMPTS = [
   { key: 'timeline', prompt: 'Build a vertical timeline component showing a product launch roadmap with milestones and dates', label: '🗓️ Timelines' },
   { key: 'cards', prompt: 'Design a responsive grid of stat cards showing KPI metrics with icons, numbers and trend indicators', label: '📊 Cards' },
   { key: 'forms', prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling', label: '📋 Forms' },
+  { key: 'landing', prompt: 'Design a complete landing page with hero, features section, pricing, testimonials, and footer', label: '🖥️ Landing' },
+  { key: 'sidebar', prompt: 'Build a collapsible sidebar navigation with icons, labels, active states, and smooth expand/collapse animations', label: '📑 Sidebar' },
 ];
 
 // Simple syntax highlighting for HTML
