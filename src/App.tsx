@@ -133,6 +133,12 @@ function AppContent() {
     showToast('success', 'History cleared');
   }, [showToast]);
 
+  const handleRefinePrompt = useCallback((_: string, refinement: string) => {
+    // Use the refinement as a new prompt
+    setPrompt(refinement);
+    handleGenerate(refinement, 'openai');
+  }, [handleGenerate]);
+
   if (siteAuth === null) {
     return (
       <div className="min-h-[100dvh] bg-bg-primary flex items-center justify-center flex-col gap-5 p-5 pt-20 w-full relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 60px)' }}>
@@ -234,6 +240,7 @@ function AppContent() {
           styleFrame={styleFrame}
           onStyleFrameChange={setStyleFrame}
           onQuickGenerate={handleQuickGenerate}
+          onRefinePrompt={handleRefinePrompt}
         />
       </div>
 

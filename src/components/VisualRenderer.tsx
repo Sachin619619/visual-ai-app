@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, Image, Layout, Square, Layers, Sparkles } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2 } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -14,6 +14,7 @@ interface VisualRendererProps {
   styleFrame?: StyleFrame;
   onStyleFrameChange?: (frame: StyleFrame) => void;
   onQuickGenerate?: (prompt: string) => void;
+  onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
 }
 
 // Quick start prompts for empty state cards
@@ -38,13 +39,15 @@ function highlightHTML(code: string): string {
     .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
 }
 
-export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showStyleFrames, setShowStyleFrames] = useState(false);
+  const [showRefine, setShowRefine] = useState(false);
+  const [refinementText, setRefinementText] = useState('');
 
   // Style frame options with icons and labels
   const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ReactNode }[] = [
@@ -114,6 +117,45 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
       link.click();
     } catch (err) {
       console.error('Failed to export PNG:', err);
+    }
+  };
+
+  // Export as SVG
+  const handleExportSVG = async () => {
+    if (!iframeRef.current) return;
+    try {
+      const iframe = iframeRef.current;
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) return;
+      
+      // Get the body content
+      const bodyContent = iframeDoc.body;
+      const innerHTML = bodyContent.innerHTML;
+      
+      // Create SVG container
+      const svgContent = `
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="
+      background: #0f0f23;
+      width: 100%;
+      height: 100%;
+      font-family: system-ui, -apple-system, sans-serif;
+    ">
+      ${innerHTML}
+    </div>
+  </foreignObject>
+</svg>`;
+      
+      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `visual-ai-${Date.now()}.svg`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export SVG:', err);
     }
   };
 
@@ -245,7 +287,25 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
               className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Export as PNG"
             >
-              <Image className="w-5 h-5 sm:w-5 sm:h-5" />
+              <FileImage className="w-5 h-5 sm:w-5 sm:h-5" />
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleExportSVG}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Export as SVG"
+            >
+              <span className="w-5 h-5 sm:w-5 sm:h-5 flex items-center justify-center text-xs font-bold">SVG</span>
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setShowRefine(true)}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Refine Prompt"
+            >
+              <Wand2 className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
@@ -307,6 +367,70 @@ export function VisualRenderer({ html, isLoading, onClear, model, styleFrame = '
             </div>
             <pre className="p-2 sm:p-4 overflow-auto max-h-[30vh] sm:max-h-44 text-xs font-mono whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: highlightHTML(html) }}>
             </pre>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Refine Prompt Modal */}
+      <AnimatePresence>
+        {showRefine && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-black/70" onClick={() => setShowRefine(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-md overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-white/5">
+                <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+                  <Wand2 className="w-5 h-5 text-accent-primary" />
+                  Refine Prompt
+                </h3>
+                <button
+                  onClick={() => setShowRefine(false)}
+                  className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-4 space-y-4">
+                <div>
+                  <label className="text-sm text-text-secondary mb-2 block font-medium">How would you like to modify it?</label>
+                  <textarea
+                    value={refinementText}
+                    onChange={(e) => setRefinementText(e.target.value)}
+                    placeholder="e.g., Make it darker, add more colors, change to glassmorphism..."
+                    className="input-field h-24 resize-none text-sm"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowRefine(false)}
+                    className="flex-1 px-4 py-2.5 rounded-lg bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (refinementText.trim() && onRefinePrompt) {
+                        onRefinePrompt(refinementText, refinementText);
+                        setRefinementText('');
+                        setShowRefine(false);
+                      }
+                    }}
+                    disabled={!refinementText.trim()}
+                    className="flex-1 btn-primary disabled:opacity-50"
+                  >
+                    Generate
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
