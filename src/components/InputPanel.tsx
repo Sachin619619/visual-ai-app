@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard } from 'lucide-react';
 import { ModelProvider, PromptHistory } from '../types';
 import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
 
@@ -48,6 +48,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showSettings, setShowSettings] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   // Use external prompt if provided, otherwise use internal
   const prompt = externalPrompt !== undefined ? externalPrompt : internalPrompt;
@@ -113,15 +114,25 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               <p className="text-xs text-text-muted">Generate stunning UIs</p>
             </div>
           </div>
-          {onClose && (
+          <div className="flex items-center gap-1">
             <button
               type="button"
-              onClick={onClose}
-              className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+              onClick={() => setShowShortcuts(true)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Keyboard Shortcuts"
             >
-              <X className="w-5 h-5" />
+              <Keyboard className="w-4 h-4 text-text-muted" />
             </button>
-          )}
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -304,6 +315,46 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           </motion.div>
         )}
       </div>
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setShowShortcuts(false)} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-sm overflow-hidden"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <h3 className="font-heading text-lg font-semibold">Keyboard Shortcuts</h3>
+              <button
+                onClick={() => setShowShortcuts(false)}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-secondary">Generate UI</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + Enter</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-secondary">Clear canvas</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + L</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-secondary">Exit fullscreen</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">Esc</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-text-secondary">Toggle code preview</span>
+                <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + Shift + C</kbd>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }

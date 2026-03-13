@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2 } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 
 interface VisualRendererProps {
@@ -14,6 +14,7 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Handle download HTML file
   const handleDownload = () => {
@@ -49,10 +50,37 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
     }
   }, [html]);
 
+  // Handle Escape key to exit fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+      // Cmd/Ctrl + Shift + C to toggle code preview
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        setShowCode(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   return (
-    <div className="flex-1 h-full bg-bg-primary relative overflow-hidden">
+    <div className={`flex-1 h-full bg-bg-primary relative overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+      {/* Fullscreen Close Button */}
+      {isFullscreen && (
+        <button
+          onClick={() => setIsFullscreen(false)}
+          className="absolute top-4 right-16 z-50 p-2.5 bg-bg-secondary/80 backdrop-blur-glass rounded-lg text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+          title="Exit Fullscreen (Esc)"
+        >
+          <Minimize2 className="w-4 h-4" />
+        </button>
+      )}
+
       {/* Toolbar */}
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 sm:gap-2">
+      <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 flex items-center gap-1.5 sm:gap-2 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             <motion.button
@@ -74,6 +102,15 @@ export function VisualRenderer({ html, isLoading, onClear }: VisualRendererProps
               title="Download HTML"
             >
               <Download className="w-4 h-4" />
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="p-2.5 sm:p-2 rounded-lg bg-bg-secondary/80 backdrop-blur-glass text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
