@@ -80,8 +80,33 @@ function AppContent() {
         justifyContent: 'center',
         flexDirection: 'column',
         gap: '20px',
-        padding: '20px'
+        padding: '20px',
+        width: '100vw',
+        position: 'relative'
       }}>
+        {/* Mobile menu button - even on login screen */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          style={{
+            position: 'fixed',
+            top: '12px',
+            left: '12px',
+            zIndex: 50,
+            padding: '10px',
+            background: '#1a1a24',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '8px',
+            minHeight: '44px',
+            minWidth: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer'
+          }}
+        >
+          <Menu style={{ width: 20, height: 20, color: 'white' }} />
+        </button>
+        
         <h1 style={{ color: '#8b5cf6', fontSize: '1.5rem' }}>🔒 Visual AI</h1>
         <form onSubmit={(e) => { e.preventDefault(); handleSiteLogin((e.target as HTMLFormElement).password.value); }} className="flex flex-col sm:flex-row gap-2 w-full max-w-sm">
           <input 
