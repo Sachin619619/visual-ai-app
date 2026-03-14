@@ -1274,6 +1274,22 @@ body {
         sandbox="allow-scripts"
         className="w-full h-full border-0"
       />
+      
+      {/* Mobile FAB - Quick Actions */}
+      {html && !isLoading && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="fixed bottom-20 right-4 z-30 lg:hidden"
+        >
+          <button
+            onClick={() => setShowMoreMenu(!showMoreMenu)}
+            className="w-14 h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary shadow-lg shadow-accent-primary/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+          >
+            <Sparkles className="w-6 h-6 text-white" />
+          </button>
+        </motion.div>
+      )}
       </div>
     </div>
   );

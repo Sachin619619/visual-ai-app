@@ -41,6 +41,39 @@ function AppContent() {
   
   const SITE_PASSWORD = 'visual2026';
 
+  // Session persistence - save/restore current design
+  useEffect(() => {
+    const savedSession = localStorage.getItem('visual-ai-session');
+    if (savedSession) {
+      try {
+        const session = JSON.parse(savedSession);
+        if (session.html) {
+          setHtml(session.html);
+        }
+        if (session.lastModel) {
+          setLastModel(session.lastModel);
+        }
+        if (session.styleFrame) {
+          setStyleFrame(session.styleFrame);
+        }
+      } catch (e) {
+        console.error('Failed to restore session', e);
+      }
+    }
+  }, []);
+
+  // Auto-save session to localStorage
+  useEffect(() => {
+    if (html) {
+      localStorage.setItem('visual-ai-session', JSON.stringify({
+        html,
+        lastModel,
+        styleFrame,
+        savedAt: Date.now()
+      }));
+    }
+  }, [html, lastModel, styleFrame]);
+
   useEffect(() => {
     const auth = localStorage.getItem('site_auth_visual');
     setSiteAuth(auth === 'true');
