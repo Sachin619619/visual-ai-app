@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -29,6 +29,10 @@ const QUICK_PROMPTS = [
   { key: 'sidebar', prompt: 'Build a collapsible sidebar navigation with icons, labels, active states, and smooth expand/collapse animations', label: '📑 Sidebar' },
   { key: 'pricing', prompt: 'Create a pricing table with 3 tiers, monthly/yearly toggle, feature lists and CTA buttons', label: '💰 Pricing' },
   { key: 'dashboard', prompt: 'Create a dark-themed analytics dashboard with multiple widgets, charts and data tables', label: '📈 Dashboard' },
+  { key: 'gallery', prompt: 'Design an image gallery with masonry layout, lightbox on click, and smooth hover animations', label: '🖼️ Gallery' },
+  { key: 'profile', prompt: 'Create a user profile card with avatar, bio, social links, and skill tags', label: '👤 Profile' },
+  { key: 'carousel', prompt: 'Build an auto-scrolling image carousel with navigation dots and prev/next buttons', label: '🎠 Carousel' },
+  { key: 'animation', prompt: 'Create an animated loading skeleton with shimmer effect for content placeholders', label: '⚡ Loading' },
 ];
 
 // Simple syntax highlighting for HTML
@@ -53,6 +57,17 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [showRefine, setShowRefine] = useState(false);
   const [refinementText, setRefinementText] = useState('');
   const [previewTheme, setPreviewTheme] = useState<PreviewTheme>('dark');
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  // Keyboard shortcuts list
+  const KEYBOARD_SHORTCUTS = [
+    { keys: ['⌘', 'Enter'], description: 'Generate UI' },
+    { keys: ['⌘', 'L'], description: 'Clear canvas' },
+    { keys: ['⌘', 'Z'], description: 'Undo' },
+    { keys: ['⌘', 'Shift', 'Z'], description: 'Redo' },
+    { keys: ['⌘', 'Shift', 'C'], description: 'Toggle code view' },
+    { keys: ['Esc'], description: 'Exit fullscreen' },
+  ];
 
   // Style frame options with icons and labels
   const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ReactNode }[] = [
@@ -323,6 +338,16 @@ export default function ${componentName}() {
             >
               {previewTheme === 'dark' ? <Sun className="w-5 h-5 sm:w-5 sm:h-5" /> : <Moon className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
+            {/* Keyboard Shortcuts Help Button */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setShowShortcuts(true)}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Keyboard Shortcuts"
+            >
+              <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
+            </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -501,6 +526,57 @@ export default function ${componentName}() {
                     Generate
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Keyboard Shortcuts Modal */}
+      <AnimatePresence>
+        {showShortcuts && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowShortcuts(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-sm overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-4 border-b border-white/5">
+                <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+                  <Keyboard className="w-5 h-5 text-accent-primary" />
+                  Keyboard Shortcuts
+                </h3>
+                <button
+                  onClick={() => setShowShortcuts(false)}
+                  className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-4 space-y-3">
+                {KEYBOARD_SHORTCUTS.map((shortcut, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-sm text-text-secondary">{shortcut.description}</span>
+                    <div className="flex gap-1">
+                      {shortcut.keys.map((key, keyIndex) => (
+                        <kbd
+                          key={keyIndex}
+                          className="px-2 py-1 text-xs font-mono bg-bg-tertiary border border-white/10 rounded-md text-text-primary"
+                        >
+                          {key}
+                        </kbd>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </motion.div>
