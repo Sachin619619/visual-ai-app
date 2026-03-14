@@ -347,6 +347,49 @@ button,
   }
 }
 
+/* Enhanced mobile optimizations */
+@media (max-width: 768px) {
+  /* Better sidebar overlay */
+  .sidebar-overlay {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  
+  /* Improved toolbar wrapping */
+  .toolbar-container {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  /* Better visual renderer padding on mobile */
+  .visual-renderer {
+    padding-top: 60px;
+  }
+  
+  /* Improve form inputs on mobile */
+  .mobile-input {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+}
+
+/* Landscape mobile fixes */
+@media (max-height: 500px) and (orientation: landscape) {
+  .input-field {
+    min-height: 80px;
+  }
+  
+  .chat-widget-container {
+    max-height: 70vh;
+  }
+}
+
+/* Ensure sidebar doesn't go off screen */
+@media (max-width: 640px) {
+  .sidebar-panel {
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+  }
+}
+
 /* Prevent layout shift on mobile */
 * {
   -webkit-tap-highlight-color: transparent;

@@ -204,12 +204,12 @@ function AppContent() {
 
   if (siteAuth === null) {
     return (
-      <div className="min-h-[100dvh] w-full flex items-center justify-center flex-col gap-5 p-5 pt-20 relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 60px)' }}>
+      <div className="min-h-[100dvh] w-full flex items-center justify-center flex-col gap-5 p-5 pt-20 relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 80px)' }}>
         {/* Mobile menu button - always visible on login screen */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="fixed top-3 left-3 z-50 p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-          style={{ top: 'env(safe-area-inset-top, 12px)', left: 'env(safe-area-inset-left, 12px)' }}
+          style={{ top: 'calc(env(safe-area-inset-top, 12px) + 60px)', left: 'env(safe-area-inset-left, 12px)' }}
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
         >
           <Menu className="w-6 h-6 text-white" />
@@ -250,7 +250,7 @@ function AppContent() {
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="fixed top-3 left-3 z-50 lg:hidden p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-        style={{ top: 'env(safe-area-inset-top, 12px)', left: 'env(safe-area-inset-left, 12px)' }}
+        style={{ top: 'calc(env(safe-area-inset-top, 12px) + 60px)', left: 'env(safe-area-inset-left, 12px)' }}
         aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >
         {sidebarOpen ? (
