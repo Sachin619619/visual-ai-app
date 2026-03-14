@@ -325,6 +325,23 @@ function AppContent() {
     showToast('success', 'HTML file downloaded! 📦');
   }, [html, showToast]);
 
+  // Apply edited code from code editor
+  const handleApplyCode = useCallback((code: string) => {
+    if (!code.trim()) {
+      showToast('error', 'Code cannot be empty');
+      return;
+    }
+    
+    // Add to undo history
+    setHtmlHistory(prev => {
+      const newHistory = historyIndex >= 0 ? htmlHistory.slice(0, historyIndex + 1) : [...prev];
+      return [...newHistory, code];
+    });
+    setHistoryIndex(prev => prev >= 0 ? prev + 1 : 0);
+    setHtml(code);
+    showToast('success', 'Code applied! ✨');
+  }, [htmlHistory, historyIndex, showToast]);
+
   // Toggle theme
   const handleToggleTheme = useCallback(() => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -543,6 +560,7 @@ function AppContent() {
           onClear={handleClear}
           onUndo={handleUndo}
           onRedo={handleRedo}
+          onApplyCode={handleApplyCode}
           model={lastModel}
           styleFrame={styleFrame}
           onStyleFrameChange={setStyleFrame}

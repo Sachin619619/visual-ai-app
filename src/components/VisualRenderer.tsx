@@ -13,6 +13,7 @@ interface VisualRendererProps {
   onClear: () => void;
   onUndo?: () => void;
   onRedo?: () => void;
+  onApplyCode?: (code: string) => void;
   model?: ModelProvider;
   styleFrame?: StyleFrame;
   onStyleFrameChange?: (frame: StyleFrame) => void;
@@ -105,7 +106,7 @@ function highlightHTML(code: string): { html: string; lineCount: number } {
   return { html: highlightedLines.join('\n'), lineCount };
 }
 
-export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -128,6 +129,8 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [viewportSize, setViewportSize] = useState<ViewportSize>('desktop');
   const [animationsPaused, setAnimationsPaused] = useState(false);
   const [showViewportSelector, setShowViewportSelector] = useState(false);
+  const [isEditingCode, setIsEditingCode] = useState(false);
+  const [editedCode, setEditedCode] = useState('');
 
   // Color scheme definitions for instant theme switching
   const COLOR_SCHEMES = [
@@ -1291,44 +1294,102 @@ body {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-16 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-4 z-20 max-h-[50vh] sm:max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+            className="absolute bottom-16 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-4 z-20 max-h-[50vh] sm:max-h-80 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
           >
             <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-white/5">
               <div className="flex items-center gap-2">
-                <span className="text-xs sm:text-sm text-text-secondary">Generated HTML</span>
-                <span className="text-[10px] sm:text-xs text-text-muted bg-bg-tertiary px-1.5 py-0.5 rounded">
-                  {highlightHTML(html).lineCount} lines
-                </span>
+                <span className="text-xs sm:text-sm text-text-secondary">{isEditingCode ? 'Edit Code' : 'Generated HTML'}</span>
+                {!isEditingCode && (
+                  <span className="text-[10px] sm:text-xs text-text-muted bg-bg-tertiary px-1.5 py-0.5 rounded">
+                    {highlightHTML(html).lineCount} lines
+                  </span>
+                )}
+                {isEditingCode && (
+                  <span className="text-[10px] sm:text-xs text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded">
+                    Editing mode
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-1 sm:gap-2">
-                <button
-                  onClick={handleCopyCode}
-                  className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
-                  title="Copy Code"
-                >
-                  {copied ? <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
-                </button>
-                <button
-                  onClick={() => setShowCode(false)}
-                  className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
-                >
-                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
-                </button>
+                {isEditingCode ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        if (onApplyCode) {
+                          onApplyCode(editedCode);
+                        }
+                        setIsEditingCode(false);
+                      }}
+                      className="p-1.5 rounded-lg hover:bg-green-500/20 text-green-400 hover:text-green-300 transition-colors"
+                      title="Apply Changes"
+                    >
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsEditingCode(false);
+                        setEditedCode(html);
+                      }}
+                      className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
+                      title="Cancel"
+                    >
+                      <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setEditedCode(html);
+                        setIsEditingCode(true);
+                      }}
+                      className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
+                      title="Edit Code"
+                    >
+                      <FileCode2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </button>
+                    <button
+                      onClick={handleCopyCode}
+                      className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
+                      title="Copy Code"
+                    >
+                      {copied ? <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    </button>
+                    <button
+                      onClick={() => setShowCode(false)}
+                      className="p-1.5 rounded-lg hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors"
+                    >
+                      <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
-            <div className="flex overflow-auto max-h-[30vh] sm:max-h-44">
-              {/* Line Numbers */}
-              <div className="flex-shrink-0 py-2 sm:py-4 px-2 sm:px-3 bg-bg-primary/50 text-right select-none border-r border-white/5">
-                {Array.from({ length: highlightHTML(html).lineCount }, (_, i) => (
-                  <div key={i} className="text-[10px] sm:text-xs font-mono text-text-muted leading-5 sm:leading-6">
-                    {i + 1}
-                  </div>
-                ))}
+            {isEditingCode ? (
+              <div className="flex overflow-auto max-h-[35vh] sm:max-h-60">
+                <textarea
+                  value={editedCode}
+                  onChange={(e) => setEditedCode(e.target.value)}
+                  className="flex-1 p-3 sm:p-4 bg-bg-primary text-text-primary text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6 resize-none focus:outline-none"
+                  spellCheck={false}
+                  placeholder="Edit your HTML code here..."
+                />
               </div>
-              {/* Code Content */}
-              <pre className="flex-1 p-2 sm:p-4 overflow-x-auto text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6" dangerouslySetInnerHTML={{ __html: highlightHTML(html).html }}>
-              </pre>
-            </div>
+            ) : (
+              <div className="flex overflow-auto max-h-[30vh] sm:max-h-44">
+                {/* Line Numbers */}
+                <div className="flex-shrink-0 py-2 sm:py-4 px-2 sm:px-3 bg-bg-primary/50 text-right select-none border-r border-white/5">
+                  {Array.from({ length: highlightHTML(html).lineCount }, (_, i) => (
+                    <div key={i} className="text-[10px] sm:text-xs font-mono text-text-muted leading-5 sm:leading-6">
+                      {i + 1}
+                    </div>
+                  ))}
+                </div>
+                {/* Code Content */}
+                <pre className="flex-1 p-2 sm:p-4 overflow-x-auto text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6" dangerouslySetInnerHTML={{ __html: highlightHTML(html).html }}>
+                </pre>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
