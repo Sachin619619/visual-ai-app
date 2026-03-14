@@ -604,7 +604,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
       className="w-[85vw] max-w-[300px] sm:max-w-[320px] md:w-72 lg:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
     >
       {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain sidebar-scroll pb-20" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain sidebar-scroll pb-24" style={{ WebkitOverflowScrolling: 'touch' }}>
       {/* Header */}
       <div className="p-2.5 sm:p-4 border-b border-white/5 sticky top-0 bg-bg-secondary z-10">
         <div className="flex items-center justify-between">

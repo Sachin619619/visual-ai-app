@@ -392,7 +392,19 @@ function AppContent() {
     }
   }, [favorites]);
 
-  // Handle escape key to close sidebar on mobile
+  // Mobile: close sidebar when clicking outside or selecting template
+  useEffect(() => {
+    const handleResize = () => {
+      // Close sidebar on resize to desktop
+      if (window.innerWidth >= 1024 && sidebarOpen) {
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]);
+
+  // Close sidebar on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && sidebarOpen) {

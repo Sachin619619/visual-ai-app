@@ -150,6 +150,27 @@ const ToolbarButton = memo(({ onClick, title, children, className = '', disabled
 
 ToolbarButton.displayName = 'ToolbarButton';
 
+// Memoized Quick Start Grid Component for better performance
+const QuickStartGrid = memo(({ items, onClick, disabled }: {
+  items: { key: string; prompt: string; label: string }[];
+  onClick: (prompt: string) => void;
+  disabled: boolean;
+}) => (
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+    {items.map((item, index) => (
+      <QuickStartButton
+        key={item.key}
+        item={item}
+        index={index}
+        onClick={onClick}
+        disabled={disabled}
+      />
+    ))}
+  </div>
+));
+
+QuickStartGrid.displayName = 'QuickStartGrid';
+
 export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -1682,17 +1703,11 @@ body {
             <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
-              {QUICK_PROMPTS.slice(0, 8).map((item, index) => (
-                <QuickStartButton
-                  key={item.key}
-                  item={item}
-                  index={index}
-                  onClick={onQuickGenerate!}
-                  disabled={isLoading}
-                />
-              ))}
-            </div>
+            <QuickStartGrid
+              items={QUICK_PROMPTS.slice(0, 8)}
+              onClick={onQuickGenerate!}
+              disabled={isLoading}
+            />
             
             {/* Saved Templates Section */}
             {savedTemplates.length > 0 && (
