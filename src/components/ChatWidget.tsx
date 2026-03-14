@@ -137,10 +137,10 @@ export function ChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed left-2 right-2 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-1rem)] max-h-[calc(100vh-10rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
+            className="fixed left-2 right-2 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-1rem)] max-h-[calc(100vh-12rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
             style={{ 
               top: 'auto', 
-              bottom: 'calc(env(safe-area-inset-bottom, 20px) + 85px)',
+              bottom: 'calc(env(safe-area-inset-bottom, 20px) + 70px)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
             }}
           >

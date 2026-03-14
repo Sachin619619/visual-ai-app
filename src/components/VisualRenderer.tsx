@@ -325,7 +325,7 @@ export default function ${componentName}() {
       )}
 
       {/* Toolbar - compact toolbar for mobile with proper spacing */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-80px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-80px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''} style={{ maxWidth: 'calc(100vw - 70px)' }}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -830,10 +830,10 @@ export default function ${componentName}() {
                   transition={{ delay: index * 0.1 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-2.5 sm:p-4 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[72px] sm:min-h-[90px] flex flex-col justify-between"
+                  className="p-3 sm:p-4 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[80px] sm:min-h-[90px] flex flex-col justify-between"
                 >
                   <p className="text-accent-primary text-xs sm:text-sm font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
-                  <p className="text-text-muted text-[10px] sm:text-xs hidden sm:block">Click to generate</p>
+                  <p className="text-text-muted text-[10px] sm:text-xs">Click to generate</p>
                 </motion.button>
               ))}
             </div>

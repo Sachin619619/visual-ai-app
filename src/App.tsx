@@ -248,7 +248,7 @@ function AppContent() {
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
-        w-[280px] sm:w-80 max-w-[85vw] xs:max-w-[320px]
+        w-[300px] sm:w-80 max-w-[85vw] xs:max-w-[320px]
         pt-16 lg:pt-0
         overflow-y-auto overflow-x-hidden
       `} style={{ 
