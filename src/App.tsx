@@ -6,7 +6,17 @@ import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, Keyboard, Star, FolderOpen } from 'lucide-react';
+
+// Favorite design type
+interface FavoriteDesign {
+  id: string;
+  name: string;
+  html: string;
+  prompt: string;
+  model: ModelProvider;
+  createdAt: number;
+}
 
 // Helper to encode/decode HTML for sharing
 const encodeHTML = (html: string) => {
@@ -38,6 +48,9 @@ function AppContent() {
   const [lastModel, setLastModel] = useState<ModelProvider>('openai');
   const [styleFrame, setStyleFrame] = useState<StyleFrame>('card');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [favorites, setFavorites] = useState<FavoriteDesign[]>([]);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
   const { showToast } = useToast();
   
   const SITE_PASSWORD = 'visual2026';
@@ -133,6 +146,16 @@ function AppContent() {
     const savedDraft = localStorage.getItem('visual-ai-draft');
     if (savedDraft) {
       setPrompt(savedDraft);
+    }
+    
+    // Load favorites
+    const savedFavorites = localStorage.getItem('visual-ai-favorites');
+    if (savedFavorites) {
+      try {
+        setFavorites(JSON.parse(savedFavorites));
+      } catch (e) {
+        console.error('Failed to parse favorites', e);
+      }
     }
   }, []);
 
@@ -308,6 +331,50 @@ function AppContent() {
     showToast('success', `Switched to ${theme === 'dark' ? 'light' : 'dark'} mode ☀️`);
   }, [theme, showToast]);
 
+  // Save to favorites
+  const handleSaveFavorite = useCallback((name?: string) => {
+    if (!html) {
+      showToast('error', 'Nothing to save');
+      return;
+    }
+    
+    const favorite: FavoriteDesign = {
+      id: Date.now().toString(),
+      name: name || `Design ${favorites.length + 1}`,
+      html,
+      prompt: history[0]?.prompt || '',
+      model: lastModel,
+      createdAt: Date.now()
+    };
+    
+    const newFavorites = [favorite, ...favorites];
+    setFavorites(newFavorites);
+    localStorage.setItem('visual-ai-favorites', JSON.stringify(newFavorites));
+    showToast('success', `Saved to favorites! ⭐`);
+  }, [html, history, lastModel, favorites.length, showToast]);
+
+  // Load from favorites
+  const handleLoadFavorite = useCallback((favorite: FavoriteDesign) => {
+    setHtml(favorite.html);
+    setShowFavorites(false);
+    showToast('success', `Loaded "${favorite.name}" from favorites! 📂`);
+  }, [showToast]);
+
+  // Delete from favorites
+  const handleDeleteFavorite = useCallback((id: string) => {
+    const newFavorites = favorites.filter(f => f.id !== id);
+    setFavorites(newFavorites);
+    localStorage.setItem('visual-ai-favorites', JSON.stringify(newFavorites));
+    showToast('success', 'Removed from favorites');
+  }, [favorites, showToast]);
+
+  // Save favorites to localStorage whenever they change
+  useEffect(() => {
+    if (favorites.length > 0) {
+      localStorage.setItem('visual-ai-favorites', JSON.stringify(favorites));
+    }
+  }, [favorites]);
+
   // Handle escape key to close sidebar on mobile
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -348,11 +415,21 @@ function AppContent() {
         e.preventDefault();
         handleToggleTheme();
       }
+      // Cmd/Ctrl + D for save to favorites
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+        e.preventDefault();
+        handleSaveFavorite();
+      }
+      // ? for shortcuts help
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault();
+        setShowShortcuts(prev => !prev);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme]);
+  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite]);
 
   if (siteAuth === null) {
     return (
@@ -467,6 +544,8 @@ function AppContent() {
           onRefinePrompt={handleRefinePrompt}
           onShare={handleShare}
           onExport={handleExport}
+          onSaveFavorite={handleSaveFavorite}
+          onShowFavorites={() => setShowFavorites(true)}
           theme={theme}
           onToggleTheme={handleToggleTheme}
           generationStats={generationStats}
@@ -475,6 +554,112 @@ function AppContent() {
 
       {/* Chat Widget */}
       <ChatWidget />
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowShortcuts(false)}
+        >
+          <div 
+            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
+                <Keyboard className="w-5 h-5" />
+                Keyboard Shortcuts
+              </h2>
+              <button 
+                onClick={() => setShowShortcuts(false)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {[
+                { keys: '⌘ + Enter', action: 'Generate UI' },
+                { keys: '⌘ + Z', action: 'Undo' },
+                { keys: '⌘ + Shift + Z', action: 'Redo' },
+                { keys: '⌘ + S', action: 'Share design' },
+                { keys: '⌘ + E', action: 'Export HTML' },
+                { keys: '⌘ + D', action: 'Save to favorites' },
+                { keys: '⌘ + B', action: 'Toggle theme' },
+                { keys: '⌘ + L', action: 'Clear canvas' },
+                { keys: '?', action: 'Show shortcuts' },
+                { keys: 'Esc', action: 'Close modals/sidebar' },
+              ].map((shortcut, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                  <span className="text-text-secondary">{shortcut.action}</span>
+                  <kbd className="px-3 py-1.5 bg-bg-tertiary rounded-lg text-sm font-mono text-accent-primary">
+                    {shortcut.keys}
+                  </kbd>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Favorites Modal */}
+      {showFavorites && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowFavorites(false)}
+        >
+          <div 
+            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-400" />
+                Saved Favorites
+              </h2>
+              <button 
+                onClick={() => setShowFavorites(false)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {favorites.length === 0 ? (
+              <div className="text-center py-8 text-text-muted">
+                <FolderOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No favorites saved yet</p>
+                <p className="text-sm mt-1">Press ⌘+D to save your current design</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {favorites.map((fav) => (
+                  <div key={fav.id} className="p-4 bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/30 transition-colors">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium flex items-center gap-2">
+                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                        {fav.name}
+                      </h3>
+                      <button 
+                        onClick={() => handleDeleteFavorite(fav.id)}
+                        className="text-text-muted hover:text-red-400 transition-colors text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <p className="text-sm text-text-muted mb-3 line-clamp-2">{fav.prompt || 'No prompt'}</p>
+                    <button 
+                      onClick={() => handleLoadFavorite(fav)}
+                      className="w-full py-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-colors text-sm font-medium"
+                    >
+                      Load Design
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
