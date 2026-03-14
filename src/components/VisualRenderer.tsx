@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -70,6 +70,7 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [showColorSchemes, setShowColorSchemes] = useState(false);
   const [colorScheme, setColorScheme] = useState('violet');
   const [isRemixing, setIsRemixing] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   // Color scheme definitions for instant theme switching
   const COLOR_SCHEMES = [
@@ -383,7 +384,7 @@ export default function ${componentName}() {
   }, [isFullscreen]);
 
   return (
-    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-14 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-12 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`} style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 48px)' }}>
       {/* Fullscreen Close Button */}
       {isFullscreen && (
         <button
@@ -396,8 +397,8 @@ export default function ${componentName}() {
         </button>
       )}
 
-      {/* Toolbar - compact toolbar for mobile with proper spacing */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-60px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
+      {/* Toolbar - compact toolbar for mobile with proper spacing and overflow handling */}
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-56px)] xs:max-w-[calc(100vw-60px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -528,12 +529,12 @@ export default function ${componentName}() {
                 </motion.div>
               )}
             </div>
-            {/* Keyboard Shortcuts Help Button - hidden on mobile */}
+            {/* Keyboard Shortcuts Help Button - hidden on mobile, shown in more menu */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowShortcuts(true)}
-              className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Keyboard Shortcuts"
             >
               <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
@@ -542,13 +543,54 @@ export default function ${componentName}() {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-2.5 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+              className={`p-2.5 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[40px] min-w-[40px] flex items-center justify-center ${
                 showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
               }`}
               title="Toggle Code Preview"
             >
               <Code className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Mobile More Menu Button */}
+            <div className="relative md:hidden">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={() => setShowMoreMenu(!showMoreMenu)}
+                className={`p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[40px] min-w-[40px] flex items-center justify-center ${
+                  showMoreMenu ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
+                }`}
+                title="More Options"
+              >
+                <MoreHorizontal className="w-5 h-5" />
+              </motion.button>
+              {/* More Menu Dropdown */}
+              {showMoreMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-30 min-w-[180px]"
+                >
+                  <button
+                    onClick={() => { setShowShortcuts(true); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <Keyboard className="w-4 h-4" /> Keyboard Shortcuts
+                  </button>
+                  <button
+                    onClick={() => { setShowSaveTemplate(true); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <Bookmark className="w-4 h-4" /> Save Template
+                  </button>
+                  <button
+                    onClick={() => { setShowTemplates(true); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <Layout className="w-4 h-4" /> Templates ({savedTemplates.length})
+                  </button>
+                </motion.div>
+              )}
+            </div>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -568,14 +610,14 @@ export default function ${componentName}() {
               >
                 <FileImage className="w-5 h-5 sm:w-5 sm:h-5" />
               </motion.button>
-              <div className="absolute -bottom-1 -right-1 text-[8px] bg-accent-primary/80 text-white px-1 rounded">{exportQuality}x</div>
+              <div className="absolute -bottom-1 -right-1 text-[8px] bg-accent-primary/80 text-white px-1 rounded hidden sm:block">{exportQuality}x</div>
             </div>
-            {/* Export SVG - hidden on mobile */}
+            {/* Export options hidden on mobile - in more menu */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportSVG}
-              className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as SVG"
             >
               <span className="w-5 h-5 sm:w-5 sm:h-5 flex items-center justify-center text-xs font-bold">SVG</span>
@@ -585,7 +627,7 @@ export default function ${componentName}() {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportReact}
-              className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as React"
             >
               <FileType className="w-5 h-5 sm:w-5 sm:h-5" />
@@ -600,8 +642,8 @@ export default function ${componentName}() {
             >
               {copiedImage ? <Check className="w-5 h-5 sm:w-5 sm:h-5 text-green-400" /> : <Clipboard className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
-            {/* Save as Template - hidden on mobile */}
-            <div className="relative hidden sm:block">
+            {/* Save as Template - hidden on mobile, in more menu */}
+            <div className="relative hidden md:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -705,12 +747,12 @@ export default function ${componentName}() {
             >
               {isFullscreen ? <Minimize2 className="w-5 h-5 sm:w-5 sm:h-5" /> : <Maximize2 className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
-            {/* Keyboard Shortcuts */}
+            {/* Keyboard Shortcuts - hidden on mobile, in more menu */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowShortcuts(true)}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Keyboard Shortcuts"
             >
               <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
@@ -944,20 +986,20 @@ export default function ${componentName}() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center max-w-xs sm:max-w-md px-3 sm:px-4"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center max-w-[280px] xs:max-w-xs sm:max-w-md px-3 sm:px-4"
           >
             {/* Animated gradient orb */}
-            <div className="relative mb-4 sm:mb-6 mx-auto w-24 h-24 sm:w-32 sm:h-32">
+            <div className="relative mb-4 sm:mb-6 mx-auto w-20 h-20 sm:w-32 sm:h-32">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-2xl animate-pulse" />
               <div className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center border border-white/10 backdrop-blur-sm">
-                <span className="text-4xl sm:text-5xl animate-bounce">🎨</span>
+                <span className="text-3xl sm:text-5xl animate-bounce">🎨</span>
               </div>
             </div>
-            <h2 className="font-heading text-xl sm:text-2xl font-semibold mb-2 gradient-text">Visual AI Generator</h2>
-            <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
+            <h2 className="font-heading text-lg sm:text-2xl font-semibold mb-2 gradient-text">Visual AI Generator</h2>
+            <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-3 xs:grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4 text-left max-w-md mx-auto">
+            <div className="grid grid-cols-3 xs:grid-cols-3 gap-1 sm:gap-2 sm:grid-cols-4 text-left max-w-sm xs:max-w-md mx-auto">
               {QUICK_PROMPTS.slice(0, 12).map((item, index) => (
                 <motion.button
                   key={item.key}
@@ -966,10 +1008,9 @@ export default function ${componentName}() {
                   transition={{ delay: index * 0.05 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[56px] sm:min-h-[70px] flex flex-col justify-between"
+                  className="p-1.5 sm:p-3 rounded-lg sm:rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[48px] sm:min-h-[70px] flex flex-col justify-center"
                 >
-                  <p className="text-accent-primary text-[10px] sm:text-xs font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
-                  <p className="text-text-muted text-[8px] sm:text-[10px] hidden xs:block">Generate</p>
+                  <p className="text-accent-primary text-[9px] sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
                 </motion.button>
               ))}
             </div>
