@@ -23,6 +23,8 @@ export const FREE_MODELS: FreeModel[] = [
   { id: 'microsoft/phi-4-reasoning:free', name: 'Phi-4 Reasoning', icon: '⚡' },
   { id: 'qwen/qwen2.5-vl-72b-instruct:free', name: 'Qwen 2.5 72B', icon: '🧑‍💻' },
   { id: 'mistralai/mistral-small-3.1-24b-instruct:free', name: 'Mistral Small 3.1', icon: '🌀' },
+  { id: 'anthropic/claude-3-haiku:free', name: 'Claude 3 Haiku', icon: '🧠' },
+  { id: 'openai/gpt-4o-mini:free', name: 'GPT-4o Mini', icon: '🤖' },
 ];
 
 // Global model selection for OpenRouter free models
@@ -196,8 +198,9 @@ const generateWithAI = async (
     const data = await response.json();
     if (data.error) throw new Error(`Anthropic error: ${data.error?.message || JSON.stringify(data.error)}`);
     rawHtml = data.content?.[0]?.text || '';
-  } else {
-    rawHtml = uiPrompt;
+  } else if (model === 'local') {
+    // Local model - return a template message (not functional without local LLM setup)
+    throw new Error('Local model requires a local LLM server. Use OpenRouter for free AI generation.');
   }
   
   // Clean up markdown code blocks if present

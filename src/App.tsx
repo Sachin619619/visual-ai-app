@@ -214,6 +214,8 @@ function AppContent() {
         errorMessage = 'Request timed out. Please try again.';
       } else if (msg.includes('quota')) {
         errorMessage = 'API quota exceeded. Check your plan limits.';
+      } else if (msg.includes('Insufficient credits') || msg.includes('insufficient credits')) {
+        errorMessage = 'Insufficient API credits. Try a different model or provider.';
       } else if (msg.includes('OpenAI error') || msg.includes('Anthropic error') || msg.includes('Gemini error') || msg.includes('OpenRouter error')) {
         errorMessage = msg;
       } else if (msg) {
