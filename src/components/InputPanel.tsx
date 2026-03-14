@@ -449,8 +449,8 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             View All <Grid3X3 className="w-2.5 h-2.5" />
           </button>
         </div>
-        <div className="flex gap-1.5 overflow-x-auto xs:overflow-x-visible overflow-y-hidden pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
-          {TEMPLATES.slice(0, 6).map((template, index) => {
+        <div className="flex gap-2 overflow-x-auto xs:overflow-x-visible overflow-y-hidden pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
+          {TEMPLATES.slice(0, 4).map((template, index) => {
             const Icon = template.icon;
             return (
               <motion.button
@@ -467,11 +467,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-2 xs:p-2.5 rounded-lg xs:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] xs:min-h-[52px] sm:min-h-[56px] group w-[48px] xs:w-auto"
+                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-2.5 xs:p-2.5 rounded-lg xs:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] xs:min-h-[52px] sm:min-h-[56px] group w-[52px] xs:w-auto"
                 title={template.name}
               >
-                <Icon className="w-4 h-4 xs:w-4.5 xs:h-4.5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[9px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
+                <Icon className="w-5 h-5 xs:w-4.5 xs:h-4.5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[10px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
               </motion.button>
             );
           })}
@@ -617,7 +617,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
-          className="btn-primary w-full flex items-center justify-center gap-1.5 sm:gap-2 min-h-[46px] sm:min-h-[48px] text-xs sm:text-sm relative overflow-hidden group"
+          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[48px] text-sm relative overflow-hidden group"
         >
           {isLoading ? (
             <>
