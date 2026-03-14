@@ -17,10 +17,12 @@ export interface FreeModel {
 }
 
 export const FREE_MODELS: FreeModel[] = [
-  { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek', icon: '💡' },
-  { id: 'qwen/qwen3-coder:free', name: 'Qwen Coder', icon: '🧑‍💻' },
-  { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3', icon: '🌟' },
-  { id: 'microsoft/phi-4-mini:free', name: 'Phi 4 Mini', icon: '⚡' },
+  { id: 'deepseek/deepseek-chat-v3-0324:free', name: 'DeepSeek V3', icon: '💡' },
+  { id: 'meta-llama/llama-4-maverick:free', name: 'Llama 4 Maverick', icon: '🦙' },
+  { id: 'google/gemma-3-27b-it:free', name: 'Gemma 3 27B', icon: '🌟' },
+  { id: 'microsoft/phi-4-reasoning:free', name: 'Phi-4 Reasoning', icon: '⚡' },
+  { id: 'qwen/qwen2.5-vl-72b-instruct:free', name: 'Qwen 2.5 72B', icon: '🧑‍💻' },
+  { id: 'mistralai/mistral-small-3.1-24b-instruct:free', name: 'Mistral Small 3.1', icon: '🌀' },
 ];
 
 // Global model selection for OpenRouter free models
@@ -123,17 +125,20 @@ const generateWithAI = async (
       body: JSON.stringify({
         model: selectedFreeModel,
         messages: [
-          { role: 'system', content: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks, NO explanations, NO "Here is", NOTHING except HTML. Your response will be used directly as a web page. If you include any non-HTML text, it will break. Render ONLY HTML.' },
+          { role: 'system', content: 'Output ONLY raw HTML code. Start with <!DOCTYPE html>. No explanations, no markdown, no code fences. Just HTML.' },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.1,
-        max_tokens: 4000,
-        stop: ['```', 'Explanation:', 'Here is', 'Here\'s', 'Sure,', 'Here\'s the']
+        temperature: 0.3,
+        max_tokens: 8000
       })
     });
     
     const data = await response.json();
-    if (data.error) throw new Error(`OpenRouter error: ${data.error.message || JSON.stringify(data.error)}`);
+    if (data.error) {
+      const raw = data.error?.metadata?.raw || data.error?.metadata?.reasons?.join(', ') || '';
+      const msg = data.error?.message || JSON.stringify(data.error);
+      throw new Error(`OpenRouter error: ${msg}${raw ? ` — ${raw}` : ''}`);
+    }
     rawHtml = data.choices?.[0]?.message?.content || '';
   } else if (model === 'openai') {
     response = await fetch('https://api.openai.com/v1/chat/completions', {

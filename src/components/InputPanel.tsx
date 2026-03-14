@@ -143,7 +143,9 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const [model, setModel] = useState<ModelProvider>('openai');
   const [freeModel, setFreeModelState] = useState(() => {
     const saved = localStorage.getItem('visual-ai-free-model');
-    return saved || 'google/gemma-3-4b-it:free';
+    // Validate saved model is still in the current FREE_MODELS list
+    if (saved && FREE_MODELS.some(m => m.id === saved)) return saved;
+    return FREE_MODELS[0].id;
   });
   const [showFreeModels, setShowFreeModels] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
