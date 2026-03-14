@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -67,6 +67,54 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [templateName, setTemplateName] = useState('');
   const [showTemplates, setShowTemplates] = useState(false);
   const [exportQuality, setExportQuality] = useState(2);
+  const [showColorSchemes, setShowColorSchemes] = useState(false);
+  const [colorScheme, setColorScheme] = useState('violet');
+  const [isRemixing, setIsRemixing] = useState(false);
+
+  // Color scheme definitions for instant theme switching
+  const COLOR_SCHEMES = [
+    { id: 'violet', name: 'Violet', primary: '#8b5cf6', secondary: '#06b6d4' },
+    { id: 'rose', name: 'Rose', primary: '#f43f5e', secondary: '#f97316' },
+    { id: 'emerald', name: 'Emerald', primary: '#10b981', secondary: '#06b6d4' },
+    { id: 'amber', name: 'Amber', primary: '#f59e0b', secondary: '#ef4444' },
+    { id: 'blue', name: 'Blue', primary: '#3b82f6', secondary: '#8b5cf6' },
+    { id: 'pink', name: 'Pink', primary: '#ec4899', secondary: '#a855f7' },
+  ];
+
+  // Apply color scheme to generated HTML
+  const applyColorScheme = (schemeId: string) => {
+    if (!iframeRef.current) return;
+    const iframe = iframeRef.current;
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) return;
+
+    const scheme = COLOR_SCHEMES.find(s => s.id === schemeId);
+    if (!scheme) return;
+
+    // Create a style element to override colors
+    const styleId = 'color-scheme-override';
+    let styleEl = iframeDoc.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = iframeDoc.createElement('style');
+      styleEl.id = styleId;
+      iframeDoc.head.appendChild(styleEl);
+    }
+
+    styleEl.textContent = `
+      :root {
+        --accent-primary: ${scheme.primary};
+        --accent-secondary: ${scheme.secondary};
+      }
+      .bg-gradient-to-r { background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary}) !important; }
+      .text-accent-primary { color: ${scheme.primary} !important; }
+      .bg-accent-primary { background-color: ${scheme.primary} !important; }
+      .border-accent-primary { border-color: ${scheme.primary} !important; }
+      button, .btn { background-color: ${scheme.primary} !important; }
+      [style*="background: linear-gradient"] { background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary}) !important; }
+    `;
+    setColorScheme(schemeId);
+    setShowColorSchemes(false);
+  };
 
   // Keyboard shortcuts list
   const KEYBOARD_SHORTCUTS = [
@@ -216,6 +264,26 @@ export default function ${componentName}() {
     link.download = `${componentName}.jsx`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  // Generate a variation/remix of the current design
+  const handleRemix = async () => {
+    if (!html || isRemixing) return;
+    setIsRemixing(true);
+    
+    try {
+      // Use the iframe content to create a variation
+      const remixPrompt = `Create a variation of this UI design with different colors, layout, or styling. Keep the same type of component but make it visually distinct. Make it dark-themed with modern styling using Tailwind CSS.`;
+      
+      // Call the parent generation function with a remix prompt
+      if (onQuickGenerate) {
+        onQuickGenerate(remixPrompt);
+      }
+    } catch (error) {
+      console.error('Remix failed:', error);
+    } finally {
+      setIsRemixing(false);
+    }
   };
 
   // Copy to clipboard as image
@@ -419,6 +487,47 @@ export default function ${componentName}() {
             >
               {previewTheme === 'dark' ? <Sun className="w-5 h-5 sm:w-5 sm:h-5" /> : <Moon className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
+            {/* Color Scheme Button with Dropdown */}
+            <div className="relative">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={() => setShowColorSchemes(!showColorSchemes)}
+                className={`p-2.5 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  showColorSchemes ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
+                }`}
+                title="Color Scheme"
+              >
+                <Palette className="w-5 h-5 sm:w-5 sm:h-5" />
+              </motion.button>
+              {/* Color Scheme Dropdown */}
+              {showColorSchemes && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-20 min-w-[160px]"
+                >
+                  <p className="text-xs text-text-muted px-2 pb-2 mb-2 border-b border-white/5">Color Scheme</p>
+                  {COLOR_SCHEMES.map((scheme) => (
+                    <button
+                      key={scheme.id}
+                      onClick={() => applyColorScheme(scheme.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        colorScheme === scheme.id 
+                          ? 'bg-accent-primary/20 text-accent-primary' 
+                          : 'text-text-secondary hover:bg-white/5 hover:text-text-primary'
+                      }`}
+                    >
+                      <div className="flex gap-0.5">
+                        <div className="w-4 h-4 rounded-full" style={{ background: scheme.primary }} />
+                        <div className="w-4 h-4 rounded-full -ml-2" style={{ background: scheme.secondary }} />
+                      </div>
+                      {scheme.name}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </div>
             {/* Keyboard Shortcuts Help Button - hidden on mobile */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
@@ -574,6 +683,19 @@ export default function ${componentName}() {
             >
               <Download className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Remix/Variation Button */}
+            {html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleRemix}
+                disabled={isRemixing}
+                className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
+                title={isRemixing ? "Generating variation..." : "Generate Variation"}
+              >
+                <Shuffle className={`w-5 h-5 sm:w-5 sm:h-5 ${isRemixing ? 'animate-spin' : ''}`} />
+              </motion.button>
+            )}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
