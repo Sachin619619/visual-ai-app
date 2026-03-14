@@ -6,8 +6,18 @@ export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }>
   claude: { name: 'Claude 3', icon: '🧠' },
   gemini: { name: 'Gemini Pro', icon: '✨' },
   openrouter: { name: 'OpenRouter (Free)', icon: '🔗' },
+  kimi: { name: 'Kimi K2.5', icon: '🌙' },
   local: { name: 'Local Model', icon: '💻' },
 };
+
+// Separate API keys for different providers
+let kimiApiKey = '';
+
+export const setKimiApiKey = (key: string) => {
+  kimiApiKey = key;
+};
+
+export const getKimiApiKey = () => kimiApiKey;
 
 // Free models available via OpenRouter
 export interface FreeModel {
@@ -257,6 +267,31 @@ const generateWithAI = async (
     const data = await response.json();
     if (data.error) throw new Error(`Anthropic error: ${data.error?.message || JSON.stringify(data.error)}`);
     rawHtml = data.content?.[0]?.text || '';
+  } else if (model === 'kimi') {
+    // Kimi API
+    if (!kimiApiKey) {
+      throw new Error('🌙 Please set your Kimi API key in settings to use Kimi K2.5');
+    }
+    response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${kimiApiKey}`
+      },
+      body: JSON.stringify({
+        model: 'kimi-k2.5',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: uiPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 10000
+      })
+    });
+    
+    const data = await response.json();
+    if (data.error) throw new Error(`Kimi error: ${data.error?.message || JSON.stringify(data.error)}`);
+    rawHtml = data.choices?.[0]?.message?.content || '';
   } else if (model === 'local') {
     // Local model - return a template message (not functional without local LLM setup)
     throw new Error('Local model requires a local LLM server. Use OpenRouter for free AI generation.');
