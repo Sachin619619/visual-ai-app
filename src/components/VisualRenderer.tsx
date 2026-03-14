@@ -717,7 +717,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className="hidden xs:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+              className="hidden sm:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
               style={{
                 background: showCode ? 'rgba(139, 92, 246, 0.2)' : 'rgba(18, 18, 26, 0.9)',
                 color: showCode ? '#8b5cf6' : '#94a3b8'

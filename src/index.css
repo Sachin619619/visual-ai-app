@@ -17,6 +17,25 @@
   --color-accent-secondary: #06b6d4;
 }
 
+/* Improve sidebar touch targets on mobile */
+@media (max-width: 768px) {
+  .sidebar-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  
+  /* Better spacing for mobile inputs */
+  .input-field {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+  
+  /* Ensure modals fit on mobile */
+  .modal-mobile {
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}
+
 [data-theme="light"] {
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
