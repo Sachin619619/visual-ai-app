@@ -149,7 +149,9 @@ function AppContent() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setHistory(parsed.map((h: any) => ({ ...h, timestamp: new Date(h.timestamp) })));
+        if (Array.isArray(parsed)) {
+          setHistory(parsed.map((h: any) => ({ ...h, timestamp: h.timestamp ? new Date(h.timestamp) : new Date() })));
+        }
       } catch (e) {
         console.error('Failed to parse history', e);
       }
@@ -185,14 +187,22 @@ function AppContent() {
   // Save history to localStorage whenever it changes
   useEffect(() => {
     if (history.length > 0) {
-      localStorage.setItem('visual-ai-history', JSON.stringify(history));
+      try {
+        localStorage.setItem('visual-ai-history', JSON.stringify(history));
+      } catch (e) {
+        console.error('localStorage quota exceeded for history', e);
+      }
     }
   }, [history]);
 
   // Save visual history to localStorage whenever it changes
   useEffect(() => {
     if (visualHistory.length > 0) {
-      localStorage.setItem('visual-ai-visual-history', JSON.stringify(visualHistory));
+      try {
+        localStorage.setItem('visual-ai-visual-history', JSON.stringify(visualHistory));
+      } catch (e) {
+        console.error('localStorage quota exceeded for visual history', e);
+      }
     }
   }, [visualHistory]);
 
@@ -261,7 +271,7 @@ function AppContent() {
       // Add to undo history
       setHtmlHistory(prev => {
         // If we're not at the end of history, truncate future history
-        const newHistory = historyIndex >= 0 ? htmlHistory.slice(0, historyIndex + 1) : [...prev];
+        const newHistory = historyIndex >= 0 ? prev.slice(0, historyIndex + 1) : [...prev];
         return [...newHistory, generatedHtml];
       });
       setHistoryIndex(prev => prev >= 0 ? prev + 1 : 0);

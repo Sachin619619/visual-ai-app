@@ -463,14 +463,17 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   // Export as React Component
   const handleExportReact = () => {
     if (!html) return;
-    
+
     // Convert HTML to a simple React functional component
     const componentName = 'GeneratedComponent';
+    // Safely encode HTML as a JSON string to avoid template literal injection
+    const safeHtml = JSON.stringify(html);
     const reactCode = `import React from 'react';
 
 export default function ${componentName}() {
+  const html = ${safeHtml};
   return (
-    <div dangerouslySetInnerHTML={{ __html: \`${html.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\` }} />
+    <div dangerouslySetInnerHTML={{ __html: html }} />
   );
 }
 `;
@@ -675,6 +678,9 @@ body {
         }
       }
     };
+    reader.onerror = () => {
+      console.error('Failed to read file:', file.name);
+    };
     reader.readAsText(file);
     
     // Reset input so same file can be selected again
@@ -834,7 +840,7 @@ body {
         {/* Separator after spacer on mobile */}
         <div className="w-px h-6 bg-white/8 flex-shrink-0 lg:hidden" />
         {/* Scrollable toolbar - right-aligned, with proper overflow handling */}
-        <div className="flex-1 flex items-center overflow-x-auto overflow-y-hidden scrollbar-hide min-w-0 px-1 sm:px-3 gap-0.5 sm:gap-1">
+        <div className="flex-1 flex items-center overflow-x-auto overflow-y-hidden scrollbar-hide min-w-0 px-1 sm:px-3 gap-0.5 sm:gap-1 [-webkit-overflow-scrolling:touch]">
           {html && (
             <div className="flex items-center gap-1 sm:gap-1.5 ml-auto min-w-max">
             {/* Model Indicator Badge - hidden on very small screens */}

@@ -500,18 +500,14 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   useEffect(() => {
     const saved = localStorage.getItem('visual-ai-api-key');
     if (saved) {
-      console.log('[API Key] Loading from localStorage:', saved.substring(0, 8) + '...');
       setApiKey(saved);
       setHasApiKey(true);
       setApiKeyInput(saved); // Also populate the input field for visibility
-    } else {
-      console.log('[API Key] No key found in localStorage');
     }
-    
+
     // Load saved Kimi API key
     const savedKimi = localStorage.getItem('visual-ai-kimi-key');
     if (savedKimi) {
-      console.log('[Kimi API] Loading from localStorage');
       setKimiApiKey(savedKimi);
     }
     
@@ -531,13 +527,10 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const handleSaveApiKey = () => {
     if (apiKeyInput.trim()) {
       const key = apiKeyInput.trim();
-      console.log('[API Key] Saving to localStorage:', key.substring(0, 8) + '...');
-      
-      // Check if it's a Kimi key
+        // Check if it's a Kimi key
       if (key.startsWith('sk-kimi-')) {
         localStorage.setItem('visual-ai-kimi-key', key);
         setKimiApiKey(key);
-        console.log('[Kimi API] Saved to localStorage');
       } else {
         localStorage.setItem('visual-ai-api-key', key);
         setApiKey(key);
@@ -550,7 +543,6 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   };
 
   const handleClearApiKey = () => {
-    console.log('[API Key] Clearing from localStorage');
     localStorage.removeItem('visual-ai-api-key');
     localStorage.removeItem('visual-ai-kimi-key');
     setApiKey('');
@@ -617,7 +609,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
         reader.onload = (event) => {
           const url = event.target?.result as string;
           setUploadedImages(prev => [...prev, {
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            id: crypto.randomUUID(),
             url,
             name: file.name
           }]);
@@ -723,7 +715,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 className="lg:hidden p-2 sm:p-2.5 hover:bg-accent-primary/20 rounded-lg sm:rounded-xl transition-all min-h-[48px] min-w-[48px] flex items-center justify-center border-2 border-accent-primary/50 bg-accent-primary/10"
                 aria-label="Close sidebar"
               >
-                <X className="w-6 h-6 sm:w-5 sm:h-5 text-accent-primary" />
+                <X className="w-5 h-5 sm:w-5 sm:h-5 text-accent-primary" />
               </button>
             )}
           </div>

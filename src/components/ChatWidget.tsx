@@ -34,10 +34,10 @@ export const ChatWidget = memo(function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  // Persist chat history
+  // Load chat history once on mount
   useEffect(() => {
     const saved = localStorage.getItem('visual-ai-chat-history');
-    if (saved && isOpen) {
+    if (saved) {
       try {
         const parsed = JSON.parse(saved);
         setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })));
@@ -45,11 +45,15 @@ export const ChatWidget = memo(function ChatWidget() {
         console.error('Failed to parse chat history', e);
       }
     }
-  }, [isOpen]);
+  }, []);
 
   useEffect(() => {
     if (messages.length > 1) {
-      localStorage.setItem('visual-ai-chat-history', JSON.stringify(messages));
+      try {
+        localStorage.setItem('visual-ai-chat-history', JSON.stringify(messages));
+      } catch (e) {
+        console.error('localStorage quota exceeded for chat history', e);
+      }
     }
   }, [messages]);
 
