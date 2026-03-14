@@ -117,8 +117,7 @@ export function ChatWidget() {
         className="fixed z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow"
         style={{ 
           bottom: 'calc(env(safe-area-inset-bottom, 20px) + 20px)', 
-          right: 'calc(env(safe-area-inset-right, 16px) + 16px)',
-          left: 'auto',
+          right: '16px',
           boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)'
         }}
         whileHover={{ scale: 1.05 }}
@@ -141,9 +140,7 @@ export function ChatWidget() {
             className="fixed left-2 right-2 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-1rem)] max-h-[calc(100vh-10rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
             style={{ 
               top: 'calc(env(safe-area-inset-top, 12px) + 60px)',
-              bottom: 'auto',
-              left: 'calc(env(safe-area-inset-left, 8px) + 8px)',
-              right: 'calc(env(safe-area-inset-right, 8px) + 8px)',
+              bottom: 'calc(env(safe-area-inset-bottom, 12px) + 12px)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
             }}
           >

@@ -281,7 +281,6 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className="w-[85vw] max-w-[280px] xs:max-w-[300px] sm:max-w-[320px] sm:w-72 md:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain sidebar-scroll pb-20" style={{ WebkitOverflowScrolling: 'touch' }}>
