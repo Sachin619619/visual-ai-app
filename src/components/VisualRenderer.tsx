@@ -609,7 +609,7 @@ body {
   return (
     <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Toolbar Header - proper sticky header, no absolute positioning, no wrapping */}
-      <div className="flex-none h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="flex-none min-h-[56px] sm:h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm px-1" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Spacer on mobile/tablet to avoid overlapping the fixed hamburger button (w-14 = 56px) */}
         <div className="w-14 flex-shrink-0 lg:hidden" />
         {/* Separator after spacer on mobile */}
@@ -676,13 +676,13 @@ body {
                 </motion.div>
               )}
             </div>
-            {/* Viewport Size Selector */}
-            <div className="relative">
+            {/* Viewport Size Selector - visible on all screens via more menu on mobile */}
+            <div className="relative hidden md:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={() => setShowViewportSelector(!showViewportSelector)}
-                className={`hidden sm:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] items-center justify-center ${
+                className={`p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] items-center justify-center ${
                   showViewportSelector || viewportSize !== 'desktop' ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
                 }`}
                 title="Viewport Size"
@@ -717,13 +717,13 @@ body {
                 </motion.div>
               )}
             </div>
-            {/* Animation Toggle Button */}
+            {/* Animation Toggle Button - visible on tablet+, mobile via more menu */}
             {html && (
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={toggleAnimations}
-                className={`hidden sm:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] items-center justify-center ${
+                className={`hidden md:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] items-center justify-center ${
                   animationsPaused ? 'bg-amber-500/20 text-amber-400' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
                 }`}
                 title={animationsPaused ? "Resume Animations" : "Pause Animations"}
@@ -755,18 +755,18 @@ body {
                 <Redo2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
               </motion.button>
             )}
-            {/* Theme Toggle Button - hidden on very small mobile, shown in more menu */}
+            {/* Theme Toggle Button - visible on tablet+, mobile via more menu */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setPreviewTheme(prev => prev === 'dark' ? 'light' : 'dark')}
-              className="hidden xs:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={previewTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {previewTheme === 'dark' ? <Sun className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Moon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
             </motion.button>
-            {/* Color Scheme Button with Dropdown - hidden on very small mobile */}
-            <div className="relative hidden xs:block">
+            {/* Color Scheme Button with Dropdown - visible on tablet+, mobile via more menu */}
+            <div className="relative hidden md:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
