@@ -1451,7 +1451,7 @@ body {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-16 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-4 z-20 max-h-[50vh] sm:max-h-80 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+            className="absolute bottom-20 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-4 z-20 max-h-[45vh] sm:max-h-80 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
           >
             <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-white/5">
               <div className="flex items-center gap-2">
@@ -1708,6 +1708,7 @@ body {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 z-20 flex items-center justify-center bg-bg-primary"
+            style={{ paddingBottom: '80px' }}
           >
             <div className="flex flex-col items-center gap-6 sm:gap-8">
               {/* Enhanced spinner with multiple rotating rings and glow effect */}
@@ -1906,8 +1907,11 @@ body {
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden mobile-fab"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 20px) + 90px)' }}
+          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden"
+          style={{ 
+            bottom: 'calc(env(safe-area-inset-bottom, 20px) + 85px)',
+            right: '16px'
+          }}
         >
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}

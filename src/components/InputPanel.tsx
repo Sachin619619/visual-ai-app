@@ -1200,15 +1200,15 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
 
       {/* All Templates Modal */}
       {showAllTemplates && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setShowAllTemplates(false)} />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
+            className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col"
           >
-            <div className="flex items-center justify-between p-4 border-b border-white/5">
-              <h3 className="font-heading text-lg font-semibold">All Templates</h3>
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 flex-shrink-0">
+              <h3 className="font-heading text-base sm:text-lg font-semibold">All Templates</h3>
               <button
                 onClick={() => setShowAllTemplates(false)}
                 className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
@@ -1216,8 +1216,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto">
-              <div className="grid grid-cols-3 gap-3">
+            <div className="p-3 sm:p-4 overflow-y-auto">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
                 {TEMPLATES.map((template) => {
                   const Icon = template.icon;
                   return (
@@ -1227,10 +1227,10 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
                         setPrompt(template.prompt);
                         setShowAllTemplates(false);
                       }}
-                      className="flex flex-col items-center gap-2 p-4 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
+                      className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
                     >
-                      <Icon className="w-6 h-6 text-accent-primary" />
-                      <span className="text-xs text-text-secondary font-medium">{template.name}</span>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-accent-primary" />
+                      <span className="text-[10px] sm:text-xs text-text-secondary font-medium text-center truncate w-full">{template.name}</span>
                     </button>
                   );
                 })}

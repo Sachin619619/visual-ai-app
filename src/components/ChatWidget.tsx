@@ -114,10 +114,11 @@ export const ChatWidget = memo(function ChatWidget() {
       {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow bottom-4 sm:bottom-6 right-4 sm:right-6"
+        className="fixed z-40 lg:z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow"
         style={{ 
           bottom: 'calc(env(safe-area-inset-bottom, 20px) + 16px)', 
-          right: '12px',
+          right: 'calc(env(safe-area-inset-right, 12px) + 12px)',
+          left: 'auto',
           boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)'
         }}
         whileHover={{ scale: 1.05 }}

@@ -77,8 +77,14 @@ export function ToastProvider({ children }: ToastProviderProps) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       
-      {/* Toast Container - mobile responsive */}
-      <div className="fixed bottom-4 left-4 right-4 sm:right-4 z-[100] flex flex-col gap-2 sm:items-end">
+      {/* Toast Container - mobile responsive - positioned above FAB */}
+      <div 
+        className="fixed bottom-20 sm:bottom-6 left-4 right-4 sm:right-4 z-[100] flex flex-col gap-2 sm:items-end"
+        style={{ 
+          bottom: 'calc(env(safe-area-inset-bottom, 20px) + 70px)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)'
+        }}
+      >
         <AnimatePresence>
           {toasts.map((toast) => (
             <motion.div
@@ -89,10 +95,10 @@ export function ToastProvider({ children }: ToastProviderProps) {
               className={`flex items-center gap-3 px-4 py-3 bg-bg-secondary rounded-lg border border-white/10 border-l-4 ${getBorderColor(toast.type)} shadow-lg w-full sm:min-w-[280px] sm:max-w-sm`}
             >
               {getIcon(toast.type)}
-              <p className="text-sm text-text-primary flex-1">{toast.message}</p>
+              <p className="text-sm text-text-primary flex-1 break-words">{toast.message}</p>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="p-1 hover:bg-white/10 rounded transition-colors"
+                className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
               >
                 <X className="w-4 h-4 text-text-muted" />
               </button>

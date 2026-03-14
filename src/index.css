@@ -351,8 +351,24 @@ body {
 @media (max-width: 640px) {
   .modal-content {
     max-height: 80vh;
-    margin: 16px;
-    width: calc(100% - 32px) !important;
+    margin: 12px;
+    width: calc(100% - 24px) !important;
+  }
+  
+  /* Better modal animations */
+  .modal-mobile-animation {
+    animation: modalSlideUp 0.3s ease-out;
+  }
+  
+  @keyframes modalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
