@@ -203,17 +203,21 @@ function AppContent() {
       showToast('success', `UI generated in ${(generationTime / 1000).toFixed(1)}s! ✨`);
     } catch (error: any) {
       console.error('Error generating UI:', error);
+      const msg: string = error?.message || '';
       let errorMessage = 'Failed to generate UI. Please try again.';
       
-      // Provide more specific error messages
-      if (error?.message?.includes('API key')) {
-        errorMessage = 'API key missing or invalid. Please check settings.';
-      } else if (error?.message?.includes('rate limit')) {
+      if (msg.includes('API key') || msg.includes('api key') || msg.includes('Please set')) {
+        errorMessage = msg;
+      } else if (msg.includes('rate limit') || msg.includes('429')) {
         errorMessage = 'Rate limit exceeded. Please wait a moment.';
-      } else if (error?.message?.includes('timeout')) {
+      } else if (msg.includes('timeout')) {
         errorMessage = 'Request timed out. Please try again.';
-      } else if (error?.message?.includes('quota')) {
+      } else if (msg.includes('quota')) {
         errorMessage = 'API quota exceeded. Check your plan limits.';
+      } else if (msg.includes('OpenAI error') || msg.includes('Anthropic error') || msg.includes('Gemini error') || msg.includes('OpenRouter error')) {
+        errorMessage = msg;
+      } else if (msg) {
+        errorMessage = msg;
       }
       
       showToast('error', errorMessage);

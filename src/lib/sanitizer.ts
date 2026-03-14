@@ -417,84 +417,107 @@ const getThemeStyles = (theme: PreviewTheme) => {
 `;
 };
 
+// Standard CDN scripts to always inject
+const CHART_JS_CDN = 'https://cdn.jsdelivr.net/npm/chart.js';
+const FONTS_CDN = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
+
+const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
+<script>
+(function() {
+  function initCharts() {
+    var containers = document.querySelectorAll('[data-chart-type]');
+    containers.forEach(function(container) {
+      var type = container.getAttribute('data-chart-type');
+      var labels = JSON.parse(container.getAttribute('data-labels') || '[]');
+      var values = JSON.parse(container.getAttribute('data-chart-data') || '[]');
+      var label = container.getAttribute('data-chart-label') || 'Data';
+      var canvas = container.querySelector('canvas');
+      if (type && labels.length && values.length && canvas && window.Chart) {
+        var tc = '${theme}' === 'light' ? '#1e293b' : '#f8fafc';
+        var gc = '${theme}' === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+        new Chart(canvas, {
+          type: type,
+          data: {
+            labels: labels,
+            datasets: [{ label: label, data: values,
+              backgroundColor: type === 'line' ? 'rgba(139,92,246,0.15)' :
+                ['rgba(139,92,246,0.85)','rgba(6,182,212,0.85)','rgba(16,185,129,0.85)','rgba(245,158,11,0.85)','rgba(239,68,68,0.85)'],
+              borderColor: '#8b5cf6', borderWidth: 2, fill: type === 'line', tension: 0.4 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: tc } } },
+            scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc } } }
+          }
+        });
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCharts);
+  } else {
+    initCharts();
+  }
+})();
+</script>`;
+
 export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark'): string => {
-  console.log('🧹 Sanitizer input (first 300 chars):', html.substring(0, 300));
-  const sanitized = sanitizeHtml(html);
-  console.log('🧹 Sanitizer output (first 300 chars):', sanitized.substring(0, 300));
+  const trimmed = html.trim();
   const themeStyles = getThemeStyles(theme);
-  
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
+
+  const headInjectables = `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    ${themeStyles}
-  </style>
+  <link href="${FONTS_CDN}" rel="stylesheet">
+  <script src="${CHART_JS_CDN}"><\/script>`;
+
+  // ── CASE 1: Full HTML document ────────────────────────────────────────────
+  // Use the AI's HTML directly — preserves ALL JavaScript, styles, libraries.
+  // The iframe's sandbox="allow-scripts" (no allow-same-origin) already prevents
+  // any script from accessing the parent page, localStorage, cookies, etc.
+  const lc = trimmed.toLowerCase();
+  if (lc.startsWith('<!doctype') || lc.startsWith('<html')) {
+    let doc = trimmed;
+
+    // Inject Chart.js CDN if absent
+    if (!doc.includes(CHART_JS_CDN)) {
+      if (/<head[^>]*>/i.test(doc)) {
+        doc = doc.replace(/<head([^>]*)>/i, `<head$1>\n  <script src="${CHART_JS_CDN}"><\/script>`);
+      } else {
+        // No <head> — insert one after <html ...>
+        doc = doc.replace(/<html([^>]*)>/i, `<html$1>\n<head>\n  <meta charset="UTF-8">\n  <script src="${CHART_JS_CDN}"><\/script>\n</head>`);
+      }
+    }
+
+    // Inject Google Fonts if absent
+    if (!doc.includes('fonts.googleapis.com')) {
+      doc = doc.replace(/<head([^>]*)>/i, `<head$1>\n  <link href="${FONTS_CDN}" rel="stylesheet">`);
+    }
+
+    // Append data-chart auto-init before </body>
+    if (/<\/body>/i.test(doc)) {
+      doc = doc.replace(/<\/body>/i, `${DATA_CHART_INIT_SCRIPT(theme)}\n</body>`);
+    } else {
+      doc += DATA_CHART_INIT_SCRIPT(theme);
+    }
+
+    return doc;
+  }
+
+  // ── CASE 2: Partial HTML (body content only) ──────────────────────────────
+  // Strip only obvious injection vectors (event handlers, javascript: URLs).
+  // Script tags are preserved so inline JS still runs.
+  const safeBody = trimmed
+    .replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*')/gi, '')  // strip onclick="..." etc.
+    .replace(/href\s*=\s*["']\s*javascript\s*:[^"']*["']/gi, 'href="#"');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>${headInjectables}
+  <style>${themeStyles}</style>
 </head>
 <body>
-  ${sanitized}
-  <script>
-    // Auto-initialize any chart canvases
-    document.addEventListener('DOMContentLoaded', function() {
-      // Find all chart containers and initialize
-      const chartContainers = document.querySelectorAll('[data-chart-type]');
-      chartContainers.forEach(function(container) {
-        const type = container.getAttribute('data-chart-type');
-        const labels = JSON.parse(container.getAttribute('data-labels') || '[]');
-        const data = JSON.parse(container.getAttribute('data-chart-data') || '[]');
-        const label = container.getAttribute('data-chart-label') || 'Data';
-        
-        if (type && labels.length && data.length) {
-          const textColor = '${theme}' === 'light' ? '#1e293b' : '#f8fafc';
-          const gridColor = '${theme}' === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-          new Chart(container.querySelector('canvas'), {
-            type: type,
-            data: {
-              labels: labels,
-              datasets: [{
-                label: label,
-                data: data,
-                backgroundColor: type === 'line' ? 'rgba(139, 92, 246, 0.1)' : [
-                  'rgba(139, 92, 246, 0.8)',
-                  'rgba(6, 182, 212, 0.8)',
-                  'rgba(16, 185, 129, 0.8)',
-                  'rgba(245, 158, 11, 0.8)',
-                  'rgba(239, 68, 68, 0.8)'
-                ],
-                borderColor: '#8b5cf6',
-                borderWidth: 2,
-                fill: type === 'line'
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  labels: { color: textColor }
-                }
-              },
-              scales: {
-                x: {
-                  ticks: { color: textColor },
-                  grid: { color: gridColor }
-                },
-                y: {
-                  ticks: { color: textColor },
-                  grid: { color: gridColor }
-                }
-              }
-            }
-          });
-        }
-      });
-    });
-  </script>
+  ${safeBody}
+  ${DATA_CHART_INIT_SCRIPT(theme)}
 </body>
-</html>
-  `;
+</html>`;
 };

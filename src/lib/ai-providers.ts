@@ -47,19 +47,16 @@ export const generateUI = async (
   model: ModelProvider,
   contextHtml?: string
 ): Promise<string> => {
-  // If API key is set, use real AI
-  if (apiKey) {
-    try {
-      const result = await generateWithAI(prompt, model, apiKey, contextHtml);
-      return result;
-    } catch (error) {
-      console.error('AI generation failed:', error);
-      throw new Error('AI generation failed. Please check your API key and try again.');
-    }
+  if (!apiKey) {
+    throw new Error('Please set your API key in settings to generate UI.');
   }
-  
-  // No API key - show error instead of hardcoded demo
-  throw new Error('Please set your API key in settings to generate UI.');
+  try {
+    return await generateWithAI(prompt, model, apiKey, contextHtml);
+  } catch (error: any) {
+    console.error('AI generation failed:', error);
+    // Re-throw with the original message so the UI can show it
+    throw error instanceof Error ? error : new Error(String(error));
+  }
 }
 
 // Chat with AI
@@ -101,15 +98,12 @@ const generateWithAI = async (
   apiKey: string,
   contextHtml?: string
 ): Promise<string> => {
-  // Enhance prompt for better UI generation
-  const enhancedPrompt = await enhancePrompt(prompt, model, apiKey);
-  
   // Build context from previous HTML if provided
   const contextSection = contextHtml 
     ? `\n\nREFERENCE DESIGN (use as inspiration but create something new):\n${contextHtml.substring(0, 2000)}`
     : '';
   
-  const uiPrompt = `${enhancedPrompt}${contextSection}
+  const uiPrompt = `${prompt}${contextSection}
 
 🚨 STRICT INSTRUCTION: Output NOTHING except HTML code. Start with <!DOCTYPE html> or <html>. End with </html>. NO other text allowed. Your output will be rendered directly as a webpage. Any non-HTML text will break the preview. Do NOT include explanations, markdown, or code blocks. ONLY HTML.`;
 
@@ -139,8 +133,8 @@ const generateWithAI = async (
     });
     
     const data = await response.json();
-    console.log('📡 OpenRouter raw response:', data.choices?.[0]?.message?.content?.substring(0, 500));
-    rawHtml = data.choices?.[0]?.message?.content || uiPrompt;
+    if (data.error) throw new Error(`OpenRouter error: ${data.error.message || JSON.stringify(data.error)}`);
+    rawHtml = data.choices?.[0]?.message?.content || '';
   } else if (model === 'openai') {
     response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -149,47 +143,54 @@ const generateWithAI = async (
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         messages: [
           { role: 'system', content: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks, NO explanations. Your response will be used directly as a web page. Render ONLY HTML.' },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.3
+        temperature: 0.3,
+        max_tokens: 8192
       })
     });
     
     const data = await response.json();
-    rawHtml = data.choices?.[0]?.message?.content || uiPrompt;
+    if (data.error) throw new Error(`OpenAI error: ${data.error.message || JSON.stringify(data.error)}`);
+    rawHtml = data.choices?.[0]?.message?.content || '';
   } else if (model === 'gemini') {
-    response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: uiPrompt }] }]
+        contents: [{ parts: [{ text: uiPrompt }] }],
+        generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
       })
     });
     
     const data = await response.json();
-    rawHtml = data.candidates?.[0]?.content?.parts?.[0]?.text || uiPrompt;
+    if (data.error) throw new Error(`Gemini error: ${data.error?.message || JSON.stringify(data.error)}`);
+    rawHtml = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   } else if (model === 'claude') {
     response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
+        model: 'claude-3-5-sonnet-20241022',
+        system: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks. ONLY HTML.',
         messages: [
           { role: 'user', content: uiPrompt }
         ],
-        max_tokens: 2000
+        max_tokens: 8192
       })
     });
     
     const data = await response.json();
-    rawHtml = data.content?.[0]?.text || uiPrompt;
+    if (data.error) throw new Error(`Anthropic error: ${data.error?.message || JSON.stringify(data.error)}`);
+    rawHtml = data.content?.[0]?.text || '';
   } else {
     rawHtml = uiPrompt;
   }
@@ -198,49 +199,64 @@ const generateWithAI = async (
   return cleanHtmlOutput(rawHtml);
 };
 
-// Clean HTML output - AGGRESSIVELY extract ONLY HTML content
+// Clean HTML output — robustly extract HTML from any AI response format
 export const cleanHtmlOutput = (html: string): string => {
-  console.log('🔍 Raw input to cleanHtmlOutput:', html.substring(0, 500));
-  
-  // Step 1: First, unescape any HTML entities that might have been double-escaped
+  if (!html || !html.trim()) {
+    throw new Error('Empty response from AI. Please try again.');
+  }
+
+  // Step 1: Unescape HTML entities that may have been double-escaped
   let cleaned = html
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ');
-  
-  // Also handle escaped backslashes
-  cleaned = cleaned.replace(/\\</g, '<').replace(/\\>/g, '>');
-  
-  // Step 2: Strip markdown code blocks completely
-  if (cleaned.startsWith('```')) {
-    cleaned = cleaned.replace(/^```[a-z]*\n?/, '');
-    cleaned = cleaned.replace(/```$/, '');
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\\</g, '<')
+    .replace(/\\>/g, '>');
+
+  // Step 2: Extract from markdown code blocks wherever they appear
+  // Handles: ```html\n...\n```, ```\n...\n```, and text before/after the block
+  const codeBlockMatch = cleaned.match(/```(?:html|HTML)?\s*\n?([\s\S]*?)\s*```/);
+  if (codeBlockMatch) {
+    cleaned = codeBlockMatch[1];
   }
-  
-  // Step 3: AGGRESSIVE - ONLY accept content that STARTS with HTML tags
-  // Trim and check what we're dealing with
+
   const trimmed = cleaned.trim();
-  
-  // If it starts with DOCTYPE, html, or body - accept it
-  if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html') || trimmed.startsWith('<body')) {
-    console.log('✅ HTML starts correctly with DOCTYPE/html/body');
+
+  // Step 3: If it already starts with a valid HTML opening, return immediately
+  const lc = trimmed.toLowerCase();
+  if (
+    lc.startsWith('<!doctype') ||
+    lc.startsWith('<html') ||
+    lc.startsWith('<body') ||
+    lc.startsWith('<div') ||
+    lc.startsWith('<main') ||
+    lc.startsWith('<section') ||
+    lc.startsWith('<article') ||
+    lc.startsWith('<header') ||
+    lc.startsWith('<style') ||
+    lc.startsWith('<nav')
+  ) {
     return trimmed;
   }
-  
-  // Step 4: Try to find and extract HTML starting from <html or <!DOCTYPE
-  const htmlStartMatch = trimmed.match(/<!DOCTYPE<html[\s\S]*/i) || trimmed.match(/<html[\s\S]*/i);
-  if (htmlStartMatch) {
-    console.log('✅ Found HTML starting point, extracting');
-    return htmlStartMatch[0];
-  }
-  
-  // Step 5: If there's no valid HTML starting point, REJECT the entire response
-  // This is the aggressive fix - don't try to salvage broken responses
-  console.log('❌ REJECTED - Response does not start with valid HTML');
-  throw new Error('Invalid AI response: Output does not start with HTML. Please try again.');
+
+  // Step 4: Find the first HTML tag anywhere in the string and extract from there
+  // Prefer <!DOCTYPE or <html start
+  const doctypeIdx = trimmed.toLowerCase().indexOf('<!doctype');
+  if (doctypeIdx >= 0) return trimmed.substring(doctypeIdx);
+
+  const htmlTagIdx = trimmed.toLowerCase().indexOf('<html');
+  if (htmlTagIdx >= 0) return trimmed.substring(htmlTagIdx);
+
+  // Fallback: first < character (handles partial body HTML like <div>...)
+  const firstTag = trimmed.indexOf('<');
+  if (firstTag >= 0) return trimmed.substring(firstTag);
+
+  // Nothing looks like HTML — return as-is and let renderer show what it can
+  console.warn('cleanHtmlOutput: no HTML found in response, returning raw text');
+  return trimmed;
 };
 
 // Enhance prompt for better results
