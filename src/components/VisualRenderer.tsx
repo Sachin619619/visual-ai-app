@@ -158,7 +158,7 @@ const QuickStartGrid = memo(({ items, onClick, disabled }: {
   onClick: (prompt: string) => void;
   disabled: boolean;
 }) => (
-  <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+  <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto md:grid">
     {items.map((item, index) => (
       <QuickStartButton
         key={item.key}
@@ -1818,16 +1818,97 @@ body {
           <div className="text-center max-w-[280px] xs:max-w-xs sm:max-w-md w-full">
             {/* Enhanced animated gradient orb with better effects */}
             <div className="relative mb-3 sm:mb-6 mx-auto w-16 h-16 sm:w-32 sm:h-32">
-              {/* Outer glow layers */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 blur-xl animate-pulse" style={{ animationDuration: '3s' }} />
-              <div className="absolute inset-2 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-2xl animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
-              {/* Main orb */}
-              <div className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center border border-white/10 backdrop-blur-sm">
-                <span className="text-2xl sm:text-5xl animate-bounce" style={{ animationDuration: '2s' }}>🎨</span>
-              </div>
+              {/* Outer glow layers with pulsing animation */}
+              <motion.div 
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-xl"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  opacity: [0.3, 0.5, 0.3]
+                }}
+                transition={{ 
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+              <motion.div 
+                className="absolute inset-2 rounded-full bg-gradient-to-br from-accent-primary/40 to-accent-secondary/40 blur-2xl"
+                animate={{ 
+                  scale: [1, 1.15, 1],
+                  opacity: [0.4, 0.6, 0.4]
+                }}
+                transition={{ 
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.3
+                }}
+              />
+              {/* Main orb with gradient background animation */}
+              <motion.div 
+                className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 flex items-center justify-center border border-white/20 backdrop-blur-sm"
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{ 
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <motion.span 
+                  className="text-2xl sm:text-5xl"
+                  animate={{ 
+                    y: [0, -5, 0],
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >🎨</motion.span>
+              </motion.div>
               {/* Floating particles */}
-              <div className="absolute top-2 right-2 w-2 h-2 bg-accent-primary/60 rounded-full animate-ping" style={{ animationDuration: '2s' }} />
-              <div className="absolute bottom-3 left-2 w-1.5 h-1.5 bg-accent-secondary/60 rounded-full animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.3s' }} />
+              <motion.div 
+                className="absolute top-2 right-2 w-2 h-2 bg-accent-primary/80 rounded-full"
+                animate={{ 
+                  y: [0, -10, 0],
+                  opacity: [0.8, 0.2, 0.8]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+              <motion.div 
+                className="absolute bottom-3 left-2 w-1.5 h-1.5 bg-accent-secondary/80 rounded-full"
+                animate={{ 
+                  y: [0, -8, 0],
+                  opacity: [0.6, 0.2, 0.6]
+                }}
+                transition={{ 
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5
+                }}
+              />
+              <motion.div 
+                className="absolute top-1/2 right-0 w-1 h-1 bg-cyan-400/60 rounded-full"
+                animate={{ 
+                  y: [0, -6, 0],
+                  opacity: [0.5, 0.1, 0.5]
+                }}
+                transition={{ 
+                  duration: 1.8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.8
+                }}
+              />
             </div>
             <h2 className="font-heading text-lg sm:text-2xl font-semibold mb-2 gradient-text">Visual AI Generator</h2>
             <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
@@ -1944,9 +2025,9 @@ body {
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden"
+          className="fixed z-30 lg:hidden"
           style={{ 
-            bottom: 'calc(env(safe-area-inset-bottom, 20px) + 90px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 20px) + 100px)',
             right: '16px'
           }}
         >

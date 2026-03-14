@@ -675,10 +675,10 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
               <button
                 type="button"
                 onClick={onClose}
-                className="lg:hidden p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="lg:hidden p-2 sm:p-2.5 hover:bg-accent-primary/20 rounded-lg sm:rounded-xl transition-all min-h-[48px] min-w-[48px] flex items-center justify-center border-2 border-accent-primary/50 bg-accent-primary/10"
                 aria-label="Close sidebar"
               >
-                <X className="w-5 h-5 sm:w-5 sm:h-5 text-text-secondary" />
+                <X className="w-6 h-6 sm:w-5 sm:h-5 text-accent-primary" />
               </button>
             )}
           </div>
