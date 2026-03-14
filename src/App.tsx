@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { InputPanel } from './components/InputPanel';
 import { VisualRenderer } from './components/VisualRenderer';
 import { ChatWidget } from './components/ChatWidget';
@@ -58,15 +58,56 @@ function AppContent() {
   const [prompt, setPrompt] = useState('');
   const [lastModel, setLastModel] = useState<ModelProvider>('openai');
   const [styleFrame, setStyleFrame] = useState<StyleFrame>('card');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('visual-ai-theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch {}
+    return 'dark';
+  });
   const [favorites, setFavorites] = useState<FavoriteDesign[]>([]);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [visualHistory, setVisualHistory] = useState<VisualHistoryEntry[]>([]);
   const [showGallery, setShowGallery] = useState(false);
   const { showToast } = useToast();
-  
+  const cleanupRan = useRef(false);
+
   const SITE_PASSWORD = 'visual2026';
+
+  // LocalStorage cleanup - remove old/stale keys on app init (runs once)
+  useEffect(() => {
+    if (cleanupRan.current) return;
+    cleanupRan.current = true;
+    try {
+      // Remove deprecated or renamed keys
+      const staleKeys = [
+        'visual-ai-dark-mode',          // replaced by visual-ai-theme
+        'visual-ai-code-editor',         // stale editor state
+        'visual-ai-temp',               // temp keys
+      ];
+      staleKeys.forEach(key => localStorage.removeItem(key));
+
+      // Cap visual history to 50 entries (prevent unbounded growth)
+      const rawHistory = localStorage.getItem('visual-ai-visual-history');
+      if (rawHistory) {
+        const parsed = JSON.parse(rawHistory);
+        if (Array.isArray(parsed) && parsed.length > 50) {
+          localStorage.setItem('visual-ai-visual-history', JSON.stringify(parsed.slice(0, 50)));
+        }
+      }
+      // Cap prompt history to 100 entries
+      const rawPromptHistory = localStorage.getItem('visual-ai-history');
+      if (rawPromptHistory) {
+        const parsed = JSON.parse(rawPromptHistory);
+        if (Array.isArray(parsed) && parsed.length > 100) {
+          localStorage.setItem('visual-ai-history', JSON.stringify(parsed.slice(0, 100)));
+        }
+      }
+    } catch {
+      // Silent - localStorage not available or corrupt
+    }
+  }, []);
 
   // Session persistence - save/restore current design
   useEffect(() => {
@@ -91,11 +132,6 @@ function AppContent() {
       }
     }
     
-    // Also check for theme preference directly
-    const savedTheme = localStorage.getItem('visual-ai-theme');
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      setTheme(savedTheme);
-    }
   }, []);
 
   // Auto-save session to localStorage
@@ -858,25 +894,29 @@ function AppContent() {
 
       {/* Keyboard Shortcuts Modal */}
       {showShortcuts && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={() => setShowShortcuts(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="shortcuts-title"
         >
-          <div 
+          <div
             className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
             style={{ paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
-                <Keyboard className="w-5 h-5" />
+              <h2 id="shortcuts-title" className="text-xl font-semibold gradient-text flex items-center gap-2">
+                <Keyboard className="w-5 h-5" aria-hidden="true" />
                 Keyboard Shortcuts
               </h2>
-              <button 
+              <button
                 onClick={() => setShowShortcuts(false)}
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                aria-label="Close keyboard shortcuts"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
             <div className="space-y-3">
@@ -906,24 +946,28 @@ function AppContent() {
 
       {/* Favorites Modal */}
       {showFavorites && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowFavorites(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="favorites-title"
         >
-          <div 
+          <div
             className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-400" />
+              <h2 id="favorites-title" className="text-xl font-semibold gradient-text flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-400" aria-hidden="true" />
                 Saved Favorites
               </h2>
-              <button 
+              <button
                 onClick={() => setShowFavorites(false)}
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                aria-label="Close favorites"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
             {favorites.length === 0 ? (

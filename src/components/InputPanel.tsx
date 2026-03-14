@@ -864,7 +864,12 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               )}
             </button>
           </div>
-          <p className="text-[10px] sm:text-xs text-text-muted mt-1">Transform any topic into a stunning visual — not just text.</p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-[10px] sm:text-xs text-text-muted">Transform any topic into a stunning visual — not just text.</p>
+            <span className={`text-[10px] font-mono tabular-nums ${prompt.length > 800 ? 'text-red-400' : prompt.length > 500 ? 'text-yellow-400' : 'text-text-muted'}`}>
+              {prompt.length}/1000
+            </span>
+          </div>
           {/* Visual Mode Template Chips */}
           <div className="mt-2 flex flex-wrap gap-1.5">
             {[

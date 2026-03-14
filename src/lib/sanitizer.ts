@@ -35,6 +35,12 @@ const sanitizeConfig = {
   ADD_TAGS: ['iframe'],
 };
 
+/**
+ * Sanitizes HTML by unescaping double-encoded entities, removing unsafe script
+ * tags and inline event handlers, then running DOMPurify.
+ * @param html - Raw HTML string to sanitize
+ * @returns Sanitized HTML string safe for display in an iframe
+ */
 export const sanitizeHtml = (html: string): string => {
   // First, unescape any HTML entities that might have been double-escaped
   // (e.g., &lt; -> <, &gt; -> >, &amp; -> &)
@@ -826,6 +832,15 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
 })();
 </script>`;
 
+/**
+ * Wraps raw HTML (full document or partial body content) into a self-contained
+ * sandbox document suitable for rendering inside an iframe.
+ * Injects theme CSS, Chart.js CDN, Google Fonts, and the data-chart auto-init
+ * script. Full HTML documents are passed through largely unchanged.
+ * @param html - Raw HTML string (full doc or partial body content)
+ * @param theme - Preview theme ('dark' | 'light'), defaults to 'dark'
+ * @returns A complete HTML document string ready for srcdoc injection
+ */
 export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark'): string => {
   const trimmed = html.trim();
   const themeStyles = getThemeStyles(theme);

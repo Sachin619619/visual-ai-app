@@ -55,13 +55,15 @@ test.describe('Theme toggle', () => {
   });
 
   test('should restore theme from localStorage on reload', async ({ page }) => {
-    // Use addInitScript to set localStorage before React loads
-    await page.addInitScript(() => {
+    // Set the theme in localStorage and reload the page
+    // We use evaluate before reload since page is already loaded from beforeEach
+    await page.evaluate(() => {
       localStorage.setItem('visual-ai-theme', 'light');
       localStorage.setItem('site_auth_visual', 'true');
     });
-    await page.goto('/');
-    await page.waitForTimeout(1500);
+    await page.reload();
+    // Wait for React to mount and apply theme
+    await page.waitForTimeout(2000);
 
     // Check that light class is applied using evaluate (handles null classAttr case)
     const hasLightClass = await page.evaluate(() => {

@@ -72,12 +72,18 @@ export const setApiKey = (key: string) => {
 
 export const getApiKey = () => apiKey;
 
-// Check if API key is configured for any provider
+/**
+ * Returns true if at least one API key (main or Kimi) is configured.
+ * OpenRouter provider is always considered configured (uses free models).
+ */
 export const isApiKeyConfigured = (): boolean => {
   return !!apiKey || !!kimiApiKey;
 };
 
-// Get provider status (configured or not)
+/**
+ * Returns a map of provider names to their configuration status.
+ * OpenRouter is always true; local is always false.
+ */
 export const getProviderStatus = (): Record<ModelProvider, boolean> => {
   return {
     openai: !!apiKey,
@@ -89,7 +95,13 @@ export const getProviderStatus = (): Record<ModelProvider, boolean> => {
   };
 };
 
-// Generate UI based on prompt
+/**
+ * Generates HTML UI based on the provided prompt and model.
+ * Throws a descriptive error if the API key is missing or the API call fails.
+ * @param prompt - The user's description of the desired UI
+ * @param model - The AI provider to use for generation
+ * @param contextHtml - Optional existing HTML to use as reference/context
+ */
 export const generateUI = async (
   prompt: string,
   model: ModelProvider,
@@ -370,7 +382,11 @@ const generateWithAI = async (
   return cleanHtmlOutput(rawHtml);
 };
 
-// Clean HTML output — robustly extract HTML from any AI response format
+/**
+ * Cleans and normalises raw AI output to extract valid HTML.
+ * Handles markdown code blocks, HTML entity escaping, and leading non-HTML text.
+ * @throws {Error} if the input is empty or contains no recognisable HTML.
+ */
 export const cleanHtmlOutput = (html: string): string => {
   if (!html || !html.trim()) {
     throw new Error('Empty response from AI. Please try again.');
