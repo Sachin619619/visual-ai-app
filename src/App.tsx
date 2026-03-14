@@ -635,7 +635,8 @@ function AppContent() {
       `} style={{ 
         paddingBottom: 'env(safe-area-inset-bottom, 20px)',
         overscrollBehavior: 'contain',
-        maxWidth: 'min(85vw, 300px)'
+        maxWidth: 'min(85vw, 300px)',
+        width: 'min(85vw, 300px)'
       }}>
         <InputPanel
           onGenerate={handleGenerate}

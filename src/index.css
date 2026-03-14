@@ -423,6 +423,16 @@ body {
     position: fixed;
     width: 100%;
   }
+  
+  /* Better modal positioning on mobile */
+  .modal-mobile-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 64px);
+  }
 }
 
 /* Fix toolbar overflow on small screens */
@@ -955,6 +965,41 @@ button,
     min-height: 32px;
     padding: 4px;
   }
+  
+  /* Better spacing for very small screens */
+  .gap-2 {
+    gap: 6px;
+  }
+  
+  /* Better sidebar content on very small screens */
+  .sidebar-content {
+    padding: 12px;
+  }
+  
+  /* Better template buttons on very small screens */
+  .template-button {
+    min-height: 40px;
+    padding: 4px;
+  }
+  
+  /* Better quick prompts on very small screens */
+  .quick-prompt-button {
+    padding: 8px 4px;
+    font-size: 10px;
+  }
+}
+
+/* Fix for very small screens - sidebar */
+@media (max-width: 360px) {
+  .sidebar-max-width {
+    width: 90vw !important;
+    max-width: 90vw !important;
+  }
+  
+  /* Better grid for quick prompts */
+  .quick-prompts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Safe area padding utility */
@@ -981,6 +1026,11 @@ button,
   /* Ensure chat widget doesn't overlap with FAB */
   .chat-widget-container {
     padding-bottom: 90px;
+  }
+  
+  /* Better chat widget positioning on mobile */
+  .chat-widget-position {
+    bottom: calc(5rem + env(safe-area-inset-bottom, 20px)) !important;
   }
 }
 
