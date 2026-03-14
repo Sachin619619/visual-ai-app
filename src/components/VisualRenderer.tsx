@@ -22,6 +22,8 @@ interface VisualRendererProps {
 // Quick start prompts for empty state cards
 const QUICK_PROMPTS = [
   { key: 'charts', prompt: 'Create a beautiful interactive line chart showing monthly revenue data for 2024 with tooltips and a legend', label: '📈 Charts' },
+  { key: 'radar', prompt: 'Create a radar chart showing skills analysis with speed, reliability, comfort, safety metrics', label: '🕸️ Radar' },
+  { key: 'polar', prompt: 'Create a polar area chart showing regional distribution of users across continents', label: '🌊 Polar' },
   { key: 'timeline', prompt: 'Build a vertical timeline component showing a product launch roadmap with milestones and dates', label: '🗓️ Timelines' },
   { key: 'cards', prompt: 'Design a responsive grid of stat cards showing KPI metrics with icons, numbers and trend indicators', label: '📊 Cards' },
   { key: 'forms', prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling', label: '📋 Forms' },
@@ -33,6 +35,8 @@ const QUICK_PROMPTS = [
   { key: 'profile', prompt: 'Create a user profile card with avatar, bio, social links, and skill tags', label: '👤 Profile' },
   { key: 'carousel', prompt: 'Build an auto-scrolling image carousel with navigation dots and prev/next buttons', label: '🎠 Carousel' },
   { key: 'animation', prompt: 'Create an animated loading skeleton with shimmer effect for content placeholders', label: '⚡ Loading' },
+  { key: 'table', prompt: 'Build a responsive data table with sortable columns, pagination, and search input', label: '📋 Table' },
+  { key: 'tabs', prompt: 'Create an interactive tabs component with multiple tabs and an accordion FAQ section', label: '🔽 Tabs' },
 ];
 
 // Simple syntax highlighting for HTML

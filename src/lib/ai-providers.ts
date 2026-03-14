@@ -45,6 +45,10 @@ export const generateUI = async (
       return generateBarChart();
     } else if (lowerPrompt.includes('pie') || lowerPrompt.includes('donut')) {
       return generatePieChart();
+    } else if (lowerPrompt.includes('radar') || lowerPrompt.includes('spider')) {
+      return generateRadarChart();
+    } else if (lowerPrompt.includes('polar') || lowerPrompt.includes('area')) {
+      return generatePolarChart();
     }
     return generateLineChart();
   }
@@ -195,6 +199,106 @@ const generatePieChart = () => `
             position: 'right',
             labels: { color: '#f8fafc', padding: 20 } 
           } 
+        }
+      }
+    });
+  });
+</script>
+`;
+
+const generateRadarChart = () => `
+<div class="card shadow">
+  <h2 style="margin-bottom: 16px;">🕸️ Skills Analysis</h2>
+  <div class="chart-container">
+    <canvas id="radarChart"></canvas>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new Chart(document.getElementById('radarChart'), {
+      type: 'radar',
+      data: {
+        labels: ['Speed', 'Reliability', 'Comfort', 'Safety', 'Efficiency', 'Design'],
+        datasets: [{
+          label: 'Current',
+          data: [85, 90, 75, 95, 80, 88],
+          fill: true,
+          backgroundColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: '#8b5cf6',
+          pointBackgroundColor: '#8b5cf6',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#8b5cf6'
+        }, {
+          label: 'Target',
+          data: [90, 85, 80, 90, 85, 92],
+          fill: true,
+          backgroundColor: 'rgba(6, 182, 212, 0.2)',
+          borderColor: '#06b6d4',
+          pointBackgroundColor: '#06b6d4',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#06b6d4'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#f8fafc' } } },
+        scales: {
+          r: {
+            angleLines: { color: 'rgba(255,255,255,0.1)' },
+            grid: { color: 'rgba(255,255,255,0.1)' },
+            pointLabels: { color: '#94a3b8', font: { size: 12 } },
+            ticks: { display: false }
+          }
+        }
+      }
+    });
+  });
+</script>
+`;
+
+const generatePolarChart = () => `
+<div class="card shadow">
+  <h2 style="margin-bottom: 16px;">🌊 Regional Distribution</h2>
+  <div class="chart-container">
+    <canvas id="polarChart"></canvas>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new Chart(document.getElementById('polarChart'), {
+      type: 'polarArea',
+      data: {
+        labels: ['North America', 'Europe', 'Asia', 'South America', 'Africa', 'Oceania'],
+        datasets: [{
+          data: [35, 25, 20, 10, 7, 3],
+          backgroundColor: [
+            'rgba(139, 92, 246, 0.7)',
+            'rgba(6, 182, 212, 0.7)',
+            'rgba(16, 185, 129, 0.7)',
+            'rgba(245, 158, 11, 0.7)',
+            'rgba(239, 68, 68, 0.7)',
+            'rgba(168, 85, 247, 0.7)'
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { 
+            position: 'right',
+            labels: { color: '#f8fafc', padding: 15 } 
+          } 
+        },
+        scales: {
+          r: {
+            grid: { color: 'rgba(255,255,255,0.1)' },
+            ticks: { display: false }
+          }
         }
       }
     });
