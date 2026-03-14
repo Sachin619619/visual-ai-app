@@ -120,6 +120,34 @@ export const chatWithAI = async (message: string): Promise<string> => {
   }
 };
 
+// Enhanced system prompt for better HTML generation
+const SYSTEM_PROMPT = `You are an expert UI/UX designer and frontend developer. Your task is to generate beautiful, modern, and responsive HTML/CSS web components.
+
+🎨 DESIGN REQUIREMENTS:
+- Use a dark theme by default with colors: background #0f0f23, cards #1a1a2e, accents #8b5cf6 (violet) and #06b6d4 (cyan)
+- Use modern CSS with flexbox and grid layouts
+- Include smooth animations and transitions (300ms ease)
+- Make it fully responsive (mobile, tablet, desktop)
+- Use Tailwind CSS classes when possible, or inline styles with modern CSS
+- Add subtle hover effects and micro-interactions
+
+🔧 TECHNICAL REQUIREMENTS:
+- Output ONLY raw HTML code - no markdown, no explanations, no code blocks
+- Start with <!DOCTYPE html> or <html>
+- Include all CSS in <style> tags in the <head>
+- Include any needed JavaScript in <script> tags before </body>
+- Use Google Fonts: Inter, Poppins, or similar modern fonts
+- Ensure the design works in modern browsers
+
+🎯 GENERATE STUNNING UI:
+- Make it visually impressive with gradients, shadows, and modern styling
+- Add appropriate icons (use Lucide icons CDN or similar)
+- Include meaningful placeholder content
+- Add loading states, hover states, and interactive elements
+- Focus on one cohesive component or section
+
+🚨 CRITICAL: Output NOTHING except HTML code. Your response will be rendered directly as a webpage. Any non-HTML text will break the preview.`;
+
 // Generate with AI
 const generateWithAI = async (
   prompt: string,
@@ -129,12 +157,17 @@ const generateWithAI = async (
 ): Promise<string> => {
   // Build context from previous HTML if provided
   const contextSection = contextHtml 
-    ? `\n\nREFERENCE DESIGN (use as inspiration but create something new):\n${contextHtml.substring(0, 2000)}`
+    ? `\n\nREFERENCE DESIGN (use as inspiration but create something NEW and DIFFERENT):\n${contextHtml.substring(0, 1500)}\n\nCreate a variation with different colors, layout, or styling while keeping the same type of component.`
     : '';
   
   const uiPrompt = `${prompt}${contextSection}
 
-🚨 STRICT INSTRUCTION: Output NOTHING except HTML code. Start with <!DOCTYPE html> or <html>. End with </html>. NO other text allowed. Your output will be rendered directly as a webpage. Any non-HTML text will break the preview. Do NOT include explanations, markdown, or code blocks. ONLY HTML.`;
+📝 Additional style preferences to follow:
+- Dark theme with rich, deep backgrounds
+- Accent colors: violet (#8b5cf6), cyan (#06b6d4), or choose a complementary palette
+- Modern, clean aesthetic with subtle glassmorphism effects
+- Smooth animations on hover and interactions
+- Responsive design that works on all screen sizes`;
 
   let response;
   let rawHtml = '';
@@ -152,11 +185,11 @@ const generateWithAI = async (
       body: JSON.stringify({
         model: selectedFreeModel,
         messages: [
-          { role: 'system', content: 'Output ONLY raw HTML code. Start with <!DOCTYPE html>. No explanations, no markdown, no code fences. Just HTML.' },
+          { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.3,
-        max_tokens: 8000
+        temperature: 0.4,
+        max_tokens: 10000
       })
     });
     
@@ -177,11 +210,11 @@ const generateWithAI = async (
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [
-          { role: 'system', content: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks, NO explanations. Your response will be used directly as a web page. Render ONLY HTML.' },
+          { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.3,
-        max_tokens: 8192
+        temperature: 0.4,
+        max_tokens: 10000
       })
     });
     
@@ -193,8 +226,8 @@ const generateWithAI = async (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: uiPrompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
+        contents: [{ parts: [{ text: `${SYSTEM_PROMPT}\n\n${uiPrompt}` }] }],
+        generationConfig: { temperature: 0.4, maxOutputTokens: 10000 }
       })
     });
     
@@ -212,11 +245,11 @@ const generateWithAI = async (
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
-        system: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks. ONLY HTML.',
+        system: SYSTEM_PROMPT,
         messages: [
           { role: 'user', content: uiPrompt }
         ],
-        max_tokens: 8192
+        max_tokens: 10000
       })
     });
     
