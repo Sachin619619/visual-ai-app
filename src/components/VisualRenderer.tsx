@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star } from 'lucide-react';
 import { jsPDF } from 'jspdf';
@@ -106,7 +106,51 @@ function highlightHTML(code: string): { html: string; lineCount: number } {
   return { html: highlightedLines.join('\n'), lineCount };
 }
 
-export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+// Memoized Quick Start Button Component
+const QuickStartButton = memo(({ item, index, onClick, disabled }: { 
+  item: { key: string; prompt: string; label: string }; 
+  index: number; 
+  onClick: (prompt: string) => void;
+  disabled: boolean;
+}) => (
+  <motion.button
+    key={item.key}
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.05 }}
+    onClick={() => onClick(item.prompt)}
+    disabled={disabled}
+    className="p-3 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[64px] sm:min-h-[70px] flex flex-col justify-center gap-1"
+  >
+    <p className="text-accent-primary text-xs sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
+  </motion.button>
+));
+
+QuickStartButton.displayName = 'QuickStartButton';
+
+// Memoized Toolbar Button Component
+const ToolbarButton = memo(({ onClick, title, children, className = '', disabled = false }: {
+  onClick?: () => void;
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+}) => (
+  <motion.button
+    initial={{ scale: 0, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    onClick={onClick}
+    disabled={disabled}
+    className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 ${className}`}
+    title={title}
+  >
+    {children}
+  </motion.button>
+));
+
+ToolbarButton.displayName = 'ToolbarButton';
+
+export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -687,14 +731,14 @@ body {
 
   return (
     <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
-      {/* Toolbar Header - proper sticky header, no absolute positioning, no wrapping */}
-      <div className="flex-none min-h-[56px] sm:h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm px-1 overflow-x-auto scrollbar-hide" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      {/* Toolbar Header - Fixed overflow issues on small screens */}
+      <div className="flex-none min-h-[56px] sm:h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm px-1 overflow-x-hidden" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Spacer on mobile/tablet to avoid overlapping the fixed hamburger button (w-14 = 56px) */}
         <div className="w-14 flex-shrink-0 lg:hidden" />
         {/* Separator after spacer on mobile */}
         <div className="w-px h-6 bg-white/8 flex-shrink-0 lg:hidden" />
-        {/* Scrollable toolbar - right-aligned, no wrapping */}
-        <div className="flex-1 flex items-center overflow-x-visible scrollbar-hide min-w-0 px-1 sm:px-3 gap-0.5 sm:gap-1">
+        {/* Scrollable toolbar - right-aligned, with proper overflow handling */}
+        <div className="flex-1 flex items-center overflow-x-auto overflow-y-hidden scrollbar-hide min-w-0 px-1 sm:px-3 gap-0.5 sm:gap-1">
           {html && (
             <div className="flex items-center gap-1 sm:gap-1.5 ml-auto min-w-max">
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -1401,12 +1445,14 @@ body {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
           >
-            <div className="absolute inset-0 bg-black/70" onClick={() => setShowRefine(false)} />
+            <div className="absolute inset-0" onClick={() => setShowRefine(false)} />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-md overflow-hidden"
             >
               <div className="flex items-center justify-between p-4 border-b border-white/5">
@@ -1496,13 +1542,14 @@ body {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
             onClick={() => setShowShortcuts(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-sm overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1550,25 +1597,32 @@ body {
             className="absolute inset-0 z-20 flex items-center justify-center bg-bg-primary"
           >
             <div className="flex flex-col items-center gap-6 sm:gap-8">
-              {/* Polished spinner with multiple rings */}
+              {/* Enhanced spinner with multiple rotating rings and glow effect */}
               <div className="relative">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-bg-tertiary" />
-                <div className="absolute inset-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" style={{ animationDuration: '1s' }} />
-                <div className="absolute inset-1.5 w-17 h-17 sm:w-20 sm:h-20 rounded-full border-4 border-transparent border-b-accent-secondary animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
-                <div className="absolute inset-3 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-transparent border-t-cyan-400 animate-spin" style={{ animationDuration: '2s' }} />
-                {/* Center dot */}
-                <div className="absolute inset-0 m-auto w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-accent-primary animate-pulse" />
+                {/* Outer ring with gradient */}
+                <div className="absolute inset-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" style={{ animationDuration: '1.2s' }}>
+                  <div className="absolute inset-0 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.5)]" />
+                </div>
+                {/* Middle ring - reverse direction */}
+                <div className="absolute inset-1 w-18 h-18 sm:w-22 sm:h-22 rounded-full border-4 border-transparent border-b-accent-secondary animate-spin" style={{ animationDuration: '1.8s', animationDirection: 'reverse' }} />
+                {/* Inner ring */}
+                <div className="absolute inset-3 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-transparent border-t-cyan-400 animate-spin" style={{ animationDuration: '2.2s' }} />
+                {/* Center glow */}
+                <div className="absolute inset-0 m-auto w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-accent-primary shadow-[0_0_20px_rgba(139,92,246,0.8)] animate-pulse" />
+                {/* Outer glow effect */}
+                <div className="absolute -inset-4 rounded-full bg-accent-primary/10 blur-xl animate-pulse" style={{ animationDuration: '2s' }} />
               </div>
               <div className="text-center px-4">
                 <p className="text-lg sm:text-xl font-medium text-text-primary mb-2">Generating your visualization</p>
                 <p className="text-sm sm:text-base text-text-muted animate-pulse">Crafting beautiful UI components...</p>
               </div>
-              {/* Progress dots */}
+              {/* Progress dots with staggered animation */}
               <div className="flex gap-2">
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-accent-primary"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-accent-primary"
                     style={{
                       animation: 'pulse 1.5s ease-in-out infinite',
                       animationDelay: `${i * 0.2}s`,
@@ -1611,12 +1665,18 @@ body {
             className="absolute inset-0 overflow-auto py-4 sm:py-10 px-3 sm:px-4 flex flex-col items-center justify-center"
           >
           <div className="text-center max-w-[280px] xs:max-w-xs sm:max-w-md w-full">
-            {/* Animated gradient orb */}
+            {/* Enhanced animated gradient orb with better effects */}
             <div className="relative mb-3 sm:mb-6 mx-auto w-16 h-16 sm:w-32 sm:h-32">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-2xl animate-pulse" />
+              {/* Outer glow layers */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 blur-xl animate-pulse" style={{ animationDuration: '3s' }} />
+              <div className="absolute inset-2 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-2xl animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
+              {/* Main orb */}
               <div className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center border border-white/10 backdrop-blur-sm">
-                <span className="text-2xl sm:text-5xl animate-bounce">🎨</span>
+                <span className="text-2xl sm:text-5xl animate-bounce" style={{ animationDuration: '2s' }}>🎨</span>
               </div>
+              {/* Floating particles */}
+              <div className="absolute top-2 right-2 w-2 h-2 bg-accent-primary/60 rounded-full animate-ping" style={{ animationDuration: '2s' }} />
+              <div className="absolute bottom-3 left-2 w-1.5 h-1.5 bg-accent-secondary/60 rounded-full animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.3s' }} />
             </div>
             <h2 className="font-heading text-lg sm:text-2xl font-semibold mb-2 gradient-text">Visual AI Generator</h2>
             <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
@@ -1624,17 +1684,13 @@ body {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
               {QUICK_PROMPTS.slice(0, 8).map((item, index) => (
-                <motion.button
+                <QuickStartButton
                   key={item.key}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => onQuickGenerate?.(item.prompt)}
+                  item={item}
+                  index={index}
+                  onClick={onQuickGenerate!}
                   disabled={isLoading}
-                  className="p-3 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[64px] sm:min-h-[70px] flex flex-col justify-center gap-1"
-                >
-                  <p className="text-accent-primary text-xs sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
-                </motion.button>
+                />
               ))}
             </div>
             
@@ -1744,6 +1800,7 @@ body {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 20px) + 80px)' }}
         >
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}
@@ -1756,4 +1813,6 @@ body {
       </div>
     </div>
   );
-}
+});
+
+VisualRenderer.displayName = 'VisualRenderer';

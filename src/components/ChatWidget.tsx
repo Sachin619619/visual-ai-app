@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Bot, User, Zap, BarChart3, Calendar, LayoutGrid, Sparkles } from 'lucide-react';
 import { ChatMessage } from '../types';
@@ -11,7 +11,7 @@ const QUICK_ACTIONS = [
   { id: 'analyze', label: 'Analyze', icon: Zap, prompt: 'Analyze this data and suggest the best visualization' },
 ];
 
-export function ChatWidget() {
+export const ChatWidget = memo(function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -275,4 +275,6 @@ export function ChatWidget() {
       </AnimatePresence>
     </>
   );
-}
+});
+
+ChatWidget.displayName = 'ChatWidget';

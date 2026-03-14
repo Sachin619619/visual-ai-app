@@ -527,7 +527,8 @@ function AppContent() {
         overflow-y-auto overflow-x-hidden
       `} style={{ 
         paddingBottom: 'env(safe-area-inset-bottom, 20px)',
-        overscrollBehavior: 'contain'
+        overscrollBehavior: 'contain',
+        maxWidth: 'min(85vw, 300px)'
       }}>
         <InputPanel
           onGenerate={handleGenerate}
@@ -582,11 +583,12 @@ function AppContent() {
       {/* Keyboard Shortcuts Modal */}
       {showShortcuts && (
         <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={() => setShowShortcuts(false)}
         >
           <div 
             className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">

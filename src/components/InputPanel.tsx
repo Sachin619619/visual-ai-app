@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
@@ -229,7 +229,39 @@ const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ElementType }[]
   { id: 'glass', label: 'Glass', icon: Layout },
 ];
 
-export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange }: InputPanelProps) {
+// Memoized Template Button Component
+const TemplateButton = memo(({ template, onClick, isLoading, onClose }: {
+  template: { id: string; name: string; icon: React.ElementType; prompt: string };
+  onClick: (prompt: string) => void;
+  isLoading: boolean;
+  onClose?: () => void;
+}) => {
+  const Icon = template.icon;
+  const handleClick = () => {
+    onClick(template.prompt);
+    if (onClose && window.innerWidth < 1024) {
+      onClose();
+    }
+  };
+  return (
+    <motion.button
+      type="button"
+      onClick={handleClick}
+      disabled={isLoading}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-2.5 xs:p-2.5 rounded-lg xs:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] xs:min-h-[52px] sm:min-h-[56px] group w-[52px] xs:w-auto"
+      title={template.name}
+    >
+      <Icon className="w-5 h-5 xs:w-4.5 xs:h-4.5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+      <span className="text-[10px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
+    </motion.button>
+  );
+});
+
+TemplateButton.displayName = 'TemplateButton';
+
+export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [freeModel, setFreeModelState] = useState(() => {
@@ -927,4 +959,6 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       )}
     </motion.div>
   );
-}
+});
+
+InputPanel.displayName = 'InputPanel';

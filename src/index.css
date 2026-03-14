@@ -786,3 +786,81 @@ button,
     min-height: 48px;
   }
 }
+
+/* Fix modal scroll on mobile with safe area */
+@media (max-width: 640px) {
+  .modal-content {
+    max-height: 80vh;
+    margin: 16px;
+    width: calc(100% - 32px) !important;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  
+  /* Ensure modal content scrolls properly */
+  .modal-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(80vh - env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Fix very small screens (< 375px) sidebar */
+@media (max-width: 374px) {
+  .sidebar-small {
+    max-width: 90vw;
+    width: 90vw;
+  }
+  
+  /* Adjust toolbar for very small screens */
+  .toolbar-very-small {
+    padding-left: 50px;
+  }
+  
+  /* Adjust quick prompts grid */
+  .quick-prompts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  
+  /* Smaller padding for very small screens */
+  .p-4 {
+    padding: 12px;
+  }
+  
+  .gap-3 {
+    gap: 8px;
+  }
+}
+
+/* Fix FAB button overlap with chat widget */
+@media (max-width: 640px) {
+  .fab-bottom-offset {
+    bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  }
+}
+
+/* Better touch targets - minimum 44px for accessibility */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  .btn-primary,
+  .btn-secondary,
+  .icon-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 16px;
+  }
+  
+  /* Input touch targets */
+  .input-field,
+  .select-field {
+    min-height: 48px;
+  }
+  
+  /* Ensure toolbar buttons have adequate touch targets */
+  .toolbar-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px;
+  }
+}
