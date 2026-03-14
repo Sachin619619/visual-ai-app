@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel } from '../lib/ai-providers';
 
@@ -150,6 +150,73 @@ const TEMPLATES = [
     name: 'Settings',
     icon: Settings,
     prompt: 'Create a settings page with sections for account, privacy, notifications, and theme toggle with form inputs and switches'
+  },
+  // New templates
+  {
+    id: 'notification',
+    name: 'Notification',
+    icon: Bell,
+    prompt: 'Create a notification toast component with icon, message, close button, and slide-in animation'
+  },
+  {
+    id: 'widget',
+    name: 'Widget',
+    icon: Clock3,
+    prompt: 'Build a beautiful clock widget showing current time, date, and a modern digital clock design'
+  },
+  {
+    id: 'badge',
+    name: 'Badge',
+    icon: Tag,
+    prompt: 'Design a collection of badges and tags with different colors, sizes, and subtle hover effects'
+  },
+  {
+    id: 'comments',
+    name: 'Comments',
+    icon: MessageCircle,
+    prompt: 'Create a comments section with user avatars, timestamps, reply functionality, and nested replies'
+  },
+  {
+    id: 'upload',
+    name: 'File Upload',
+    icon: Upload,
+    prompt: 'Build a drag-and-drop file upload zone with progress bar, file preview, and upload complete state'
+  },
+  {
+    id: 'datepicker',
+    name: 'Date Picker',
+    icon: CalendarDays,
+    prompt: 'Create a stylish date picker calendar component with month navigation and date selection'
+  },
+  {
+    id: 'slider',
+    name: 'Slider',
+    icon: Sliders,
+    prompt: 'Design a range slider component with value labels, custom thumb styling, and smooth interactions'
+  },
+  {
+    id: 'progress',
+    name: 'Progress',
+    icon: Loader2,
+    prompt: 'Build various progress indicators including linear bars, circular spinners, and percentage display'
+  },
+  {
+    id: 'skeleton',
+    name: 'Skeleton',
+    icon: Loader2,
+    prompt: 'Create elegant skeleton loading placeholders with shimmer animation for content loading states'
+  },
+  {
+    id: 'alert',
+    name: 'Alert',
+    icon: BellOff,
+    prompt: 'Design alert banner components with different types (success, warning, error, info) and dismissible option'
+  },
+  {
+    id: 'files',
+    name: 'File Browser',
+    icon: FolderOpen,
+    prompt: 'Create a file browser interface with folder hierarchy, file icons, selection states, and grid/list view toggle'
   }
 ];
 

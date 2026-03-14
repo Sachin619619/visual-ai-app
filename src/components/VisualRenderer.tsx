@@ -46,6 +46,23 @@ const QUICK_PROMPTS = [
   { key: 'footer', prompt: 'Create a responsive website footer with company logo, navigation links, social media icons, newsletter signup, and copyright text', label: '🦶 Footer' },
   { key: 'error404', prompt: 'Design a creative 404 error page with illustration, "Page Not Found" message, helpful links, and a search box', label: '❌ 404 Page' },
   { key: 'settings', prompt: 'Create a settings page with sections for account, privacy, notifications, and theme toggle with form inputs and switches', label: '⚙️ Settings' },
+  // New quick prompts
+  { key: 'notification', prompt: 'Create a notification toast component with icon, message, close button, and slide-in animation', label: '🔔 Toast' },
+  { key: 'upload', prompt: 'Build a drag-and-drop file upload zone with progress bar, file preview, and upload complete state', label: '📤 Upload' },
+  { key: 'comments', prompt: 'Create a comments section with user avatars, timestamps, reply functionality, and nested replies', label: '💬 Comments' },
+  { key: 'slider', prompt: 'Design a range slider component with value labels, custom thumb styling, and smooth interactions', label: '🎚️ Slider' },
+  { key: 'progress', prompt: 'Build various progress indicators including linear bars, circular spinners, and percentage display', label: '⏳ Progress' },
+  { key: 'datepicker', prompt: 'Create a stylish date picker calendar component with month navigation and date selection', label: '📅 Date Picker' },
+  { key: 'skeleton', prompt: 'Create elegant skeleton loading placeholders with shimmer animation for content loading states', label: '✨ Skeleton' },
+  { key: 'alert', prompt: 'Design alert banner components with different types (success, warning, error, info) and dismissible option', label: '⚠️ Alerts' },
+  { key: 'widget', prompt: 'Build a beautiful clock widget showing current time, date, and a modern digital clock design', label: '🕐 Widget' },
+  { key: 'badge', prompt: 'Design a collection of badges and tags with different colors, sizes, and subtle hover effects', label: '🏷️ Badges' },
+  { key: 'files', prompt: 'Create a file browser interface with folder hierarchy, file icons, selection states, and grid/list view toggle', label: '📁 Files' },
+  { key: 'modal', prompt: 'Create a beautiful modal dialog with overlay, header, body content, and action buttons with smooth animations', label: '💭 Modal' },
+  { key: 'login', prompt: 'Create a modern login form with email, password fields, remember me checkbox, and login button', label: '🔑 Login' },
+  { key: 'cart', prompt: 'Create a shopping cart component showing product items with images, quantities, prices, and a checkout summary', label: '🛒 Cart' },
+  { key: 'product', prompt: 'Design a beautiful product card with image placeholder, product title, price, rating stars, and Add to Cart button', label: '🛍️ Product' },
+  { key: 'portfolio', prompt: 'Build a personal portfolio section with project cards, skills tags, about section, and contact information', label: '💼 Portfolio' },
 ];
 
 // Viewport size configurations
