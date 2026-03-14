@@ -81,10 +81,16 @@ const generateWithAI = async (
   
   const uiPrompt = `${enhancedPrompt}
 
-Generate a complete, single-file HTML UI component. 
-Include inline CSS and JavaScript. Make it dark-themed with modern styling.
-Use Tailwind CSS via CDN for styling.
-Ensure it's responsive and visually appealing.`;
+IMPORTANT: You must output ONLY raw HTML code. No explanations, no markdown, no text.
+
+Generate a complete, single-file HTML UI component with:
+1. Inline CSS in <style> tags
+2. Inline JavaScript in <script> tags
+3. Dark theme with modern styling
+4. Tailwind CSS via CDN
+5. Make it visually stunning and interactive
+
+Output ONLY the raw HTML code - nothing else.`;
 
   let response;
   
