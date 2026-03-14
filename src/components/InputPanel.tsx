@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt } from '../lib/ai-providers';
 
@@ -135,12 +135,22 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     const saved = localStorage.getItem('visual-ai-dark-mode');
     return saved !== null ? saved === 'true' : true;
   });
+  const [showAllTemplates, setShowAllTemplates] = useState(false);
+  const [autoEnhance, setAutoEnhance] = useState(() => {
+    const saved = localStorage.getItem('visual-ai-auto-enhance');
+    return saved === 'true';
+  });
 
   // Apply dark/light mode to document
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
     localStorage.setItem('visual-ai-dark-mode', String(darkMode));
   }, [darkMode]);
+
+  // Save auto-enhance preference
+  useEffect(() => {
+    localStorage.setItem('visual-ai-auto-enhance', String(autoEnhance));
+  }, [autoEnhance]);
 
   // Use external prompt if provided, otherwise use internal
   const prompt = externalPrompt !== undefined ? externalPrompt : internalPrompt;
@@ -174,10 +184,25 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     setApiKey('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim() && !isLoading) {
-      onGenerate(prompt, model);
+      // Auto-enhance if toggle is enabled
+      if (autoEnhance && !isEnhancing) {
+        setIsEnhancing(true);
+        try {
+          const apiKey = getApiKey();
+          const enhanced = await enhancePrompt(prompt, model, apiKey);
+          onGenerate(enhanced, model);
+        } catch (error) {
+          console.error('Auto-enhance failed:', error);
+          onGenerate(prompt, model);
+        } finally {
+          setIsEnhancing(false);
+        }
+      } else {
+        onGenerate(prompt, model);
+      }
       setPrompt('');
     }
   };
@@ -256,7 +281,16 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
 
         {/* Templates Gallery - horizontal scroll on mobile */}
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
-        <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start</label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-xs text-text-muted block font-medium">Quick Start</label>
+          <button
+            type="button"
+            onClick={() => setShowAllTemplates(true)}
+            className="text-xs text-accent-primary hover:text-accent-secondary transition-colors flex items-center gap-1"
+          >
+            View All <Grid3X3 className="w-3 h-3" />
+          </button>
+        </div>
         <div className="flex sm:grid sm:grid-cols-4 gap-2 overflow-x-auto sm:overflow-visible pb-2 -mb-2 sm:mb-0 sm:pb-0 scrollbar-hide">
           {TEMPLATES.slice(0, 8).map((template, index) => {
             const Icon = template.icon;
@@ -440,6 +474,25 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             <p className="text-xs text-text-muted mt-2">
               OpenAI, Anthropic, Gemini
             </p>
+            
+            {/* Auto-enhance toggle */}
+            <div className="mt-4 pt-4 border-t border-white/5">
+              <button
+                onClick={() => setAutoEnhance(!autoEnhance)}
+                className="w-full flex items-center justify-between p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Zap className={`w-4 h-4 ${autoEnhance ? 'text-yellow-400' : 'text-text-muted'}`} />
+                  <div className="text-left">
+                    <p className="text-sm text-text-primary">Auto-Enhance</p>
+                    <p className="text-xs text-text-muted">Automatically improve prompts</p>
+                  </div>
+                </div>
+                <div className={`w-10 h-6 rounded-full transition-colors relative ${autoEnhance ? 'bg-accent-primary' : 'bg-bg-primary'}`}>
+                  <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${autoEnhance ? 'translate-x-5' : 'translate-x-1'}`} />
+                </div>
+              </button>
+            </div>
           </motion.div>
         )}
       </div>
@@ -585,6 +638,48 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               <div className="flex items-center justify-between">
                 <span className="text-sm text-text-secondary">Toggle code preview</span>
                 <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + Shift + C</kbd>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* All Templates Modal */}
+      {showAllTemplates && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setShowAllTemplates(false)} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <h3 className="font-heading text-lg font-semibold">All Templates</h3>
+              <button
+                onClick={() => setShowAllTemplates(false)}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {TEMPLATES.map((template) => {
+                  const Icon = template.icon;
+                  return (
+                    <button
+                      key={template.id}
+                      onClick={() => {
+                        setPrompt(template.prompt);
+                        setShowAllTemplates(false);
+                      }}
+                      className="flex flex-col items-center gap-2 p-4 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
+                    >
+                      <Icon className="w-6 h-6 text-accent-primary" />
+                      <span className="text-xs text-text-secondary font-medium">{template.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </motion.div>
