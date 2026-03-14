@@ -52,7 +52,7 @@ export const chatWithAI = async (message: string): Promise<string> => {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemma-3-4b-it:free',
         messages: [
           { role: 'system', content: 'You are a helpful AI assistant that helps generate UI components. Keep responses short and friendly.' },
           { role: 'user', content: message }
@@ -96,7 +96,7 @@ Ensure it's responsive and visually appealing.`;
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: model === 'openrouter' ? 'gpt-4o-mini' : 'gpt-4o-mini',
+        model: model === 'openrouter' ? 'google/gemma-3-4b-it:free' : 'google/gemma-3-4b-it:free',
         messages: [
           { role: 'system', content: 'You are an expert UI designer. Generate beautiful, modern HTML/CSS/JS UIs.' },
           { role: 'user', content: uiPrompt }
@@ -170,7 +170,7 @@ Keep it concise but detailed.`;
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'google/gemma-3-4b-it:free',
           messages: [
             { role: 'user', content: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }
           ],
