@@ -9,6 +9,29 @@ export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }>
   local: { name: 'Local Model', icon: '💻' },
 };
 
+// Free models available via OpenRouter
+export interface FreeModel {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+export const FREE_MODELS: FreeModel[] = [
+  { id: 'qwen/qwen3-coder:free', name: 'Qwen Coder', icon: '🧑‍💻' },
+  { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3', icon: '🌟' },
+  { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek', icon: '💡' },
+  { id: 'microsoft/phi-4-mini:free', name: 'Phi 4 Mini', icon: '⚡' },
+];
+
+// Global model selection for OpenRouter free models
+let selectedFreeModel = FREE_MODELS[0].id;
+
+export const setFreeModel = (modelId: string) => {
+  selectedFreeModel = modelId;
+};
+
+export const getFreeModel = () => selectedFreeModel;
+
 // Global API key storage
 let apiKey = '';
 
@@ -52,7 +75,7 @@ export const chatWithAI = async (message: string): Promise<string> => {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-4b-it:free',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: 'You are a helpful AI assistant that helps generate UI components. Keep responses short and friendly.' },
           { role: 'user', content: message }
@@ -106,7 +129,7 @@ Output ONLY the raw HTML code - nothing else.`;
         'X-Title': 'Visual AI'
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-4b-it:free',
+        model: selectedFreeModel,
         messages: [
           { role: 'system', content: 'You are an expert UI designer. Generate beautiful, modern HTML/CSS/JS UIs.' },
           { role: 'user', content: uiPrompt }
@@ -203,7 +226,7 @@ Keep it concise but detailed.`;
           'X-Title': 'Visual AI'
         },
         body: JSON.stringify({
-          model: 'google/gemma-3-4b-it:free',
+          model: selectedFreeModel,
           messages: [
             { role: 'user', content: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }
           ],

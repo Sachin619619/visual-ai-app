@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
-import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt } from '../lib/ai-providers';
+import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel } from '../lib/ai-providers';
 
 interface InputPanelProps {
   onGenerate: (prompt: string, model: ModelProvider) => void;
@@ -141,6 +141,11 @@ const STYLE_FRAMES: { id: StyleFrame; label: string; icon: React.ElementType }[]
 export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
+  const [freeModel, setFreeModelState] = useState(() => {
+    const saved = localStorage.getItem('visual-ai-free-model');
+    return saved || 'google/gemma-3-4b-it:free';
+  });
+  const [showFreeModels, setShowFreeModels] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
@@ -186,7 +191,19 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     if (saved) {
       setApiKey(saved);
     }
+    
+    // Load saved free model
+    const savedFreeModel = localStorage.getItem('visual-ai-free-model');
+    if (savedFreeModel) {
+      setFreeModel(savedFreeModel);
+    }
   }, []);
+
+  // Save free model selection
+  useEffect(() => {
+    localStorage.setItem('visual-ai-free-model', freeModel);
+    setFreeModel(freeModel);
+  }, [freeModel]);
 
   const handleSaveApiKey = () => {
     if (apiKeyInput.trim()) {
@@ -387,6 +404,48 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               ))}
             </select>
           </div>
+          {/* Free Model Selector - shown when OpenRouter is selected */}
+          {model === 'openrouter' && (
+            <div className="mt-2 relative">
+              <button
+                type="button"
+                onClick={() => setShowFreeModels(!showFreeModels)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-bg-tertiary border border-white/10 text-sm hover:border-accent-primary/50 transition-colors"
+              >
+                <span className="text-text-secondary">
+                  {FREE_MODELS.find(m => m.id === freeModel)?.icon} {FREE_MODELS.find(m => m.id === freeModel)?.name}
+                </span>
+                <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${showFreeModels ? 'rotate-180' : ''}`} />
+              </button>
+              {/* Free Models Dropdown */}
+              {showFreeModels && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute top-full left-0 right-0 mt-1 p-1 bg-bg-secondary border border-white/10 rounded-lg shadow-xl z-20 max-h-48 overflow-y-auto"
+                >
+                  {FREE_MODELS.map((fm) => (
+                    <button
+                      key={fm.id}
+                      type="button"
+                      onClick={() => {
+                        setFreeModelState(fm.id);
+                        setShowFreeModels(false);
+                      }}
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        freeModel === fm.id
+                          ? 'bg-accent-primary/20 text-accent-primary'
+                          : 'text-text-secondary hover:bg-white/5 hover:text-text-primary'
+                      }`}
+                    >
+                      <span>{fm.icon}</span>
+                      <span>{fm.name}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+          )}
         </div>
 
         <div>
