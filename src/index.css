@@ -504,13 +504,6 @@ button,
   }
 }
 
-/* Better mobile viewport handling */
-@supports (height: 100dvh) {
-  .h-screen {
-    height: 100dvh;
-  }
-}
-
 /* Enhanced mobile optimizations */
 @media (max-width: 768px) {
   /* Better sidebar overlay */
@@ -528,6 +521,18 @@ button,
   .sidebar-scroll {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+  }
+  
+  /* Better toolbar overflow on mobile */
+  .toolbar-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .toolbar-scroll::-webkit-scrollbar {
+    display: none;
   }
 }
 

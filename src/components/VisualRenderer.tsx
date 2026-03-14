@@ -685,13 +685,13 @@ body {
   return (
     <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Toolbar Header - proper sticky header, no absolute positioning, no wrapping */}
-      <div className="flex-none min-h-[56px] sm:h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm px-1" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="flex-none min-h-[56px] sm:h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm px-1 overflow-x-auto scrollbar-hide" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Spacer on mobile/tablet to avoid overlapping the fixed hamburger button (w-14 = 56px) */}
         <div className="w-14 flex-shrink-0 lg:hidden" />
         {/* Separator after spacer on mobile */}
         <div className="w-px h-6 bg-white/8 flex-shrink-0 lg:hidden" />
         {/* Scrollable toolbar - right-aligned, no wrapping */}
-        <div className="flex-1 flex items-center overflow-x-auto scrollbar-hide min-w-0 px-1 sm:px-3 gap-0.5 sm:gap-1">
+        <div className="flex-1 flex items-center overflow-x-visible scrollbar-hide min-w-0 px-1 sm:px-3 gap-0.5 sm:gap-1">
           {html && (
             <div className="flex items-center gap-1 sm:gap-1.5 ml-auto min-w-max">
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -1561,7 +1561,7 @@ body {
             <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
               {QUICK_PROMPTS.slice(0, 8).map((item, index) => (
                 <motion.button
                   key={item.key}
@@ -1570,7 +1570,7 @@ body {
                   transition={{ delay: index * 0.05 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-3 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[56px] sm:min-h-[70px] flex flex-col justify-center gap-1"
+                  className="p-3 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[64px] sm:min-h-[70px] flex flex-col justify-center gap-1"
                 >
                   <p className="text-accent-primary text-xs sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
                 </motion.button>

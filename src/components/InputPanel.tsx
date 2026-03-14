@@ -390,7 +390,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     <motion.div 
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-[85vw] max-w-[280px] xs:max-w-[300px] sm:max-w-[320px] sm:w-72 md:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
+      className="w-[85vw] max-w-[300px] sm:max-w-[320px] md:w-72 lg:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
     >
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain sidebar-scroll pb-20" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -488,7 +488,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="e.g., Show me a line chart of sales data..."
-              className="input-field h-24 sm:h-40 resize-none text-sm"
+              className="input-field h-28 sm:h-40 resize-none text-base"
               style={{ fontSize: '16px' }}
               disabled={isLoading || isEnhancing}
             />

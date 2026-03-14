@@ -433,12 +433,12 @@ function AppContent() {
 
   if (siteAuth === null) {
     return (
-      <div className="min-h-[100dvh] w-full flex items-center justify-center flex-col gap-5 p-5 pt-20 relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 80px)' }}>
+      <div className="min-h-[100dvh] w-full flex items-center justify-center flex-col gap-5 p-5 pt-20 relative overflow-x-hidden">
         {/* Mobile menu button - always visible on login screen */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="fixed top-3 left-3 z-50 p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-          style={{ top: 'calc(env(safe-area-inset-top, 12px) + 8px)', left: 'env(safe-area-inset-left, 12px)' }}
+          style={{ top: 'calc(env(safe-area-inset-top, 12px) + 8px)', left: 'calc(env(safe-area-inset-left, 12px) + 8px)' }}
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
         >
           <Menu className="w-6 h-6 text-white" />
@@ -468,7 +468,13 @@ function AppContent() {
 
 
   return (
-    <div className="h-[100dvh] w-full flex overflow-hidden bg-bg-primary relative" style={{ paddingTop: 'env(safe-area-inset-top)', paddingRight: 'env(safe-area-inset-right)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}>
+    <div className="h-[100dvh] w-full flex overflow-hidden bg-bg-primary relative" style={{ 
+        paddingTop: 'env(safe-area-inset-top, 0px)', 
+        paddingRight: 'env(safe-area-inset-right, 0px)', 
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)', 
+        paddingLeft: 'env(safe-area-inset-left, 0px)',
+        height: '100dvh'
+      }}>
       {/* Ambient background gradient */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent-primary/10 rounded-full blur-3xl" />
@@ -497,13 +503,13 @@ function AppContent() {
       <div className={`
         fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:relative lg:translate-x-0 lg:w-80 lg:flex-shrink-0
+        lg:relative lg:translate-x-0 lg:w-72 lg:flex-shrink-0
         bg-bg-secondary border-r border-white/5
-        w-[85vw] max-w-[300px] xs:max-w-[320px] sm:max-w-[360px]
+        w-[85vw] max-w-[300px] sm:max-w-[320px]
         pt-14 lg:pt-0
         overflow-y-auto overflow-x-hidden
       `} style={{ 
-        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingBottom: 'env(safe-area-inset-bottom, 20px)',
         overscrollBehavior: 'contain'
       }}>
         <InputPanel
