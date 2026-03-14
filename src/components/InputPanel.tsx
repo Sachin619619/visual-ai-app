@@ -267,47 +267,47 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     <motion.div 
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-[90vw] max-w-[300px] xs:max-w-[320px] sm:max-w-[340px] sm:w-80 sm:max-w-none h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
+      className="w-[85vw] max-w-[280px] xs:max-w-[300px] sm:max-w-[320px] sm:w-72 md:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
     >
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
       {/* Header */}
-      <div className="p-3 sm:p-5 border-b border-white/5 sticky top-0 bg-bg-secondary z-10">
+      <div className="p-2.5 sm:p-4 border-b border-white/5 sticky top-0 bg-bg-secondary z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg shadow-accent-primary/25">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg shadow-accent-primary/25">
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
             <div>
-              <h1 className="font-heading text-base sm:text-lg font-semibold gradient-text">Visual AI</h1>
-              <p className="text-xs text-text-muted hidden xs:block">Generate stunning UIs</p>
+              <h1 className="font-heading text-sm sm:text-base font-semibold gradient-text">Visual AI</h1>
+              <p className="text-[10px] sm:text-xs text-text-muted hidden xs:block">Generate stunning UIs</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             <button
               type="button"
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-text-muted" />}
+              {darkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />}
             </button>
             <button
               type="button"
               onClick={() => setShowShortcuts(true)}
-              className="p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
               title="Keyboard Shortcuts"
             >
-              <Keyboard className="w-5 h-5 text-text-muted" />
+              <Keyboard className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
             </button>
             {onClose && (
               <button
                 type="button"
                 onClick={onClose}
-                className="lg:hidden p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="lg:hidden p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
                 aria-label="Close sidebar"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6 text-text-secondary" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
               </button>
             )}
           </div>
@@ -315,15 +315,15 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       </div>
 
         {/* Templates Gallery - horizontal scroll on mobile */}
-      <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
-        <div className="flex items-center justify-between mb-3">
-          <label className="text-xs text-text-muted block font-medium">Quick Start</label>
+      <div className="px-2.5 sm:px-4 py-2.5 sm:py-3.5 border-b border-white/5">
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <label className="text-[10px] sm:text-xs text-text-muted block font-medium">Quick Start</label>
           <button
             type="button"
             onClick={() => setShowAllTemplates(true)}
-            className="text-xs text-accent-primary hover:text-accent-secondary transition-colors flex items-center gap-1"
+            className="text-[10px] sm:text-xs text-accent-primary hover:text-accent-secondary transition-colors flex items-center gap-1"
           >
-            View All <Grid3X3 className="w-3 h-3" />
+            View All <Grid3X3 className="w-2.5 h-2.5" />
           </button>
         </div>
         <div className="flex xs:grid xs:grid-cols-4 gap-1 overflow-x-auto xs:overflow-visible pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
@@ -340,11 +340,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-1.5 xs:p-2 rounded-lg sm:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[44px] xs:min-h-[52px] sm:min-h-[60px] group w-[48px] xs:w-auto"
+                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-1.5 rounded-lg sm:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[44px] xs:min-h-[48px] sm:min-h-[52px] group w-[44px] xs:w-auto"
                 title={template.name}
               >
-                <Icon className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[8px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
+                <Icon className="w-3.5 h-3.5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[8px] sm:text-[9px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
               </motion.button>
             );
           })}
@@ -352,36 +352,36 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="p-3 sm:p-5 flex-1 flex flex-col gap-4 sm:gap-5">
+      <form onSubmit={handleSubmit} className="p-2.5 sm:p-4 flex-1 flex flex-col gap-3 sm:gap-4">
         <div>
-          <label className="text-sm text-text-secondary mb-2 block font-medium">Describe what you want</label>
+          <label className="text-xs sm:text-sm text-text-secondary mb-1.5 sm:mb-2 block font-medium">Describe what you want</label>
           <div className="relative">
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="e.g., Show me a line chart of sales data..."
-              className="input-field h-28 sm:h-44 resize-none text-sm pr-12"
+              className="input-field h-24 sm:h-40 resize-none text-xs sm:text-sm pr-10"
               disabled={isLoading || isEnhancing}
             />
             <button
               type="button"
               onClick={handleEnhancePrompt}
               disabled={!prompt.trim() || isEnhancing || isLoading}
-              className="absolute right-2 top-2 p-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute right-1.5 top-1.5 p-1.5 sm:p-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               title="Enhance prompt with AI"
             >
               {isEnhancing ? (
-                <div className="w-4 h-4 border-2 border-accent-primary/30 border-t-accent-primary rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 border-2 border-accent-primary/30 border-t-accent-primary rounded-full animate-spin" />
               ) : (
-                <Wand2 className="w-4 h-4" />
+                <Wand2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               )}
             </button>
           </div>
-          <p className="text-xs text-text-muted mt-1">✨ Use the wand to enhance your prompt</p>
+          <p className="text-[10px] sm:text-xs text-text-muted mt-1">✨ Use the wand to enhance your prompt</p>
           {/* Draft indicator - shows when prompt has content (draft auto-saved) */}
           {prompt.trim() && (
-            <p className="text-[10px] text-cyan-400 mt-1 flex items-center gap-1">
+            <p className="text-[9px] sm:text-[10px] text-cyan-400 mt-1 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
               Draft auto-saved
             </p>
@@ -389,12 +389,12 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         </div>
 
         <div>
-          <label className="text-sm text-text-secondary mb-2 block font-medium">AI Model</label>
+          <label className="text-xs sm:text-sm text-text-secondary mb-1.5 sm:mb-2 block font-medium">AI Model</label>
           <div className="relative">
             <select
               value={model}
               onChange={(e) => setModel(e.target.value as ModelProvider)}
-              className="select-field w-full text-sm"
+              className="select-field w-full text-xs sm:text-sm"
               disabled={isLoading}
             >
               {Object.entries(AI_PROVIDERS).map(([key, { name, icon }]) => (
@@ -449,8 +449,8 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         </div>
 
         <div>
-          <label className="text-sm text-text-secondary mb-2 block font-medium">Style Frame</label>
-          <div className="grid grid-cols-5 gap-2">
+          <label className="text-xs sm:text-sm text-text-secondary mb-1.5 sm:mb-2 block font-medium">Style Frame</label>
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
             {STYLE_FRAMES.map((frame) => {
               const Icon = frame.icon;
               return (
@@ -459,15 +459,15 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   type="button"
                   onClick={() => onStyleFrameChange?.(frame.id)}
                   disabled={isLoading}
-                  className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all min-h-[52px] ${
+                  className={`flex flex-col items-center gap-0.5 sm:gap-1 p-1.5 sm:p-2 rounded-lg transition-all min-h-[44px] sm:min-h-[48px] ${
                     styleFrame === frame.id
                       ? 'bg-accent-primary/20 text-accent-primary border border-accent-primary/50'
                       : 'bg-bg-tertiary text-text-secondary hover:bg-white/10 border border-transparent'
                   }`}
                   title={frame.label}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-[10px]">{frame.label}</span>
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="text-[9px] sm:text-[10px]">{frame.label}</span>
                 </button>
               );
             })}
@@ -477,23 +477,23 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
-          className="btn-primary w-full flex items-center justify-center gap-2 min-h-[52px] sm:min-h-[52px] text-sm sm:text-base relative overflow-hidden group"
+          className="btn-primary w-full flex items-center justify-center gap-1.5 sm:gap-2 min-h-[46px] sm:min-h-[48px] text-xs sm:text-sm relative overflow-hidden group"
         >
           {isLoading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               <span className="hidden sm:inline">Generating...</span>
               <span className="sm:hidden">Generating</span>
             </>
           ) : (
             <>
-              <Send className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+              <Send className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-0.5 transition-transform" />
               <span>Generate</span>
             </>
           )}
         </button>
 
-        <p className="text-xs text-text-muted text-center">
+        <p className="text-[10px] sm:text-xs text-text-muted text-center">
           <span className="hidden sm:inline">Press ⌘ + Enter to submit</span>
           <span className="sm:hidden">⌘ + ↵ to submit</span>
         </p>
@@ -504,23 +504,23 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       <div className="border-t border-white/5 flex-shrink-0">
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="w-full p-3 sm:p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="w-full p-2.5 sm:p-3.5 flex items-center justify-between text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors"
         >
           <div className="flex items-center gap-2">
-            <Key className="w-4 h-4" />
+            <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span className="hidden sm:inline">API Settings</span>
             <span className="sm:hidden">Settings</span>
           </div>
-          <ChevronDown className={`w-4 h-4 transition-transform ${showSettings ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${showSettings ? 'rotate-180' : ''}`} />
         </button>
         
         {showSettings && (
           <motion.div
             initial={{ height: 0 }}
             animate={{ height: 'auto' }}
-            className="px-3 sm:px-4 pb-3 sm:pb-4"
+            className="px-2.5 sm:px-4 pb-2.5 sm:pb-4"
           >
-            <p className="text-xs text-text-muted mb-2 sm:mb-3">
+            <p className="text-[10px] sm:text-xs text-text-muted mb-2 sm:mb-3">
               Add your API key to enable real AI generation.
             </p>
             <div className="flex gap-2">
@@ -530,50 +530,50 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
                   placeholder="sk-..."
-                  className="input-field w-full pr-10 text-sm"
+                  className="input-field w-full pr-8 text-xs sm:text-sm py-2 sm:py-2.5"
                 />
                 <button
                   type="button"
                   onClick={() => setShowApiKey(!showApiKey)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
                 >
-                  {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showApiKey ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                 </button>
               </div>
             </div>
             <div className="flex gap-2 mt-2">
               <button
                 onClick={handleSaveApiKey}
-                className="btn-primary flex-1 text-xs sm:text-sm py-2 sm:py-2.5 min-h-[40px] sm:min-h-[44px]"
+                className="btn-primary flex-1 text-[10px] sm:text-xs py-2 sm:py-2.5 min-h-[36px] sm:min-h-[40px]"
               >
                 Save
               </button>
               <button
                 onClick={handleClearApiKey}
-                className="px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[40px] sm:min-h-[44px]"
+                className="px-2 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[36px] sm:min-h-[40px]"
               >
                 Clear
               </button>
             </div>
-            <p className="text-xs text-text-muted mt-2">
+            <p className="text-[10px] sm:text-xs text-text-muted mt-2">
               OpenAI, Anthropic, Gemini
             </p>
             
             {/* Auto-enhance toggle */}
-            <div className="mt-4 pt-4 border-t border-white/5">
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5">
               <button
                 onClick={() => setAutoEnhance(!autoEnhance)}
-                className="w-full flex items-center justify-between p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  <Zap className={`w-4 h-4 ${autoEnhance ? 'text-yellow-400' : 'text-text-muted'}`} />
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <Zap className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${autoEnhance ? 'text-yellow-400' : 'text-text-muted'}`} />
                   <div className="text-left">
-                    <p className="text-sm text-text-primary">Auto-Enhance</p>
-                    <p className="text-xs text-text-muted">Automatically improve prompts</p>
+                    <p className="text-xs sm:text-sm text-text-primary">Auto-Enhance</p>
+                    <p className="text-[10px] sm:text-xs text-text-muted">Automatically improve prompts</p>
                   </div>
                 </div>
-                <div className={`w-10 h-6 rounded-full transition-colors relative ${autoEnhance ? 'bg-accent-primary' : 'bg-bg-primary'}`}>
-                  <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${autoEnhance ? 'translate-x-5' : 'translate-x-1'}`} />
+                <div className={`w-9 h-5 sm:w-10 sm:h-6 rounded-full transition-colors relative ${autoEnhance ? 'bg-accent-primary' : 'bg-bg-primary'}`}>
+                  <div className={`absolute top-0.5 w-4 h-4 sm:top-1 sm:w-4 sm:h-4 rounded-full bg-white transition-transform ${autoEnhance ? 'translate-x-4 sm:translate-x-5' : 'translate-x-0.5 sm:translate-x-1'}`} />
                 </div>
               </button>
             </div>
@@ -585,48 +585,48 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       <div className="border-t border-white/5">
         <button
           onClick={() => setShowHistory(!showHistory)}
-          className="w-full p-3 sm:p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="w-full p-2.5 sm:p-3.5 flex items-center justify-between text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors"
         >
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span className="hidden sm:inline">Recent prompts</span>
             <span className="sm:hidden">History</span>
           </div>
-          <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
         </button>
         
         {showHistory && (
           <motion.div
             initial={{ height: 0 }}
             animate={{ height: 'auto' }}
-            className="px-3 sm:px-4 pb-3 sm:pb-4"
+            className="px-2.5 sm:px-4 pb-2.5 sm:pb-4"
           >
             {/* Search Input */}
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <div className="relative mb-2.5 sm:mb-3">
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-muted" />
               <input
                 type="text"
                 value={historySearch}
                 onChange={(e) => setHistorySearch(e.target.value)}
                 placeholder="Search history..."
-                className="input-field w-full pl-10 text-xs py-2"
+                className="input-field w-full pl-8 sm:pl-10 text-[10px] sm:text-xs py-2"
               />
             </div>
             
             {history.length === 0 ? (
-              <p className="text-xs text-text-muted text-center py-3 sm:py-4">No history yet</p>
+              <p className="text-[10px] sm:text-xs text-text-muted text-center py-2.5 sm:py-3.5">No history yet</p>
             ) : (
-              <div className="flex flex-col gap-2 max-h-40 sm:max-h-48 overflow-y-auto">
+              <div className="flex flex-col gap-1.5 sm:gap-2 max-h-32 sm:max-h-40 overflow-y-auto">
                 {/* Filter toggle */}
                 <button
                   onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs transition-colors ${
+                  className={`w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg text-[10px] sm:text-xs transition-colors ${
                     showFavoritesOnly 
                       ? 'bg-yellow-500/20 text-yellow-400' 
                       : 'bg-bg-tertiary text-text-muted hover:text-text-secondary'
                   }`}
                 >
-                  <Star className={`w-3.5 h-3.5 ${showFavoritesOnly ? 'fill-yellow-400' : ''}`} />
+                  <Star className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${showFavoritesOnly ? 'fill-yellow-400' : ''}`} />
                   {showFavoritesOnly ? 'Showing Favorites' : 'Show Favorites Only'}
                 </button>
                 
@@ -637,7 +637,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                         onClearHistory?.();
                       }
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                    className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg text-[10px] sm:text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 transition-colors"
                   >
                     Clear All History
                   </button>
@@ -649,27 +649,27 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                     return null;
                   }
                   return (
-                  <div key={item.id} className="flex items-start gap-2">
+                  <div key={item.id} className="flex items-start gap-1.5 sm:gap-2">
                     <button
                       onClick={() => setPrompt(item.prompt)}
-                      className="flex-1 text-left p-2.5 sm:p-3 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-xs"
+                      className="flex-1 text-left p-2 sm:p-2.5 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-[10px] sm:text-xs"
                     >
                       <p className="text-text-primary line-clamp-2">{item.prompt}</p>
-                      <p className="text-text-muted mt-1">{AI_PROVIDERS[item.model].icon} {item.model}</p>
+                      <p className="text-text-muted mt-1 text-[9px] sm:text-[10px]">{AI_PROVIDERS[item.model].icon} {item.model}</p>
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onToggleFavorite?.(item.id);
                       }}
-                      className={`p-2 rounded-lg transition-colors min-w-[36px] flex items-center justify-center ${
+                      className={`p-1.5 sm:p-2 rounded-lg transition-colors min-w-[32px] sm:min-w-[36px] flex items-center justify-center ${
                         item.isFavorite 
                           ? 'text-yellow-400 hover:text-yellow-300' 
                           : 'text-text-muted hover:text-yellow-400'
                       }`}
                       title={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
                     >
-                      <Star className={`w-4 h-4 ${item.isFavorite ? 'fill-yellow-400' : ''}`} />
+                      <Star className={`w-3.5 h-3.5 ${item.isFavorite ? 'fill-yellow-400' : ''}`} />
                     </button>
                   </div>
                   );
