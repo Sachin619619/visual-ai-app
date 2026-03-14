@@ -648,6 +648,8 @@ function AppContent() {
           onClearHistory={handleClearHistory}
           styleFrame={styleFrame}
           onStyleFrameChange={setStyleFrame}
+          onRefine={(refinement) => handleRefinePrompt('', refinement)}
+          contextHtml={html}
         />
       </div>
 

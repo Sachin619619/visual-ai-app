@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
+import { QuickRefine, PromptTemplates } from './QuickRefine';
 
 interface InputPanelProps {
   onGenerate: (prompt: string, model: ModelProvider) => void;
+  onRefine?: (refinement: string) => void;
   isLoading: boolean;
   history: PromptHistory[];
   onClose?: () => void;
@@ -21,6 +23,7 @@ interface InputPanelProps {
   onExport?: () => void;
   onSaveFavorite?: (name?: string) => void;
   generationStats?: { time: number; model: string } | null;
+  contextHtml?: string;
 }
 
 // Template definitions
@@ -430,7 +433,7 @@ const TemplateButton = memo(({ template, onClick, isLoading, onClose }: {
 
 TemplateButton.displayName = 'TemplateButton';
 
-export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onSaveFavorite, generationStats }: InputPanelProps) {
+export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [freeModel, setFreeModelState] = useState(() => {
@@ -701,13 +704,26 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
       <div className="px-2.5 sm:px-4 py-2.5 sm:py-3.5 border-b border-white/5">
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <label className="text-[10px] sm:text-xs text-text-muted block font-medium">Quick Start</label>
-          <button
-            type="button"
-            onClick={() => setShowAllTemplates(true)}
-            className="text-[10px] sm:text-xs text-accent-primary hover:text-accent-secondary transition-colors flex items-center gap-1"
-          >
-            View All <Grid3X3 className="w-2.5 h-2.5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {onRefine && (
+              <PromptTemplates
+                onSelect={(template) => {
+                  setPrompt(template);
+                  if (onClose && window.innerWidth < 1024) {
+                    onClose();
+                  }
+                }}
+                isLoading={isLoading}
+              />
+            )}
+            <button
+              type="button"
+              onClick={() => setShowAllTemplates(true)}
+              className="text-[10px] sm:text-xs text-accent-primary hover:text-accent-secondary transition-colors flex items-center gap-1"
+            >
+              View All <Grid3X3 className="w-2.5 h-2.5" />
+            </button>
+          </div>
         </div>
         <div className="flex gap-2 overflow-x-auto xs:overflow-x-visible overflow-y-hidden pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
           {TEMPLATES.slice(0, 4).map((template, index) => {
@@ -737,6 +753,18 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
           })}
         </div>
       </div>
+
+      {/* Quick Refine - only show when there's context HTML */}
+      {onRefine && contextHtml && (
+        <QuickRefine
+          onRefine={(refinement) => {
+            if (onRefine) {
+              onRefine(refinement);
+            }
+          }}
+          isLoading={isLoading}
+        />
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="p-2.5 sm:p-4 flex-1 flex flex-col gap-3 sm:gap-4">
