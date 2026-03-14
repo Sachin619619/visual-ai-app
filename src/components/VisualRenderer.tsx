@@ -1946,7 +1946,7 @@ body {
           animate={{ scale: 1 }}
           className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden"
           style={{ 
-            bottom: 'calc(env(safe-area-inset-bottom, 20px) + 85px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 20px) + 90px)',
             right: '16px'
           }}
         >
