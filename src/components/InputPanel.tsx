@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt } from '../lib/ai-providers';
 
@@ -108,6 +108,24 @@ const TEMPLATES = [
     name: 'Tabs & Accordion',
     icon: ChevronDownCircle,
     prompt: 'Create an interactive tabs component with multiple tabs and an accordion FAQ section with expand/collapse'
+  },
+  {
+    id: 'product',
+    name: 'Product Card',
+    icon: ShoppingBag,
+    prompt: 'Design a beautiful product card with image placeholder, product title, price, rating stars, and Add to Cart button with hover effects'
+  },
+  {
+    id: 'cart',
+    name: 'Shopping Cart',
+    icon: ShoppingCart,
+    prompt: 'Create a shopping cart component showing product items with images, quantities, prices, and a checkout summary with total'
+  },
+  {
+    id: 'portfolio',
+    name: 'Portfolio',
+    icon: Briefcase,
+    prompt: 'Build a personal portfolio section with project cards, skills tags, about section, and contact information'
   }
 ];
 

@@ -88,7 +88,31 @@ Ensure it's responsive and visually appealing.`;
 
   let response;
   
-  if (model === 'openai' || model === 'openrouter') {
+  if (model === 'openrouter') {
+    // Use OpenRouter API - allows browser calls
+    response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://visual-ai-app.vercel.app',
+        'X-Title': 'Visual AI'
+      },
+      body: JSON.stringify({
+        model: 'google/gemma-3-4b-it:free',
+        messages: [
+          { role: 'system', content: 'You are an expert UI designer. Generate beautiful, modern HTML/CSS/JS UIs.' },
+          { role: 'user', content: uiPrompt }
+        ],
+        temperature: 0.7
+      })
+    });
+    
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || uiPrompt;
+  }
+  
+  if (model === 'openai') {
     response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -96,7 +120,7 @@ Ensure it's responsive and visually appealing.`;
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: model === 'openrouter' ? 'google/gemma-3-4b-it:free' : 'google/gemma-3-4b-it:free',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: 'You are an expert UI designer. Generate beautiful, modern HTML/CSS/JS UIs.' },
           { role: 'user', content: uiPrompt }
@@ -162,7 +186,29 @@ Focus on:
 Keep it concise but detailed.`;
   
   try {
-    if (model === 'openai' || model === 'openrouter') {
+    if (model === 'openrouter') {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': 'https://visual-ai-app.vercel.app',
+          'X-Title': 'Visual AI'
+        },
+        body: JSON.stringify({
+          model: 'google/gemma-3-4b-it:free',
+          messages: [
+            { role: 'user', content: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }
+          ],
+          temperature: 0.7
+        })
+      });
+      
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || prompt;
+    }
+    
+    if (model === 'openai') {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -170,7 +216,7 @@ Keep it concise but detailed.`;
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'google/gemma-3-4b-it:free',
+          model: 'gpt-4o-mini',
           messages: [
             { role: 'user', content: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }
           ],
