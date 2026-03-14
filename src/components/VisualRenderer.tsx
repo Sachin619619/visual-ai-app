@@ -216,6 +216,11 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
     { keys: ['⌘', 'Z'], description: 'Undo' },
     { keys: ['⌘', 'Shift', 'Z'], description: 'Redo' },
     { keys: ['⌘', 'Shift', 'C'], description: 'Toggle code view' },
+    { keys: ['⌘', 'S'], description: 'Share design' },
+    { keys: ['⌘', 'E'], description: 'Export HTML' },
+    { keys: ['⌘', 'P'], description: 'Export as PNG' },
+    { keys: ['⌘', 'B'], description: 'Toggle theme' },
+    { keys: ['⌘', '/'], description: 'Show shortcuts' },
     { keys: ['Esc'], description: 'Exit fullscreen' },
   ];
 

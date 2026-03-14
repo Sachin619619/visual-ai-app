@@ -333,11 +333,26 @@ function AppContent() {
         e.preventDefault();
         handleRedo();
       }
+      // Cmd/Ctrl + S for share
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleShare();
+      }
+      // Cmd/Ctrl + E for export
+      if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+        e.preventDefault();
+        handleExport();
+      }
+      // Cmd/Ctrl + B for toggle theme
+      if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+        e.preventDefault();
+        handleToggleTheme();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate]);
+  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme]);
 
   if (siteAuth === null) {
     return (

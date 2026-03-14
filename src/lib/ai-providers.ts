@@ -42,7 +42,16 @@ export const FREE_MODELS: FreeModel[] = [
   { id: 'qwen/qwen3-8b:free', name: 'Qwen 3 8B', icon: '🔍' },
   { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3 4B', icon: '💎' },
   { id: 'deepseek/deepseek-coder-v2:free', name: 'DeepSeek Coder V2', icon: '💻' },
-  { id: 'anthropic/claude-3-5-haiku:free', name: 'Claude 3.5 Haiku', icon: '🎯' },
+  { id: 'anthropic/claude-3.5-haiku:free', name: 'Claude 3.5 Haiku', icon: '🎯' },
+  // Newer models added
+  { id: 'google/gemini-2.5-pro:free', name: 'Gemini 2.5 Pro', icon: '✨' },
+  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1', icon: '🧠' },
+  { id: 'qwen/qwen3-32b:free', name: 'Qwen 3 32B', icon: '🔢' },
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B', icon: '🦙' },
+  { id: 'xai/grok-3-beta:free', name: 'Grok 3 Beta', icon: '🚀' },
+  { id: 'Perplexity/llama-3.1-sonar-small-128k-online:free', name: 'Llama 3.1 Online', icon: '🌐' },
+  { id: '01-ai/yi-1.5-34b-chat:free', name: 'Yi 1.5 34B', icon: '☀️' },
+  { id: 'cohere/command-a-03-2025:free', name: 'Command A', icon: '💬' },
 ];
 
 // Global model selection for OpenRouter free models
