@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
-import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel } from '../lib/ai-providers';
+import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
 
 interface InputPanelProps {
   onGenerate: (prompt: string, model: ModelProvider) => void;
@@ -291,6 +291,13 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       console.log('[API Key] No key found in localStorage');
     }
     
+    // Load saved Kimi API key
+    const savedKimi = localStorage.getItem('visual-ai-kimi-key');
+    if (savedKimi) {
+      console.log('[Kimi API] Loading from localStorage');
+      setKimiApiKey(savedKimi);
+    }
+    
     // Load saved free model
     const savedFreeModel = localStorage.getItem('visual-ai-free-model');
     if (savedFreeModel) {
@@ -306,10 +313,20 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
 
   const handleSaveApiKey = () => {
     if (apiKeyInput.trim()) {
-      console.log('[API Key] Saving to localStorage:', apiKeyInput.trim().substring(0, 8) + '...');
-      localStorage.setItem('visual-ai-api-key', apiKeyInput.trim());
-      setApiKey(apiKeyInput.trim());
-      setHasApiKey(true);
+      const key = apiKeyInput.trim();
+      console.log('[API Key] Saving to localStorage:', key.substring(0, 8) + '...');
+      
+      // Check if it's a Kimi key
+      if (key.startsWith('sk-kimi-')) {
+        localStorage.setItem('visual-ai-kimi-key', key);
+        setKimiApiKey(key);
+        console.log('[Kimi API] Saved to localStorage');
+      } else {
+        localStorage.setItem('visual-ai-api-key', key);
+        setApiKey(key);
+        setHasApiKey(true);
+      }
+      
       setApiKeyInput(''); // Clear input after saving
       setShowSettings(false);
     }
@@ -318,7 +335,9 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const handleClearApiKey = () => {
     console.log('[API Key] Clearing from localStorage');
     localStorage.removeItem('visual-ai-api-key');
+    localStorage.removeItem('visual-ai-kimi-key');
     setApiKey('');
+    setKimiApiKey('');
     setHasApiKey(false);
     setApiKeyInput('');
   };
