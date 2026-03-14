@@ -947,6 +947,19 @@ body {
             >
               <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Remix/Variation Button - visible on tablet+ */}
+            {html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleRemix}
+                disabled={isRemixing}
+                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
+                title={isRemixing ? "Generating variation..." : "Generate Variation"}
+              >
+                <Shuffle className={`w-4 h-4 sm:w-5 sm:h-5 ${isRemixing ? 'animate-spin' : ''}`} />
+              </motion.button>
+            )}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1038,13 +1051,50 @@ body {
                   >
                     <Layout className="w-4 h-4" /> Templates ({savedTemplates.length})
                   </button>
-                  {/* Export PDF - mobile */}
+                  {/* Export options - mobile */}
+                  {html && (
+                    <>
+                      <button
+                        onClick={() => { handleExportSVG(); setShowMoreMenu(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold">SVG</span> Export as SVG
+                      </button>
+                      <button
+                        onClick={() => { handleExportReact(); setShowMoreMenu(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <FileType className="w-4 h-4" /> Export as React
+                      </button>
+                      <button
+                        onClick={() => { handleExportCSS(); setShowMoreMenu(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <FileCode2 className="w-4 h-4" /> Export as CSS
+                      </button>
+                      <button
+                        onClick={() => { handleExportJSON(); setShowMoreMenu(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold">JSON</span> Export as JSON
+                      </button>
+                      <button
+                        onClick={() => { handleExportPDF(); setShowMoreMenu(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <FileText className="w-4 h-4" /> Export as PDF
+                      </button>
+                    </>
+                  )}
+                  {/* Remix - mobile */}
                   {html && (
                     <button
-                      onClick={() => { handleExportPDF(); setShowMoreMenu(false); }}
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      onClick={() => { handleRemix(); setShowMoreMenu(false); }}
+                      disabled={isRemixing}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors disabled:opacity-50"
                     >
-                      <FileText className="w-4 h-4" /> Export as PDF
+                      <Shuffle className={`w-4 h-4 ${isRemixing ? 'animate-spin' : ''}`} /> 
+                      {isRemixing ? 'Generating...' : 'Generate Variation'}
                     </button>
                   )}
                   <div className="border-t border-white/10 my-1" />
@@ -1058,68 +1108,20 @@ body {
                 </motion.div>
               )}
             </div>
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleCopyCode}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title={copied ? "Copied!" : "Copy HTML"}
-            >
-              {copied ? <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
-            </motion.button>
-            <div className="relative">
+            {/* Export options - visible on tablet+ */}
+            <div className="relative hidden md:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={handleExportPNG}
-                className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
                 title={`Export as PNG (${exportQuality}x quality, hold Shift to cycle)`}
               >
-                <FileImage className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+                <FileImage className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
-              <div className="absolute -bottom-1 -right-1 text-[7px] sm:text-[8px] bg-accent-primary/80 text-white px-1.5 rounded-full hidden sm:block">{exportQuality}x</div>
+              <div className="absolute -bottom-1 -right-1 text-[7px] sm:text-[8px] bg-accent-primary/80 text-white px-1.5 rounded-full">{exportQuality}x</div>
             </div>
-            {/* Export options hidden on mobile - in more menu */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleExportSVG}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
-              title="Export as SVG"
-            >
-              <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">SVG</span>
-            </motion.button>
-            {/* Export React - hidden on mobile */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleExportReact}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
-              title="Export as React"
-            >
-              <FileType className="w-4 h-4 sm:w-5 sm:h-5" />
-            </motion.button>
-            {/* Export CSS - hidden on mobile */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleExportCSS}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
-              title="Export as CSS"
-            >
-              <FileCode2 className="w-4 h-4 sm:w-5 sm:h-5" />
-            </motion.button>
-            {/* Copy to Clipboard as Image */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleCopyToClipboard}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title={copiedImage ? "Copied!" : "Copy as Image"}
-            >
-              {copiedImage ? <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-green-400" /> : <Clipboard className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
-            </motion.button>
-            {/* Save as Template - hidden on mobile, in more menu */}
+            {/* Save as Template - visible on tablet+ */}
             <div className="relative hidden md:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
@@ -1170,7 +1172,6 @@ body {
                         <button
                           key={t.id}
                           onClick={() => {
-                            // This would need to be handled by parent - for now just show notification
                             setShowSaveTemplate(false);
                             setShowTemplates(false);
                           }}
@@ -1184,118 +1185,35 @@ body {
                 </motion.div>
               )}
             </div>
+            {/* Refine Prompt - visible on tablet+ */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowRefine(true)}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Refine Prompt"
             >
-              <Wand2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+              <Wand2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
-            {/* Load from File Button */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleLoadFile}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title="Load HTML File"
-            >
-              <Upload className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-            </motion.button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".html,.htm"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleDownload}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title="Download HTML"
-            >
-              <Download className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-            </motion.button>
-            {/* Export JSON Button */}
-            {html && (
+            {/* Load from File - visible on tablet+ */}
+            <div className="hidden md:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                onClick={handleExportJSON}
-                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
-                title="Export as JSON"
+                onClick={handleLoadFile}
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Load HTML File"
               >
-                <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">JSON</span>
+                <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
-            )}
-            {/* Export PDF Button */}
-            {html && (
-              <motion.button
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                onClick={handleExportPDF}
-                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
-                title="Export as PDF"
-              >
-                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-              </motion.button>
-            )}
-            {/* Reset All Button */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleResetAll}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-red-400 transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title="Reset All Settings"
-            >
-              <RotateCcw className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-            </motion.button>
-            {/* Share Button */}
-            {html && onShare && (
-              <motion.button
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                onClick={onShare}
-                className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-                title="Share via URL"
-              >
-                <Share2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-              </motion.button>
-            )}
-            {/* Remix/Variation Button */}
-            {html && (
-              <motion.button
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                onClick={handleRemix}
-                disabled={isRemixing}
-                className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
-                title={isRemixing ? "Generating variation..." : "Generate Variation"}
-              >
-                <Shuffle className={`w-3.5 h-3.5 sm:w-5 sm:h-5 ${isRemixing ? 'animate-spin' : ''}`} />
-              </motion.button>
-            )}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
-            >
-              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
-            </motion.button>
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={onClear}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title="Clear (⌘+L)"
-            >
-              <Trash2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-            </motion.button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".html,.htm"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
             </div>
           )}
         </div>
