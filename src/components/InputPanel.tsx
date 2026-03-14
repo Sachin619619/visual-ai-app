@@ -1,6 +1,6 @@
 import { memo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
 
@@ -21,9 +21,21 @@ interface InputPanelProps {
 const TEMPLATES = [
   {
     id: 'chart',
-    name: 'Chart',
+    name: 'Line Chart',
     icon: BarChart3,
     prompt: 'Create a beautiful interactive line chart showing monthly revenue data for 2024 with tooltips and a legend'
+  },
+  {
+    id: 'bar-chart',
+    name: 'Bar Chart',
+    icon: BarChart3,
+    prompt: 'Build a vertical bar chart comparing product sales across categories with hover tooltips and animated bars'
+  },
+  {
+    id: 'pie-chart',
+    name: 'Pie Chart',
+    icon: PieChart,
+    prompt: 'Create an interactive pie chart showing market share percentages with labels and legend'
   },
   {
     id: 'timeline',
@@ -217,6 +229,157 @@ const TEMPLATES = [
     name: 'File Browser',
     icon: FolderOpen,
     prompt: 'Create a file browser interface with folder hierarchy, file icons, selection states, and grid/list view toggle'
+  },
+  // New practical templates
+  {
+    id: 'stats',
+    name: 'Stats Widget',
+    icon: TrendingUp,
+    prompt: 'Create a statistics widget showing key metrics with large numbers, trend indicators, and mini sparkline charts'
+  },
+  {
+    id: 'metric-card',
+    name: 'Metric Card',
+    icon: Gauge,
+    prompt: 'Build a metric card with current value, percentage change, trend arrow, and a small area chart'
+  },
+  {
+    id: 'wallet',
+    name: 'Wallet Balance',
+    icon: Wallet,
+    prompt: 'Design a wallet or balance card showing total amount, recent transactions, and quick action buttons'
+  },
+  {
+    id: 'team',
+    name: 'Team Members',
+    icon: Users,
+    prompt: 'Create a team member grid with avatars, names, roles, and social media links with hover effects'
+  },
+  {
+    id: 'contact-card',
+    name: 'Contact Card',
+    icon: Mail,
+    prompt: 'Build a contact information card with email, phone, address, map preview, and social links'
+  },
+  {
+    id: 'api-docs',
+    name: 'API Docs',
+    icon: Code2,
+    prompt: 'Create an API documentation layout with endpoint descriptions, request/response examples, and code snippets'
+  },
+  {
+    id: 'terminal',
+    name: 'Terminal',
+    icon: Terminal,
+    prompt: 'Build a terminal/console UI with command prompt, output area, and typing animation effects'
+  },
+  {
+    id: 'database',
+    name: 'Database Schema',
+    icon: Database,
+    prompt: 'Design a database schema visualization showing tables, columns, relationships, and data types'
+  },
+  {
+    id: 'server-status',
+    name: 'Server Status',
+    icon: Server,
+    prompt: 'Create a server status dashboard showing uptime, CPU, memory, storage, and health indicators'
+  },
+  {
+    id: 'cloud-services',
+    name: 'Cloud Services',
+    icon: Cloud,
+    prompt: 'Build a cloud services comparison table with features, pricing tiers, and selection buttons'
+  },
+  {
+    id: 'login-register',
+    name: 'Login + Register',
+    icon: Lock,
+    prompt: 'Create a combined login and registration form with tab switching, social login options, and form validation'
+  },
+  {
+    id: 'password-reset',
+    name: 'Password Reset',
+    icon: Unlock,
+    prompt: 'Design a password reset flow with email input, OTP verification, and new password creation steps'
+  },
+  {
+    id: 'media-gallery',
+    name: 'Media Gallery',
+    icon: Image,
+    prompt: 'Create a media gallery with lightbox, thumbnail grid, filters, and masonry layout'
+  },
+  {
+    id: 'video-player',
+    name: 'Video Player',
+    icon: Video,
+    prompt: 'Build a custom video player with controls, progress bar, volume, fullscreen, and playback speed'
+  },
+  {
+    id: 'music-player',
+    name: 'Music Player',
+    icon: Music,
+    prompt: 'Create a music player UI with album art, progress bar, controls, playlist, and visualizer'
+  },
+  {
+    id: 'file-manager',
+    name: 'File Manager',
+    icon: File,
+    prompt: 'Design a file manager interface with breadcrumbs, toolbar, file list, and context menu'
+  },
+  {
+    id: 'download-list',
+    name: 'Download Manager',
+    icon: Download,
+    prompt: 'Build a download manager showing file list, progress bars, speed, pause/resume, and cancel options'
+  },
+  {
+    id: 'share-modal',
+    name: 'Share Modal',
+    icon: Share2,
+    prompt: 'Create a share dialog with multiple platform icons, copy link, and social media options'
+  },
+  {
+    id: 'print-preview',
+    name: 'Print Preview',
+    icon: Printer,
+    prompt: 'Design a print-friendly document preview with page navigation and print button'
+  },
+  {
+    id: 'onboarding',
+    name: 'Onboarding',
+    icon: Rocket,
+    prompt: 'Create an onboarding flow with step indicators, illustrations, and progress through welcome, setup, and completion'
+  },
+  {
+    id: 'feature-list',
+    name: 'Feature Grid',
+    icon: ZapFast,
+    prompt: 'Build a features grid showcasing product capabilities with icons, titles, and descriptions'
+  },
+  {
+    id: 'comparison',
+    name: 'Comparison Table',
+    icon: Filter,
+    prompt: 'Design a product/service comparison table with checkmarks, pricing, and highlighted recommended option'
+  },
+  {
+    id: 'sort-filter',
+    name: 'Sort & Filter',
+    icon: SortDesc,
+    prompt: 'Create a data table with sort controls, filter dropdowns, search, and bulk actions toolbar'
+  },
+  {
+    id: 'newsletter',
+    name: 'Newsletter',
+    icon: Mail,
+    prompt: 'Build a newsletter signup section with email input, subscription options, and privacy notice'
+  },
+  {
+    id: 'faq',
+    name: 'FAQ',
+    icon: HelpCircle,
+    prompt: 'Create an FAQ section with expandable questions and answers in an accordion style'
   }
 ];
 
