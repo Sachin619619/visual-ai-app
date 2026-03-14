@@ -3,6 +3,17 @@ export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'openrouter' | 'loc
 // Theme options for preview
 export type PreviewTheme = 'dark' | 'light';
 
+// Viewport/device sizes for preview
+export type ViewportSize = 'mobile' | 'tablet' | 'desktop' | 'wide' | 'custom';
+
+export interface ViewportConfig {
+  id: ViewportSize;
+  name: string;
+  width: number;
+  height: number;
+  icon: string;
+}
+
 // Style/frame options for generated UI
 export type StyleFrame = 'card' | 'modal' | 'fullwidth' | 'floating' | 'glass';
 

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
-import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats } from '../types';
+import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
 import html2canvas from 'html2canvas';
 
@@ -42,6 +42,14 @@ const QUICK_PROMPTS = [
   { key: 'tabs', prompt: 'Create an interactive tabs component with multiple tabs and an accordion FAQ section', label: '🔽 Tabs' },
 ];
 
+// Viewport size configurations
+const VIEWPORTS: { id: ViewportSize; name: string; width: number; height: number; icon: React.ElementType }[] = [
+  { id: 'mobile', name: 'Mobile', width: 375, height: 667, icon: Smartphone },
+  { id: 'tablet', name: 'Tablet', width: 768, height: 1024, icon: Tablet },
+  { id: 'desktop', name: 'Desktop', width: 1280, height: 800, icon: Monitor },
+  { id: 'wide', name: 'Wide', width: 1920, height: 1080, icon: MonitorPlay },
+];
+
 // Simple syntax highlighting for HTML
 function highlightHTML(code: string): string {
   return code
@@ -74,6 +82,9 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [colorScheme, setColorScheme] = useState('violet');
   const [isRemixing, setIsRemixing] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [viewportSize, setViewportSize] = useState<ViewportSize>('desktop');
+  const [animationsPaused, setAnimationsPaused] = useState(false);
+  const [showViewportSelector, setShowViewportSelector] = useState(false);
 
   // Color scheme definitions for instant theme switching
   const COLOR_SCHEMES = [
@@ -118,6 +129,43 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
     `;
     setColorScheme(schemeId);
     setShowColorSchemes(false);
+  };
+
+  // Handle viewport change
+  const handleViewportChange = (viewportId: ViewportSize) => {
+    setViewportSize(viewportId);
+    setShowViewportSelector(false);
+  };
+
+  // Toggle animations
+  const toggleAnimations = () => {
+    if (!iframeRef.current) return;
+    const iframe = iframeRef.current;
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) return;
+
+    const styleId = 'animation-pause-override';
+    let styleEl = iframeDoc.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = iframeDoc.createElement('style');
+      styleEl.id = styleId;
+      iframeDoc.head.appendChild(styleEl);
+    }
+
+    if (animationsPaused) {
+      // Resume animations
+      styleEl.textContent = '';
+      setAnimationsPaused(false);
+    } else {
+      // Pause animations
+      styleEl.textContent = `
+        *, *::before, *::after {
+          animation-play-state: paused !important;
+          transition-duration: 0s !important;
+        }
+      `;
+      setAnimationsPaused(true);
+    }
   };
 
   // Keyboard shortcuts list
@@ -628,6 +676,61 @@ body {
                 </motion.div>
               )}
             </div>
+            {/* Viewport Size Selector */}
+            <div className="relative">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={() => setShowViewportSelector(!showViewportSelector)}
+                className={`hidden sm:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] items-center justify-center ${
+                  showViewportSelector || viewportSize !== 'desktop' ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
+                }`}
+                title="Viewport Size"
+              >
+                {viewportSize === 'mobile' ? <Smartphone className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : viewportSize === 'tablet' ? <Tablet className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : viewportSize === 'wide' ? <MonitorPlay className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Monitor className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
+              </motion.button>
+              {/* Viewport Dropdown */}
+              {showViewportSelector && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-20 min-w-[140px]"
+                >
+                  <p className="text-xs text-text-muted px-2 pb-2 mb-2 border-b border-white/5">Viewport</p>
+                  {VIEWPORTS.map((viewport) => {
+                    const Icon = viewport.icon;
+                    return (
+                      <button
+                        key={viewport.id}
+                        onClick={() => handleViewportChange(viewport.id)}
+                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          viewportSize === viewport.id 
+                            ? 'bg-accent-primary/20 text-accent-primary' 
+                            : 'text-text-secondary hover:bg-white/5 hover:text-text-primary'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {viewport.name}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </div>
+            {/* Animation Toggle Button */}
+            {html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={toggleAnimations}
+                className={`hidden sm:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] items-center justify-center ${
+                  animationsPaused ? 'bg-amber-500/20 text-amber-400' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
+                }`}
+                title={animationsPaused ? "Resume Animations" : "Pause Animations"}
+              >
+                {animationsPaused ? <Play className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Pause className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
+              </motion.button>
+            )}
             {/* Undo Button */}
             {onUndo && (
               <motion.button
@@ -762,6 +865,21 @@ body {
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
                   >
                     <Palette className="w-4 h-4" /> Color Scheme
+                  </button>
+                  {/* Viewport Size */}
+                  <button
+                    onClick={() => { setShowViewportSelector(true); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <Monitor className="w-4 h-4" /> Viewport: {viewportSize.charAt(0).toUpperCase() + viewportSize.slice(1)}
+                  </button>
+                  {/* Animation Toggle */}
+                  <button
+                    onClick={() => { toggleAnimations(); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    {animationsPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+                    {animationsPaused ? 'Resume Animations' : 'Pause Animations'}
                   </button>
                   {/* Code Toggle */}
                   <button
@@ -1372,12 +1490,33 @@ body {
       </AnimatePresence>
 
       {/* Iframe Renderer */}
-      <iframe
-        ref={iframeRef}
-        title="Visual Output"
-        sandbox="allow-scripts"
-        className="w-full h-full border-0"
-      />
+      <div 
+        className="w-full h-full flex items-center justify-center overflow-auto p-4"
+        style={{
+          background: viewportSize !== 'desktop' ? 'repeating-linear-gradient(45deg, #1a1a24 25%, transparent 25%, transparent 75%, #1a1a24 75%, #1a1a24), repeating-linear-gradient(45deg, #1a1a24 25%, #0a0a0f 25%, #0a0a0f 75%, #1a1a24 75%, #1a1a24)' : undefined,
+          backgroundPosition: '0 0, 10px 10px',
+          backgroundSize: '20px 20px'
+        }}
+      >
+        <div
+          className="transition-all duration-300 ease-out shadow-2xl"
+          style={{
+            width: viewportSize === 'desktop' ? '100%' : `${VIEWPORTS.find(v => v.id === viewportSize)?.width || 1280}px`,
+            height: viewportSize === 'desktop' ? '100%' : `${VIEWPORTS.find(v => v.id === viewportSize)?.height || 800}px`,
+            maxWidth: '100%',
+            maxHeight: '100%',
+            borderRadius: viewportSize !== 'desktop' ? '12px' : '0',
+            overflow: 'hidden'
+          }}
+        >
+          <iframe
+            ref={iframeRef}
+            title="Visual Output"
+            sandbox="allow-scripts"
+            className="w-full h-full border-0"
+          />
+        </div>
+      </div>
       
       {/* Mobile FAB - Quick Actions */}
       {html && !isLoading && (
