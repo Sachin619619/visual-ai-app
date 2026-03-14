@@ -693,6 +693,31 @@ body {
     }
   };
 
+  // Duplicate current design (save a copy to gallery)
+  const handleDuplicate = useCallback(() => {
+    if (!html) return;
+    
+    // Add current design to visual history as a duplicate
+    const entry = {
+      id: Date.now().toString(),
+      html,
+      prompt: 'Duplicated design',
+      model: model || 'openai',
+      thumbnail: '',
+      createdAt: Date.now()
+    };
+    
+    // Save to localStorage directly for quick duplicate
+    const savedVisualHistory = localStorage.getItem('visual-ai-visual-history');
+    let history = savedVisualHistory ? JSON.parse(savedVisualHistory) : [];
+    history = [entry, ...history].slice(0, 50);
+    localStorage.setItem('visual-ai-visual-history', JSON.stringify(history));
+    
+    // Show feedback
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [html, model]);
+
   // Copy to clipboard as image
   const handleCopyToClipboard = async () => {
     if (!iframeRef.current) return;
@@ -1164,6 +1189,18 @@ body {
             >
               <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Duplicate Button - quick save to gallery */}
+            {html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleDuplicate}
+                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-green-400 transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+                title="Duplicate Design"
+              >
+                {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <Copy className="w-4 h-4 sm:w-5 sm:h-5" />}
+              </motion.button>
+            )}
             {/* Remix/Variation Button - visible on tablet+ */}
             {html && (
               <motion.button
