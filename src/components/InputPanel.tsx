@@ -21,6 +21,8 @@ interface InputPanelProps {
   onToggleTheme?: () => void;
   onShare?: () => void;
   onExport?: () => void;
+  onExportPNG?: () => void;
+  onExportPDF?: () => void;
   onSaveFavorite?: (name?: string) => void;
   generationStats?: { time: number; model: string } | null;
   contextHtml?: string;
@@ -433,7 +435,7 @@ const TemplateButton = memo(({ template, onClick, isLoading, onClose }: {
 
 TemplateButton.displayName = 'TemplateButton';
 
-export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
+export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onExportPNG, onExportPDF, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [freeModel, setFreeModelState] = useState(() => {
@@ -685,7 +687,27 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
                 title="Export HTML"
               >
-                <Download className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              </button>
+            )}
+            {onExportPNG && (
+              <button
+                type="button"
+                onClick={onExportPNG}
+                className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                title="Export PNG"
+              >
+                <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              </button>
+            )}
+            {onExportPDF && (
+              <button
+                type="button"
+                onClick={onExportPDF}
+                className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                title="Export PDF"
+              >
+                <File className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
               </button>
             )}
             {onShare && (

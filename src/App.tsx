@@ -376,6 +376,87 @@ function AppContent() {
     showToast('success', 'HTML file downloaded! 📦');
   }, [html, showToast]);
 
+  // Export design as PNG image
+  const handleExportPNG = useCallback(async () => {
+    if (!html) {
+      showToast('error', 'Nothing to export');
+      return;
+    }
+    
+    try {
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.width = '1200px';
+      container.style.background = theme === 'light' ? '#ffffff' : '#0f0f0f';
+      container.style.padding = '32px';
+      document.body.appendChild(container);
+      
+      const canvas = await html2canvas(container, {
+        backgroundColor: theme === 'light' ? '#ffffff' : '#0f0f0f',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      const link = document.createElement('a');
+      link.download = `visual-ai-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      document.body.removeChild(container);
+      showToast('success', 'PNG image downloaded! 🖼️');
+    } catch (err) {
+      showToast('error', 'Failed to export PNG');
+    }
+  }, [html, theme, showToast]);
+
+  // Export design as PDF
+  const handleExportPDF = useCallback(async () => {
+    if (!html) {
+      showToast('error', 'Nothing to export');
+      return;
+    }
+    
+    try {
+      const { default: jsPDF } = await import('jspdf');
+      
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.width = '1200px';
+      container.style.background = theme === 'light' ? '#ffffff' : '#0f0f0f';
+      container.style.padding = '32px';
+      document.body.appendChild(container);
+      
+      const canvas = await html2canvas(container, {
+        backgroundColor: theme === 'light' ? '#ffffff' : '#0f0f0f',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`visual-ai-${Date.now()}.pdf`);
+      
+      document.body.removeChild(container);
+      showToast('success', 'PDF downloaded! 📄');
+    } catch (err) {
+      showToast('error', 'Failed to export PDF');
+    }
+  }, [html, theme, showToast]);
+
   // Capture thumbnail of current design
   const captureThumbnail = useCallback(async (htmlCode: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -695,6 +776,8 @@ function AppContent() {
           onRefinePrompt={handleRefinePrompt}
           onShare={handleShare}
           onExport={handleExport}
+          onExportPNG={handleExportPNG}
+          onExportPDF={handleExportPDF}
           onSaveFavorite={handleSaveFavorite}
           onShowFavorites={() => setShowFavorites(true)}
           onShowGallery={() => setShowGallery(true)}

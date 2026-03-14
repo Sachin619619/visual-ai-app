@@ -21,6 +21,8 @@ interface VisualRendererProps {
   onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
   onShare?: () => void;
   onExport?: () => void;
+  onExportPNG?: () => void;
+  onExportPDF?: () => void;
   onSaveFavorite?: () => void;
   onShowFavorites?: () => void;
   onShowGallery?: () => void;
