@@ -398,6 +398,18 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               Draft auto-saved
             </p>
           )}
+          {/* Keyboard shortcuts hint */}
+          <p className="text-[9px] sm:text-[10px] text-text-muted mt-1.5 flex flex-wrap gap-2">
+            <span className="bg-bg-tertiary px-1.5 py-0.5 rounded">
+              {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+Enter
+            </span>
+            <span className="bg-bg-tertiary px-1.5 py-0.5 rounded">
+              {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+Z
+            </span>
+            <span className="bg-bg-tertiary px-1.5 py-0.5 rounded">
+              {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+L
+            </span>
+          </p>
         </div>
 
         <div>
