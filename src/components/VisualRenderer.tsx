@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2 } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -319,6 +319,60 @@ body {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  // Export as JSON with metadata
+  const handleExportJSON = () => {
+    if (!html) return;
+    
+    const jsonData = {
+      content: html,
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        model: model || 'unknown',
+        previewTheme,
+        colorScheme,
+        styleFrame,
+        version: '1.0.0'
+      }
+    };
+    
+    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `visual-ai-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Load HTML from file
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const handleLoadFile = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content && iframeRef.current) {
+        try {
+          const sandboxedContent = createSandboxContent(content, previewTheme);
+          iframeRef.current.srcdoc = sandboxedContent;
+        } catch (err) {
+          console.error('Failed to load file:', err);
+        }
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  }, [previewTheme]);
 
   // Generate a variation/remix of the current design
   const handleRemix = async () => {
@@ -781,6 +835,23 @@ body {
             >
               <Wand2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Load from File Button */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleLoadFile}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Load HTML File"
+            >
+              <Upload className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </motion.button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".html,.htm"
+              onChange={handleFileChange}
+              className="hidden"
+            />
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -790,6 +861,18 @@ body {
             >
               <Download className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Export JSON Button */}
+            {html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleExportJSON}
+                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+                title="Export as JSON"
+              >
+                <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">JSON</span>
+              </motion.button>
+            )}
             {/* Share Button */}
             {html && onShare && (
               <motion.button
