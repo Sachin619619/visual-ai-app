@@ -23,6 +23,7 @@ interface InputPanelProps {
   onExport?: () => void;
   onExportPNG?: () => void;
   onExportPDF?: () => void;
+  onExportCodePen?: () => void;
   onSaveFavorite?: (name?: string) => void;
   generationStats?: { time: number; model: string } | null;
   contextHtml?: string;
@@ -435,7 +436,7 @@ const TemplateButton = memo(({ template, onClick, isLoading, onClose }: {
 
 TemplateButton.displayName = 'TemplateButton';
 
-export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onExportPNG, onExportPDF, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
+export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onExportPNG, onExportPDF, onExportCodePen, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [freeModel, setFreeModelState] = useState(() => {
@@ -713,6 +714,16 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 <File className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
               </button>
             )}
+            {onExportCodePen && (
+              <button
+                type="button"
+                onClick={onExportCodePen}
+                className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                title="Export to CodePen"
+              >
+                <Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              </button>
+            )}
             {onShare && (
               <button
                 type="button"
@@ -947,6 +958,30 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 </option>
               ))}
             </select>
+          </div>
+          {/* Provider Status Indicator */}
+          <div className="mt-2 flex items-center gap-2 text-[10px] sm:text-xs">
+            {model === 'openrouter' ? (
+              <span className="flex items-center gap-1 text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Free models available
+              </span>
+            ) : model === 'kimi' ? (
+              <span className="flex items-center gap-1 text-amber-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                Requires Kimi API key
+              </span>
+            ) : model === 'local' ? (
+              <span className="flex items-center gap-1 text-text-muted">
+                <span className="w-1.5 h-1.5 rounded-full bg-text-muted"></span>
+                Local model (not configured)
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-amber-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                Requires API key in settings
+              </span>
+            )}
           </div>
           {/* Free Model Selector - shown when OpenRouter is selected */}
           {model === 'openrouter' && (

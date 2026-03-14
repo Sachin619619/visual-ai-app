@@ -72,6 +72,23 @@ export const setApiKey = (key: string) => {
 
 export const getApiKey = () => apiKey;
 
+// Check if API key is configured for any provider
+export const isApiKeyConfigured = (): boolean => {
+  return !!apiKey || !!kimiApiKey;
+};
+
+// Get provider status (configured or not)
+export const getProviderStatus = (): Record<ModelProvider, boolean> => {
+  return {
+    openai: !!apiKey,
+    claude: !!apiKey,
+    gemini: !!apiKey,
+    openrouter: true, // Uses free models
+    kimi: !!kimiApiKey,
+    local: false,
+  };
+};
+
 // Generate UI based on prompt
 export const generateUI = async (
   prompt: string,

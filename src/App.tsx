@@ -457,6 +457,62 @@ function AppContent() {
     }
   }, [html, theme, showToast]);
 
+  // Export design to CodePen
+  const handleExportCodePen = useCallback(() => {
+    if (!html) {
+      showToast('error', 'Nothing to export');
+      return;
+    }
+
+    // Extract CSS and JS from the HTML if present
+    let css = '';
+    let js = '';
+    
+    // Simple extraction - look for style and script tags
+    const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const scriptMatch = html.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+    
+    if (styleMatch) css = styleMatch[1];
+    if (scriptMatch) js = scriptMatch[1];
+    
+    // Clean HTML - remove style and script tags (CodePen will handle them separately)
+    let cleanHtml = html
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<html[^>]*>|<head[^>]*>|<\/head>|<body[^>]*>|<\/body>|<!DOCTYPE[^>]*>/gi, '')
+      .trim();
+
+    // Build CodePen data
+    const codepenData = {
+      title: 'Visual AI Design',
+      html: cleanHtml,
+      css: css,
+      js: js,
+      editors: '110',
+      layout: 'right',
+      head: '<script src="https://cdn.tailwindcss.com"></script>'
+    };
+
+    // Open CodePen in a new window with pre-filled data
+    const codepenDataStr = JSON.stringify(codepenData);
+    const form = document.createElement('form');
+    form.action = 'https://codepen.io/pen/define';
+    form.method = 'POST';
+    form.target = '_blank';
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = codepenDataStr;
+    
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    showToast('success', 'Opening CodePen... 🚀');
+  }, [html, showToast]);
+
   // Capture thumbnail of current design
   const captureThumbnail = useCallback(async (htmlCode: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -778,6 +834,7 @@ function AppContent() {
           onExport={handleExport}
           onExportPNG={handleExportPNG}
           onExportPDF={handleExportPDF}
+          onExportCodePen={handleExportCodePen}
           onSaveFavorite={handleSaveFavorite}
           onShowFavorites={() => setShowFavorites(true)}
           onShowGallery={() => setShowGallery(true)}

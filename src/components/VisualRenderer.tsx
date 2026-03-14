@@ -23,6 +23,7 @@ interface VisualRendererProps {
   onExport?: () => void;
   onExportPNG?: () => void;
   onExportPDF?: () => void;
+  onExportCodePen?: () => void;
   onSaveFavorite?: () => void;
   onShowFavorites?: () => void;
   onShowGallery?: () => void;
