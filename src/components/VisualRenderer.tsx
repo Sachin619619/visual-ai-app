@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -343,6 +344,70 @@ body {
     link.download = `visual-ai-${Date.now()}.json`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  // Export as PDF
+  const handleExportPDF = async () => {
+    if (!iframeRef.current) return;
+    try {
+      const iframe = iframeRef.current;
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) return;
+      
+      const bodyContent = iframeDoc.body.cloneNode(true) as HTMLElement;
+      
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.background = previewTheme === 'dark' ? '#0f0f23' : '#ffffff';
+      container.appendChild(bodyContent);
+      document.body.appendChild(container);
+      
+      const canvas = await html2canvas(container, {
+        backgroundColor: previewTheme === 'dark' ? '#0f0f23' : '#ffffff',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      document.body.removeChild(container);
+      
+      // Create PDF with jsPDF
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [canvas.width / 2, canvas.height / 2]
+      });
+      
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+      pdf.save(`visual-ai-${Date.now()}.pdf`);
+    } catch (err) {
+      console.error('Failed to export PDF:', err);
+    }
+  };
+
+  // Reset all settings and clear localStorage
+  const handleResetAll = () => {
+    if (!confirm('Reset all settings and clear all data? This cannot be undone.')) return;
+    
+    // Clear all Visual AI localStorage keys
+    const keysToRemove = [
+      'visual-ai-session',
+      'visual-ai-history',
+      'visual-ai-draft',
+      'visual-ai-api-key',
+      'visual-ai-free-model',
+      'visual-ai-dark-mode',
+      'visual-ai-auto-enhance',
+      'visual-ai-templates',
+      'site_auth_visual'
+    ];
+    
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    // Reload the page to reset state
+    window.location.reload();
   };
 
   // Load HTML from file
@@ -724,6 +789,23 @@ body {
                   >
                     <Layout className="w-4 h-4" /> Templates ({savedTemplates.length})
                   </button>
+                  {/* Export PDF - mobile */}
+                  {html && (
+                    <button
+                      onClick={() => { handleExportPDF(); setShowMoreMenu(false); }}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                    >
+                      <FileText className="w-4 h-4" /> Export as PDF
+                    </button>
+                  )}
+                  <div className="border-t border-white/10 my-1" />
+                  {/* Reset All */}
+                  <button
+                    onClick={() => { handleResetAll(); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4" /> Reset All
+                  </button>
                 </motion.div>
               )}
             </div>
@@ -900,6 +982,28 @@ body {
                 <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">JSON</span>
               </motion.button>
             )}
+            {/* Export PDF Button */}
+            {html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleExportPDF}
+                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+                title="Export as PDF"
+              >
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {/* Reset All Button */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleResetAll}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-red-400 transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Reset All Settings"
+            >
+              <RotateCcw className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </motion.button>
             {/* Share Button */}
             {html && onShare && (
               <motion.button
