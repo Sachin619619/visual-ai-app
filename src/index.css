@@ -347,6 +347,13 @@ button,
   }
 }
 
+/* Better mobile viewport handling */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+}
+
 /* Enhanced mobile optimizations */
 @media (max-width: 768px) {
   /* Better sidebar overlay */
@@ -358,6 +365,12 @@ button,
   /* Improve form inputs on mobile */
   .mobile-input {
     font-size: 16px; /* Prevents iOS zoom */
+  }
+  
+  /* Fix sidebar scrolling */
+  .sidebar-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 }
 
@@ -376,6 +389,18 @@ button,
 @media (max-width: 640px) {
   .sidebar-panel {
     box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Better toolbar button spacing on mobile */
+  .toolbar-btn {
+    padding: 8px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  /* Reduce toolbar gap on small screens */
+  .toolbar-gap {
+    gap: 4px;
   }
 }
 

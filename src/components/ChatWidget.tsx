@@ -114,7 +114,7 @@ export function ChatWidget() {
       {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-20 sm:bottom-6 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow"
+        className="fixed z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow"
         style={{ 
           bottom: 'calc(env(safe-area-inset-bottom, 20px) + 88px)', 
           right: 'calc(env(safe-area-inset-right, 16px) + 16px)',
@@ -128,7 +128,7 @@ export function ChatWidget() {
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
         aria-label="Open AI Assistant"
       >
-        <MessageCircle className="w-6 h-6 sm:w-6 sm:h-6 text-white" />
+        <MessageCircle className="w-6 h-6 text-white" />
       </motion.button>
 
       {/* Chat Dialog - full width on mobile with safe area */}
