@@ -246,7 +246,6 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 onClick={onClose}
                 className="lg:hidden p-2.5 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close sidebar"
-                aria-hidden="true"
               >
                 <X className="w-5 h-5 sm:w-6 sm:h-6 text-text-secondary" />
               </button>
