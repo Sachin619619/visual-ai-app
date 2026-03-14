@@ -496,7 +496,7 @@ body {
   return (
     <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Toolbar Header - proper sticky header, no absolute positioning, no wrapping */}
-      <div className="flex-none h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm">
+      <div className="flex-none h-14 flex items-center border-b border-white/8 bg-bg-secondary/90 backdrop-blur-md flex-shrink-0 shadow-sm" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Spacer on mobile/tablet to avoid overlapping the fixed hamburger button (w-14 = 56px) */}
         <div className="w-14 flex-shrink-0 lg:hidden" />
         {/* Separator after spacer on mobile */}
@@ -587,18 +587,18 @@ body {
                 <Redo2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
               </motion.button>
             )}
-            {/* Theme Toggle Button */}
+            {/* Theme Toggle Button - hidden on very small mobile, shown in more menu */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setPreviewTheme(prev => prev === 'dark' ? 'light' : 'dark')}
-              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden xs:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={previewTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {previewTheme === 'dark' ? <Sun className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Moon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
             </motion.button>
-            {/* Color Scheme Button with Dropdown */}
-            <div className="relative">
+            {/* Color Scheme Button with Dropdown - hidden on very small mobile */}
+            <div className="relative hidden xs:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -652,15 +652,17 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
-                showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
-              }`}
+              className="hidden xs:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+              style={{
+                background: showCode ? 'rgba(139, 92, 246, 0.2)' : 'rgba(18, 18, 26, 0.9)',
+                color: showCode ? '#8b5cf6' : '#94a3b8'
+              }}
               title="Toggle Code Preview"
             >
               <Code className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </motion.button>
-            {/* Mobile More Menu Button */}
-            <div className="relative md:hidden">
+            {/* Mobile More Menu Button - always visible on mobile */}
+            <div className="relative lg:hidden">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -677,8 +679,33 @@ body {
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-30 min-w-[180px]"
+                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-30 min-w-[200px]"
                 >
+                  {/* Theme Toggle */}
+                  <button
+                    onClick={() => { setPreviewTheme(prev => prev === 'dark' ? 'light' : 'dark'); setShowMoreMenu(false); }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      {previewTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                      <span>Light Mode</span>
+                    </div>
+                  </button>
+                  {/* Color Scheme */}
+                  <button
+                    onClick={() => { setShowColorSchemes(true); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <Palette className="w-4 h-4" /> Color Scheme
+                  </button>
+                  {/* Code Toggle */}
+                  <button
+                    onClick={() => { setShowCode(!showCode); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <Code className="w-4 h-4" /> {showCode ? 'Hide Code' : 'Show Code'}
+                  </button>
+                  <div className="border-t border-white/10 my-1" />
                   <button
                     onClick={() => { setShowShortcuts(true); setShowMoreMenu(false); }}
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
@@ -1153,7 +1180,7 @@ body {
             <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-4 xs:grid-cols-4 gap-1.5 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+            <div className="grid grid-cols-3 xs:grid-cols-4 gap-1.5 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
               {QUICK_PROMPTS.slice(0, 12).map((item, index) => (
                 <motion.button
                   key={item.key}

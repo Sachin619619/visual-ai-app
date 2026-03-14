@@ -279,6 +279,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className="w-[85vw] max-w-[280px] xs:max-w-[300px] sm:max-w-[320px] sm:w-72 md:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -338,7 +339,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           </button>
         </div>
         <div className="flex gap-1.5 overflow-x-auto xs:overflow-x-visible overflow-y-hidden pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
-          {TEMPLATES.slice(0, 8).map((template, index) => {
+          {TEMPLATES.slice(0, 6).map((template, index) => {
             const Icon = template.icon;
             return (
               <motion.button
@@ -461,7 +462,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
 
         <div>
           <label className="text-xs sm:text-sm text-text-secondary mb-1.5 sm:mb-2 block font-medium">Style Frame</label>
-          <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2">
             {STYLE_FRAMES.map((frame) => {
               const Icon = frame.icon;
               return (
