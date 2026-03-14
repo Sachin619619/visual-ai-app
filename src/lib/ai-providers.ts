@@ -210,15 +210,24 @@ Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output
 const cleanHtmlOutput = (html: string): string => {
   console.log('🔍 Raw input to cleanHtmlOutput:', html.substring(0, 300));
   
-  // First, check if it's already valid HTML - return as-is if it looks good
-  if (html.trim().startsWith('<!DOCTYPE html') || html.trim().startsWith('<html')) {
-    console.log('✅ HTML already valid, returning as-is');
-    return html;
-  }
+  // First, unescape any HTML entities that might have been double-escaped
+  // This handles cases where AI returns &lt; instead of <
+  let cleaned = html
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
   
-  // Remove markdown code block wrappers
-  let cleaned = html.replace(/^```html\n/, '').replace(/^```\n/, '');
-  cleaned = cleaned.replace(/\n```$/, '');
+  // Also handle escaped backslashes
+  cleaned = cleaned.replace(/\\</g, '<').replace(/\\>/g, '>');
+  
+  // First, check if it's already valid HTML - return as-is if it looks good
+  if (cleaned.trim().startsWith('<!DOCTYPE html') || cleaned.trim().startsWith('<html')) {
+    console.log('✅ HTML already valid, returning as-is');
+    return cleaned;
+  }
   
   // If still wrapped in code block, try generic removal
   if (cleaned.startsWith('```')) {
