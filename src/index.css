@@ -237,6 +237,16 @@ body {
   .chat-widget {
     margin: 0 12px 100px 12px;
   }
+
+  /* Prevent horizontal scroll on mobile */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Extra small screens */
@@ -307,6 +317,19 @@ button,
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Better mobile viewport handling */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+}
+
+/* Prevent layout shift on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .page-transition-enter {
   opacity: 0;
   transform: translateY(10px);

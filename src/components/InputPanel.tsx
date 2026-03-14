@@ -185,8 +185,10 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     <motion.div 
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-[280px] sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
+      className="w-[280px] sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
     >
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
       {/* Header */}
       <div className="p-3 sm:p-5 border-b border-white/5 sticky top-0 bg-bg-secondary z-10">
         <div className="flex items-center justify-between">
@@ -341,9 +343,10 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
           <span className="sm:hidden">⌘ + ↵ to submit</span>
         </p>
       </form>
+      </div>
 
       {/* Settings - API Key */}
-      <div className="border-t border-white/5">
+      <div className="border-t border-white/5 flex-shrink-0">
         <button
           onClick={() => setShowSettings(!showSettings)}
           className="w-full p-3 sm:p-4 flex items-center justify-between text-sm text-text-secondary hover:text-text-primary transition-colors"

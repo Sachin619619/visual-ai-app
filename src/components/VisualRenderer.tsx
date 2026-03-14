@@ -802,7 +802,7 @@ export default function ${componentName}() {
             <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 text-left max-w-sm mx-auto">
               {QUICK_PROMPTS.map((item, index) => (
                 <motion.button
                   key={item.key}
@@ -811,10 +811,10 @@ export default function ${componentName}() {
                   transition={{ delay: index * 0.1 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-3 sm:p-4 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[80px] sm:min-h-[90px] flex flex-col justify-between"
+                  className="p-2.5 sm:p-4 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[72px] sm:min-h-[90px] flex flex-col justify-between"
                 >
-                  <p className="text-accent-primary text-sm font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
-                  <p className="text-text-muted text-xs hidden sm:block">Click to generate</p>
+                  <p className="text-accent-primary text-xs sm:text-sm font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
+                  <p className="text-text-muted text-[10px] sm:text-xs hidden sm:block">Click to generate</p>
                 </motion.button>
               ))}
             </div>
