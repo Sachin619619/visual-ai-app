@@ -19,6 +19,9 @@ interface VisualRendererProps {
   onQuickGenerate?: (prompt: string) => void;
   onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
   onShare?: () => void;
+  onExport?: () => void;
+  theme?: 'dark' | 'light';
+  onToggleTheme?: () => void;
   generationStats?: GenerationStats | null;
 }
 
@@ -80,7 +83,7 @@ function highlightHTML(code: string): { html: string; lineCount: number } {
   return { html: highlightedLines.join('\n'), lineCount };
 }
 
-export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, generationStats }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -681,6 +684,28 @@ body {
                 title="Share via URL"
               >
                 <Share2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {onExport && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onExport}
+                className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-secondary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Download HTML"
+              >
+                <FileType className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {onToggleTheme && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onToggleTheme}
+                className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-yellow-400 transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? <Sun className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Moon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
               </motion.button>
             )}
             {/* Copy and Export - always visible */}

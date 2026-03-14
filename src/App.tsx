@@ -37,6 +37,7 @@ function AppContent() {
   const [prompt, setPrompt] = useState('');
   const [lastModel, setLastModel] = useState<ModelProvider>('openai');
   const [styleFrame, setStyleFrame] = useState<StyleFrame>('card');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const { showToast } = useToast();
   
   const SITE_PASSWORD = 'visual2026';
@@ -56,9 +57,18 @@ function AppContent() {
         if (session.styleFrame) {
           setStyleFrame(session.styleFrame);
         }
+        if (session.theme) {
+          setTheme(session.theme);
+        }
       } catch (e) {
         console.error('Failed to restore session', e);
       }
+    }
+    
+    // Also check for theme preference directly
+    const savedTheme = localStorage.getItem('visual-ai-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      setTheme(savedTheme);
     }
   }, []);
 
@@ -69,10 +79,14 @@ function AppContent() {
         html,
         lastModel,
         styleFrame,
+        theme,
         savedAt: Date.now()
       }));
     }
-  }, [html, lastModel, styleFrame]);
+    localStorage.setItem('visual-ai-theme', theme);
+    // Apply theme to document
+    document.documentElement.classList.toggle('light', theme === 'light');
+  }, [html, lastModel, styleFrame, theme]);
 
   useEffect(() => {
     const auth = localStorage.getItem('site_auth_visual');
@@ -269,6 +283,31 @@ function AppContent() {
     });
   }, [html, showToast]);
 
+  // Export design as HTML file
+  const handleExport = useCallback(() => {
+    if (!html) {
+      showToast('error', 'Nothing to export');
+      return;
+    }
+    
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `visual-ai-${Date.now()}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('success', 'HTML file downloaded! 📦');
+  }, [html, showToast]);
+
+  // Toggle theme
+  const handleToggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    showToast('success', `Switched to ${theme === 'dark' ? 'light' : 'dark'} mode ☀️`);
+  }, [theme, showToast]);
+
   // Keyboard shortcut: Cmd/Ctrl + L to clear, Z to undo/redo
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -409,6 +448,9 @@ function AppContent() {
           onQuickGenerate={handleQuickGenerate}
           onRefinePrompt={handleRefinePrompt}
           onShare={handleShare}
+          onExport={handleExport}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
           generationStats={generationStats}
         />
       </div>
