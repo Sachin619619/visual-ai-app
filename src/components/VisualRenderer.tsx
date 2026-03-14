@@ -315,7 +315,7 @@ export default function ${componentName}() {
   }, [isFullscreen]);
 
   return (
-    <div className={`flex-1 h-full lg:h-full w-full lg:w-auto flex flex-col bg-bg-primary relative overflow-hidden pt-14 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-14 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Fullscreen Close Button */}
       {isFullscreen && (
         <button
@@ -825,7 +825,7 @@ export default function ${componentName}() {
             <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 text-left max-w-sm mx-auto">
+            <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 text-left max-w-sm mx-auto">
               {QUICK_PROMPTS.map((item, index) => (
                 <motion.button
                   key={item.key}

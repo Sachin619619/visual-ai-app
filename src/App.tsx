@@ -186,7 +186,7 @@ function AppContent() {
 
   if (siteAuth === null) {
     return (
-      <div className="min-h-[100dvh] bg-bg-primary flex items-center justify-center flex-col gap-5 p-5 pt-20 w-full relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 60px)' }}>
+      <div className="min-h-[100dvh] w-full flex items-center justify-center flex-col gap-5 p-5 pt-20 relative overflow-x-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 60px)' }}>
         {/* Mobile menu button - always visible on login screen */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -221,7 +221,7 @@ function AppContent() {
 
 
   return (
-    <div className="h-screen w-screen lg:h-screen lg:w-screen flex overflow-hidden bg-bg-primary relative" style={{ paddingTop: 'env(safe-area-inset-top)', paddingRight: 'env(safe-area-inset-right)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}>
+    <div className="h-[100dvh] w-full flex overflow-hidden bg-bg-primary relative" style={{ paddingTop: 'env(safe-area-inset-top)', paddingRight: 'env(safe-area-inset-right)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}>
       {/* Ambient background gradient */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent-primary/10 rounded-full blur-3xl" />
@@ -248,7 +248,7 @@ function AppContent() {
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
-        w-[300px] sm:w-80 max-w-[85vw] xs:max-w-[320px]
+        w-[85vw] max-w-[320px] sm:max-w-[340px]
         pt-16 lg:pt-0
         overflow-y-auto overflow-x-hidden
       `} style={{ 

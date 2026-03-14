@@ -45,6 +45,16 @@ html, body, #root {
 html {
   width: 100%;
   overflow-x: hidden;
+  /* Ensure proper viewport on mobile browsers */
+  height: 100%;
+}
+
+/* Ensure the root element also uses full dimensions */
+#root {
+  height: 100%;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
