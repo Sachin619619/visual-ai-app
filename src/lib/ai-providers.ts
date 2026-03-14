@@ -17,9 +17,9 @@ export interface FreeModel {
 }
 
 export const FREE_MODELS: FreeModel[] = [
+  { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek', icon: '💡' },
   { id: 'qwen/qwen3-coder:free', name: 'Qwen Coder', icon: '🧑‍💻' },
   { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3', icon: '🌟' },
-  { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek', icon: '💡' },
   { id: 'microsoft/phi-4-mini:free', name: 'Phi 4 Mini', icon: '⚡' },
 ];
 
@@ -104,19 +104,18 @@ const generateWithAI = async (
   
   const uiPrompt = `${enhancedPrompt}
 
-IMPORTANT: You must output ONLY raw HTML code. No explanations, no markdown, no text.
+CRITICAL: You MUST output ONLY raw HTML code. NO markdown, NO explanations, NO text before or after.
 
-Generate a complete, single-file HTML UI component that WORKS IMMEDIATELY when rendered:
+Your response must:
+- Start EXACTLY with <!DOCTYPE html> or <html>
+- End with </html>
+- Contain ONLY valid HTML with inline CSS/JS
+- Work immediately when saved as .html file
 
-1. Include Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-2. Use Tailwind classes for all styling
-3. Make it dark-themed with modern styling
-4. Use inline styles as backup
-5. Make it visually stunning and interactive
-
-Output ONLY the raw HTML code - nothing else.`;
+Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output ONLY the raw HTML.`;
 
   let response;
+  let rawHtml = '';
   
   if (model === 'openrouter') {
     // Use OpenRouter API - allows browser calls
@@ -131,18 +130,17 @@ Output ONLY the raw HTML code - nothing else.`;
       body: JSON.stringify({
         model: selectedFreeModel,
         messages: [
-          { role: 'system', content: 'You are an expert UI designer. Generate beautiful, modern HTML/CSS/JS UIs.' },
+          { role: 'system', content: 'STRICT OUTPUT RULE: You are an HTML generator. Your ONLY output must be raw HTML code starting with <!DOCTYPE html> or <html>. NEVER output markdown, NEVER output explanations, NEVER output text before or after the HTML. The HTML must be complete and work immediately when saved as a .html file. Include Tailwind CSS via CDN. Make it dark-themed and visually stunning.' },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.7
+        temperature: 0.3,
+        stop: ['```', 'Explanation:', 'Here is']
       })
     });
     
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || uiPrompt;
-  }
-  
-  if (model === 'openai') {
+    rawHtml = data.choices?.[0]?.message?.content || uiPrompt;
+  } else if (model === 'openai') {
     response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -152,18 +150,16 @@ Output ONLY the raw HTML code - nothing else.`;
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are an expert UI designer. Generate beautiful, modern HTML/CSS/JS UIs.' },
+          { role: 'system', content: 'STRICT OUTPUT RULE: Your ONLY output must be raw HTML code starting with <!DOCTYPE html> or <html>. NEVER output markdown, NEVER output explanations. Output ONLY valid HTML with inline CSS/JS that works immediately.' },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.7
+        temperature: 0.3
       })
     });
     
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || uiPrompt;
-  }
-  
-  if (model === 'gemini') {
+    rawHtml = data.choices?.[0]?.message?.content || uiPrompt;
+  } else if (model === 'gemini') {
     response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -173,10 +169,8 @@ Output ONLY the raw HTML code - nothing else.`;
     });
     
     const data = await response.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || uiPrompt;
-  }
-  
-  if (model === 'claude') {
+    rawHtml = data.candidates?.[0]?.content?.parts?.[0]?.text || uiPrompt;
+  } else if (model === 'claude') {
     response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -194,10 +188,39 @@ Output ONLY the raw HTML code - nothing else.`;
     });
     
     const data = await response.json();
-    return data.content?.[0]?.text || uiPrompt;
+    rawHtml = data.content?.[0]?.text || uiPrompt;
+  } else {
+    rawHtml = uiPrompt;
   }
   
-  return uiPrompt;
+  // Clean up markdown code blocks if present
+  return cleanHtmlOutput(rawHtml);
+};
+
+// Clean HTML output - strip markdown code blocks
+const cleanHtmlOutput = (html: string): string => {
+  // Remove markdown code block wrappers
+  let cleaned = html.replace(/^```html\n/, '').replace(/^```\n/, '');
+  cleaned = cleaned.replace(/\n```$/, '');
+  
+  // If still wrapped in code block, try generic removal
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```[a-z]*\n?/, '');
+    cleaned = cleaned.replace(/```$/, '');
+  }
+  
+  // Find HTML content and extract it
+  const htmlMatch = cleaned.match(/<html[\s\S]*<\/html>/i);
+  if (htmlMatch) {
+    return htmlMatch[0];
+  }
+  
+  const doctypeMatch = cleaned.match(/<!DOCTYPE html>[\s\S]*/i);
+  if (doctypeMatch) {
+    return doctypeMatch[0];
+  }
+  
+  return cleaned;
 };
 
 // Enhance prompt for better results
