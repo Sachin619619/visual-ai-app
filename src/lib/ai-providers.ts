@@ -18,6 +18,7 @@ export interface FreeModel {
 
 export const FREE_MODELS: FreeModel[] = [
   { id: 'deepseek/deepseek-chat-v3-0324:free', name: 'DeepSeek V3', icon: '💡' },
+  { id: 'moonshotai/kimi-k2.5', name: 'Kimi K2.5', icon: '🌙' },
   { id: 'meta-llama/llama-4-maverick:free', name: 'Llama 4 Maverick', icon: '🦙' },
   { id: 'google/gemma-3-27b-it:free', name: 'Gemma 3 27B', icon: '🌟' },
   { id: 'microsoft/phi-4-reasoning:free', name: 'Phi-4 Reasoning', icon: '⚡' },
