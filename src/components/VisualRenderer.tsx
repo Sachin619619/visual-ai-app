@@ -50,16 +50,34 @@ const VIEWPORTS: { id: ViewportSize; name: string; width: number; height: number
   { id: 'wide', name: 'Wide', width: 1920, height: 1080, icon: MonitorPlay },
 ];
 
-// Simple syntax highlighting for HTML
-function highlightHTML(code: string): string {
-  return code
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="text-purple-400">$2</span>')
-    .replace(/([\w-]+)=/g, '<span class="text-cyan-400">$1</span>=')
-    .replace(/"([^"]*)"/g, '"<span class="text-green-400">$1</span>"')
-    .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
+// Enhanced syntax highlighting for HTML with line numbers
+function highlightHTML(code: string): { html: string; lineCount: number } {
+  const lines = code.split('\n');
+  const lineCount = lines.length;
+  
+  const highlightedLines = lines.map(line => {
+    let highlighted = line
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      // HTML tags
+      .replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="text-purple-400 font-semibold">$2</span>')
+      // Attributes
+      .replace(/([\w-]+)=/g, '<span class="text-cyan-400">$1</span>=')
+      // String values
+      .replace(/"([^"]*)"/g, '"<span class="text-green-400">$1</span>"')
+      .replace(/'([^']*)'/g, "'<span class=\"text-green-400\">$1</span>'")
+      // Closing brackets
+      .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>')
+      // Comments
+      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="text-gray-500 italic">$1</span>')
+      // CSS in style tags
+      .replace(/([\w-]+):/g, '<span class="text-pink-400">$1</span>:');
+    
+    return highlighted;
+  });
+  
+  return { html: highlightedLines.join('\n'), lineCount };
 }
 
 export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, generationStats }: VisualRendererProps) {
@@ -1240,7 +1258,7 @@ body {
 
       {/* Preview Area */}
       <div className="flex-1 relative min-h-0 overflow-hidden">
-      {/* Code Preview Panel */}
+      {/* Code Preview Panel - Enhanced with Line Numbers */}
       <AnimatePresence>
         {showCode && html && (
           <motion.div
@@ -1250,7 +1268,12 @@ body {
             className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 z-20 max-h-[40vh] sm:max-h-64 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
           >
             <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-white/5">
-              <span className="text-xs sm:text-sm text-text-secondary">Generated HTML</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm text-text-secondary">Generated HTML</span>
+                <span className="text-[10px] sm:text-xs text-text-muted bg-bg-tertiary px-1.5 py-0.5 rounded">
+                  {highlightHTML(html).lineCount} lines
+                </span>
+              </div>
               <div className="flex items-center gap-1 sm:gap-2">
                 <button
                   onClick={handleCopyCode}
@@ -1267,8 +1290,19 @@ body {
                 </button>
               </div>
             </div>
-            <pre className="p-2 sm:p-4 overflow-auto max-h-[30vh] sm:max-h-44 text-xs font-mono whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: highlightHTML(html) }}>
-            </pre>
+            <div className="flex overflow-auto max-h-[30vh] sm:max-h-44">
+              {/* Line Numbers */}
+              <div className="flex-shrink-0 py-2 sm:py-4 px-2 sm:px-3 bg-bg-primary/50 text-right select-none border-r border-white/5">
+                {Array.from({ length: highlightHTML(html).lineCount }, (_, i) => (
+                  <div key={i} className="text-[10px] sm:text-xs font-mono text-text-muted leading-5 sm:leading-6">
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
+              {/* Code Content */}
+              <pre className="flex-1 p-2 sm:p-4 overflow-x-auto text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6" dangerouslySetInnerHTML={{ __html: highlightHTML(html).html }}>
+              </pre>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

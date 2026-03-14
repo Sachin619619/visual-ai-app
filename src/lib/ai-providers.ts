@@ -25,6 +25,9 @@ export const FREE_MODELS: FreeModel[] = [
   { id: 'mistralai/mistral-small-3.1-24b-instruct:free', name: 'Mistral Small 3.1', icon: '🌀' },
   { id: 'anthropic/claude-3-haiku:free', name: 'Claude 3 Haiku', icon: '🧠' },
   { id: 'openai/gpt-4o-mini:free', name: 'GPT-4o Mini', icon: '🤖' },
+  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash', icon: '🚀' },
+  { id: 'deepseek/deepseek-prover:free', name: 'DeepSeek Prover', icon: '🧮' },
+  { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', name: 'Nemotron 70B', icon: '🔷' },
 ];
 
 // Global model selection for OpenRouter free models
@@ -52,13 +55,31 @@ export const generateUI = async (
   contextHtml?: string
 ): Promise<string> => {
   if (!apiKey) {
-    throw new Error('Please set your API key in settings to generate UI.');
+    throw new Error('🔑 Please set your API key in settings to generate UI. Get your free API key from https://openrouter.ai/keys');
   }
   try {
     return await generateWithAI(prompt, model, apiKey, contextHtml);
   } catch (error: any) {
     console.error('AI generation failed:', error);
-    // Re-throw with the original message so the UI can show it
+    const msg = error?.message || String(error);
+    
+    // Provide more helpful error messages
+    if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('network')) {
+      throw new Error('🌐 Network error. Check your internet connection and try again.');
+    }
+    if (msg.includes('rate limit') || msg.includes('429')) {
+      throw new Error('⏳ Rate limit reached. Wait a moment or try a different model.');
+    }
+    if (msg.includes('Insufficient credits') || msg.includes('insufficient credits') || msg.includes('quota')) {
+      throw new Error('💳 API credits exhausted. Get a free key from https://openrouter.ai/keys');
+    }
+    if (msg.includes('Invalid API key') || msg.includes('Unauthorized') || msg.includes('401')) {
+      throw new Error('🔐 Invalid API key. Please check your key in settings.');
+    }
+    if (msg.includes('timeout') || msg.includes('Timeout')) {
+      throw new Error('⏱️ Request timed out. Try again or use a faster model.');
+    }
+    
     throw error instanceof Error ? error : new Error(String(error));
   }
 }
