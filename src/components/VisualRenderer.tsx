@@ -583,6 +583,16 @@ export default function ${componentName}() {
             >
               {isFullscreen ? <Minimize2 className="w-5 h-5 sm:w-5 sm:h-5" /> : <Maximize2 className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
+            {/* Keyboard Shortcuts */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setShowShortcuts(true)}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Keyboard Shortcuts"
+            >
+              <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
+            </motion.button>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}

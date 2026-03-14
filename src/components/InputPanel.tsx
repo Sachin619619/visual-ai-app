@@ -344,6 +344,13 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             </button>
           </div>
           <p className="text-xs text-text-muted mt-1">✨ Use the wand to enhance your prompt</p>
+          {/* Draft indicator - shows when prompt has content (draft auto-saved) */}
+          {prompt.trim() && (
+            <p className="text-[10px] text-cyan-400 mt-1 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+              Draft auto-saved
+            </p>
+          )}
         </div>
 
         <div>

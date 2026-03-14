@@ -38,6 +38,7 @@ function AppContent() {
   };
 
   // Load history from localStorage on mount
+  // Load history and draft prompt from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('visual-ai-history');
     if (saved) {
@@ -48,6 +49,12 @@ function AppContent() {
         console.error('Failed to parse history', e);
       }
     }
+    
+    // Load draft prompt if any
+    const savedDraft = localStorage.getItem('visual-ai-draft');
+    if (savedDraft) {
+      setPrompt(savedDraft);
+    }
   }, []);
 
   // Save history to localStorage whenever it changes
@@ -56,6 +63,15 @@ function AppContent() {
       localStorage.setItem('visual-ai-history', JSON.stringify(history));
     }
   }, [history]);
+
+  // Auto-save draft prompt to localStorage whenever it changes
+  useEffect(() => {
+    if (prompt) {
+      localStorage.setItem('visual-ai-draft', prompt);
+    } else {
+      localStorage.removeItem('visual-ai-draft');
+    }
+  }, [prompt]);
 
   // Undo function
   const handleUndo = useCallback(() => {
@@ -111,6 +127,8 @@ function AppContent() {
       });
       setHistoryIndex(prev => prev >= 0 ? prev + 1 : 0);
       setHtml(generatedHtml);
+      // Clear draft prompt after successful generation
+      localStorage.removeItem('visual-ai-draft');
       showToast('success', 'UI generated successfully! ✨');
     } catch (error: any) {
       console.error('Error generating UI:', error);
