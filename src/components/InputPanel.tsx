@@ -231,11 +231,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
         </div>
       </div>
 
-      {/* Templates Gallery - horizontal scroll on mobile */}
+        {/* Templates Gallery - horizontal scroll on mobile */}
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5">
         <label className="text-xs text-text-muted mb-3 block font-medium">Quick Start</label>
         <div className="flex sm:grid sm:grid-cols-4 gap-2 overflow-x-auto sm:overflow-visible pb-2 -mb-2 sm:mb-0 sm:pb-0 scrollbar-hide">
-          {TEMPLATES.map((template, index) => {
+          {TEMPLATES.slice(0, 8).map((template, index) => {
             const Icon = template.icon;
             return (
               <motion.button

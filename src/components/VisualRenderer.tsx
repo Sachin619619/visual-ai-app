@@ -27,6 +27,8 @@ const QUICK_PROMPTS = [
   { key: 'forms', prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling', label: '📋 Forms' },
   { key: 'landing', prompt: 'Design a complete landing page with hero, features section, pricing, testimonials, and footer', label: '🖥️ Landing' },
   { key: 'sidebar', prompt: 'Build a collapsible sidebar navigation with icons, labels, active states, and smooth expand/collapse animations', label: '📑 Sidebar' },
+  { key: 'pricing', prompt: 'Create a pricing table with 3 tiers, monthly/yearly toggle, feature lists and CTA buttons', label: '💰 Pricing' },
+  { key: 'dashboard', prompt: 'Create a dark-themed analytics dashboard with multiple widgets, charts and data tables', label: '📈 Dashboard' },
 ];
 
 // Simple syntax highlighting for HTML
@@ -230,8 +232,8 @@ export default function ${componentName}() {
         </button>
       )}
 
-      {/* Toolbar - optimized for mobile with wrap and scroll */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-60px)] sm:max-w-none overflow-x-auto max-h-[50px] sm:max-h-none ${isFullscreen ? 'right-16' : ''}`}>
+      {/* Toolbar - compact toolbar for mobile with proper spacing */}
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-70px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -252,12 +254,12 @@ export default function ${componentName}() {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={() => setShowStyleFrames(!showStyleFrames)}
-                className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                className={`p-2.5 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[40px] min-w-[40px] flex items-center justify-center ${
                   showStyleFrames ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
                 }`}
                 title="Style Frame"
               >
-                <Layout className="w-5 h-5 sm:w-5 sm:h-5" />
+                <Layout className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
               {/* Style Frame Dropdown */}
               {showStyleFrames && (
@@ -586,7 +588,7 @@ export default function ${componentName}() {
             <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
               {QUICK_PROMPTS.map((item, index) => (
                 <motion.button
                   key={item.key}

@@ -130,19 +130,19 @@ export function ChatWidget() {
         <MessageCircle className="w-6 h-6 sm:w-6 sm:h-6 text-white" />
       </motion.button>
 
-      {/* Chat Dialog - responsive width for mobile */}
+      {/* Chat Dialog - full width on mobile with safe area */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed sm:absolute inset-x-4 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-2rem)] max-h-[calc(100vh-9rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
+            className="fixed inset-x-2 sm:inset-auto sm:top-16 sm:right-4 sm:w-96 sm:h-[500px] w-auto h-auto max-w-[calc(100vw-1rem)] max-h-[calc(100vh-8rem)] sm:max-h-[500px] bg-bg-secondary rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50"
             style={{ 
               top: 'auto', 
-              left: '16px', 
-              right: '16px', 
-              bottom: 'calc(env(safe-area-inset-bottom, 20px) + 70px)',
+              bottom: 'calc(env(safe-area-inset-bottom, 20px) + 80px)',
+              left: '8px', 
+              right: '8px', 
               transformOrigin: 'bottom center',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
             }}
