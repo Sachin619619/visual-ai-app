@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
@@ -23,6 +23,8 @@ interface VisualRendererProps {
   onExport?: () => void;
   onSaveFavorite?: () => void;
   onShowFavorites?: () => void;
+  onShowGallery?: () => void;
+  visualHistoryCount?: number;
   theme?: 'dark' | 'light';
   onToggleTheme?: () => void;
   generationStats?: GenerationStats | null;
@@ -171,7 +173,7 @@ const QuickStartGrid = memo(({ items, onClick, disabled }: {
 
 QuickStartGrid.displayName = 'QuickStartGrid';
 
-export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -890,6 +892,22 @@ body {
                 title="View Favorites"
               >
                 <Star className="w-4 h-4 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {onShowGallery && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onShowGallery}
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 relative"
+                title="Design Gallery"
+              >
+                <GalleryHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
+                {visualHistoryCount !== undefined && visualHistoryCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {visualHistoryCount > 9 ? '9+' : visualHistoryCount}
+                  </span>
+                )}
               </motion.button>
             )}
             {/* Copy menu with options */}

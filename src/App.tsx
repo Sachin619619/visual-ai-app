@@ -6,7 +6,8 @@ import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
-import { Menu, X, Sparkles, Keyboard, Star, FolderOpen } from 'lucide-react';
+import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 // Favorite design type
 interface FavoriteDesign {
@@ -15,6 +16,16 @@ interface FavoriteDesign {
   html: string;
   prompt: string;
   model: ModelProvider;
+  createdAt: number;
+}
+
+// Visual history entry with thumbnail
+interface VisualHistoryEntry {
+  id: string;
+  html: string;
+  prompt: string;
+  model: ModelProvider;
+  thumbnail: string; // base64 image data
   createdAt: number;
 }
 
@@ -51,6 +62,8 @@ function AppContent() {
   const [favorites, setFavorites] = useState<FavoriteDesign[]>([]);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [visualHistory, setVisualHistory] = useState<VisualHistoryEntry[]>([]);
+  const [showGallery, setShowGallery] = useState(false);
   const { showToast } = useToast();
   
   const SITE_PASSWORD = 'visual2026';
@@ -157,6 +170,16 @@ function AppContent() {
         console.error('Failed to parse favorites', e);
       }
     }
+    
+    // Load visual history
+    const savedVisualHistory = localStorage.getItem('visual-ai-visual-history');
+    if (savedVisualHistory) {
+      try {
+        setVisualHistory(JSON.parse(savedVisualHistory));
+      } catch (e) {
+        console.error('Failed to parse visual history', e);
+      }
+    }
   }, []);
 
   // Save history to localStorage whenever it changes
@@ -165,6 +188,13 @@ function AppContent() {
       localStorage.setItem('visual-ai-history', JSON.stringify(history));
     }
   }, [history]);
+
+  // Save visual history to localStorage whenever it changes
+  useEffect(() => {
+    if (visualHistory.length > 0) {
+      localStorage.setItem('visual-ai-visual-history', JSON.stringify(visualHistory));
+    }
+  }, [visualHistory]);
 
   // Auto-save draft prompt to localStorage whenever it changes
   useEffect(() => {
@@ -230,6 +260,11 @@ function AppContent() {
       });
       setHistoryIndex(prev => prev >= 0 ? prev + 1 : 0);
       setHtml(generatedHtml);
+      
+      // Add to visual history gallery (with slight delay to ensure render)
+      setTimeout(() => {
+        addToVisualHistory(generatedHtml, prompt, model);
+      }, 100);
       
       // Track generation stats
       const generationTime = Date.now() - startTime;
@@ -324,6 +359,66 @@ function AppContent() {
     URL.revokeObjectURL(url);
     showToast('success', 'HTML file downloaded! 📦');
   }, [html, showToast]);
+
+  // Capture thumbnail of current design
+  const captureThumbnail = useCallback(async (htmlCode: string): Promise<string> => {
+    return new Promise((resolve) => {
+      // Create a temporary container to render the HTML
+      const container = document.createElement('div');
+      container.innerHTML = htmlCode;
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.width = '400px';
+      container.style.background = '#0f0f0f';
+      container.style.padding = '16px';
+      document.body.appendChild(container);
+      
+      html2canvas(container, {
+        backgroundColor: '#0f0f0f',
+        scale: 0.5,
+        logging: false,
+        useCORS: true,
+      }).then((canvas) => {
+        const thumbnail = canvas.toDataURL('image/png');
+        document.body.removeChild(container);
+        resolve(thumbnail);
+      }).catch(() => {
+        document.body.removeChild(container);
+        resolve('');
+      });
+    });
+  }, []);
+
+  // Add to visual history
+  const addToVisualHistory = useCallback(async (htmlCode: string, promptText: string, modelUsed: ModelProvider) => {
+    const thumbnail = await captureThumbnail(htmlCode);
+    if (thumbnail) {
+      const entry: VisualHistoryEntry = {
+        id: Date.now().toString(),
+        html: htmlCode,
+        prompt: promptText,
+        model: modelUsed,
+        thumbnail,
+        createdAt: Date.now()
+      };
+      setVisualHistory(prev => [entry, ...prev].slice(0, 50)); // Keep last 50
+    }
+  }, [captureThumbnail]);
+
+  // Load from visual history
+  const handleLoadFromGallery = useCallback((entry: VisualHistoryEntry) => {
+    setHtml(entry.html);
+    setShowGallery(false);
+    showToast('success', 'Design loaded from gallery! 🖼️');
+  }, [showToast]);
+
+  // Clear visual history
+  const handleClearVisualHistory = useCallback(() => {
+    setVisualHistory([]);
+    localStorage.removeItem('visual-ai-visual-history');
+    showToast('success', 'Gallery cleared');
+  }, [showToast]);
 
   // Apply edited code from code editor
   const handleApplyCode = useCallback((code: string) => {
@@ -583,6 +678,8 @@ function AppContent() {
           onExport={handleExport}
           onSaveFavorite={handleSaveFavorite}
           onShowFavorites={() => setShowFavorites(true)}
+          onShowGallery={() => setShowGallery(true)}
+          visualHistoryCount={visualHistory.length}
           theme={theme}
           onToggleTheme={handleToggleTheme}
           generationStats={generationStats}
@@ -691,6 +788,89 @@ function AppContent() {
                     >
                       Load Design
                     </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Visual History Gallery Modal */}
+      {showGallery && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowGallery(false)}
+        >
+          <div 
+            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
+                <GalleryHorizontal className="w-5 h-5 text-accent-primary" />
+                Design Gallery
+              </h2>
+              <div className="flex items-center gap-2">
+                {visualHistory.length > 0 && (
+                  <button 
+                    onClick={handleClearVisualHistory}
+                    className="text-sm text-text-muted hover:text-red-400 transition-colors"
+                  >
+                    Clear All
+                  </button>
+                )}
+                <button 
+                  onClick={() => setShowGallery(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            {visualHistory.length === 0 ? (
+              <div className="text-center py-8 text-text-muted">
+                <GalleryHorizontal className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No designs in gallery yet</p>
+                <p className="text-sm mt-1">Your generated designs will appear here</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {visualHistory.map((entry) => (
+                  <div 
+                    key={entry.id} 
+                    className="group relative bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer"
+                    onClick={() => handleLoadFromGallery(entry)}
+                  >
+                    <div className="aspect-video bg-bg-primary overflow-hidden">
+                      {entry.thumbnail ? (
+                        <img 
+                          src={entry.thumbnail} 
+                          alt={entry.prompt || 'Generated design'}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-text-muted">
+                          <GalleryHorizontal className="w-8 h-8 opacity-30" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <p className="text-xs text-text-muted line-clamp-2 mb-2">
+                        {entry.prompt || 'No prompt'}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-accent-primary">
+                          {AI_PROVIDERS[entry.model]?.name || entry.model}
+                        </span>
+                        <span className="text-xs text-text-muted">
+                          {new Date(entry.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white font-medium">Load Design</span>
+                    </div>
                   </div>
                 ))}
               </div>
