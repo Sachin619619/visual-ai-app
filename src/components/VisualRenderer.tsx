@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2 } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2 } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -17,6 +17,7 @@ interface VisualRendererProps {
   onStyleFrameChange?: (frame: StyleFrame) => void;
   onQuickGenerate?: (prompt: string) => void;
   onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
+  onShare?: () => void;
 }
 
 // Quick start prompts for empty state cards
@@ -51,7 +52,7 @@ function highlightHTML(code: string): string {
     .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
 }
 
-export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -786,6 +787,18 @@ body {
             >
               <Download className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Share Button */}
+            {html && onShare && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onShare}
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Share via URL"
+              >
+                <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
             {/* Remix/Variation Button */}
             {html && (
               <motion.button

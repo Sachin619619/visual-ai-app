@@ -7,6 +7,23 @@ import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI } from './lib/ai-providers';
 import { Menu, X, Sparkles } from 'lucide-react';
 
+// Helper to encode/decode HTML for sharing
+const encodeHTML = (html: string) => {
+  try {
+    return btoa(encodeURIComponent(html));
+  } catch {
+    return '';
+  }
+};
+
+const decodeHTML = (encoded: string) => {
+  try {
+    return decodeURIComponent(atob(encoded));
+  } catch {
+    return null;
+  }
+};
+
 function AppContent() {
   const [html, setHtml] = useState('');
   const [htmlHistory, setHtmlHistory] = useState<string[]>([]);
@@ -25,6 +42,19 @@ function AppContent() {
   useEffect(() => {
     const auth = localStorage.getItem('site_auth_visual');
     setSiteAuth(auth === 'true');
+    
+    // Check for shared design in URL
+    const params = new URLSearchParams(window.location.search);
+    const sharedDesign = params.get('design');
+    if (sharedDesign) {
+      const decodedHtml = decodeHTML(sharedDesign);
+      if (decodedHtml) {
+        setHtml(decodedHtml);
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+        showToast('success', 'Shared design loaded! 🔗');
+      }
+    }
   }, []);
 
   const handleSiteLogin = (password: string) => {
@@ -174,6 +204,24 @@ function AppContent() {
     handleGenerate(refinement, 'openai');
   }, [handleGenerate]);
 
+  // Share design via URL
+  const handleShare = useCallback(() => {
+    if (!html) {
+      showToast('error', 'Nothing to share');
+      return;
+    }
+    
+    const encoded = encodeHTML(html);
+    const shareUrl = `${window.location.origin}${window.location.pathname}?design=${encoded}`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast('success', 'Share link copied to clipboard! 🔗');
+    }).catch(() => {
+      showToast('error', 'Failed to copy link');
+    });
+  }, [html, showToast]);
+
   // Keyboard shortcut: Cmd/Ctrl + L to clear, Z to undo/redo
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -309,6 +357,7 @@ function AppContent() {
           onStyleFrameChange={setStyleFrame}
           onQuickGenerate={handleQuickGenerate}
           onRefinePrompt={handleRefinePrompt}
+          onShare={handleShare}
         />
       </div>
 
