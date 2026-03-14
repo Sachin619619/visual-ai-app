@@ -1049,8 +1049,8 @@ body {
                 </motion.div>
               )}
             </div>
-            {/* Viewport Size Selector - visible on all screens via more menu on mobile */}
-            <div className="relative hidden md:block">
+            {/* Viewport Size Selector - visible on tablet+ directly, mobile via more menu */}
+            <div className="relative hidden sm:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -1293,6 +1293,33 @@ body {
                   >
                     <Keyboard className="w-4 h-4" /> Keyboard Shortcuts
                   </button>
+                  {/* Viewport selector for mobile - in more menu */}
+                  <button
+                    onClick={() => { setShowViewportSelector(!showViewportSelector); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    {viewportSize === 'mobile' ? <Smartphone className="w-4 h-4" /> : viewportSize === 'tablet' ? <Tablet className="w-4 h-4" /> : viewportSize === 'wide' ? <MonitorPlay className="w-4 h-4" /> : <Monitor className="w-4 h-4" />} 
+                    Viewport: {viewportSize.charAt(0).toUpperCase() + viewportSize.slice(1)}
+                  </button>
+                  {/* Viewport quick actions - mobile */}
+                  <div className="flex gap-1 px-3 py-1">
+                    {VIEWPORTS.map((vp) => (
+                      <button
+                        key={vp.id}
+                        onClick={() => { handleViewportChange(vp.id); setShowMoreMenu(false); }}
+                        className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs transition-colors ${
+                          viewportSize === vp.id 
+                            ? 'bg-accent-primary/20 text-accent-primary' 
+                            : 'text-text-muted hover:bg-white/5 hover:text-text-primary'
+                        }`}
+                      >
+                        {vp.id === 'mobile' && <Smartphone className="w-3 h-3" />}
+                        {vp.id === 'tablet' && <Tablet className="w-3 h-3" />}
+                        {vp.id === 'desktop' && <Monitor className="w-3 h-3" />}
+                        {vp.id === 'wide' && <MonitorPlay className="w-3 h-3" />}
+                      </button>
+                    ))}
+                  </div>
                   <button
                     onClick={() => { setShowSaveTemplate(true); setShowMoreMenu(false); }}
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
@@ -1488,7 +1515,8 @@ body {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-20 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-4 z-20 max-h-[45vh] sm:max-h-80 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+            className="absolute bottom-16 sm:bottom-4 left-1 right-1 sm:left-4 sm:right-4 z-20 max-h-[50vh] sm:max-h-80 bg-bg-secondary/95 backdrop-blur-glass rounded-xl border border-white/10 overflow-hidden"
+            style={{ maxHeight: 'calc(50vh - env(safe-area-inset-bottom, 0px))' }}
           >
             <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-white/5">
               <div className="flex items-center gap-2">
@@ -1560,17 +1588,18 @@ body {
               </div>
             </div>
             {isEditingCode ? (
-              <div className="flex overflow-auto max-h-[35vh] sm:max-h-60">
+              <div className="flex overflow-auto max-h-[40vh] sm:max-h-60">
                 <textarea
                   value={editedCode}
                   onChange={(e) => setEditedCode(e.target.value)}
-                  className="flex-1 p-3 sm:p-4 bg-bg-primary text-text-primary text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6 resize-none focus:outline-none"
+                  className="flex-1 p-3 sm:p-4 bg-bg-primary text-text-primary text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6 resize-none focus:outline-none min-h-[200px]"
+                  style={{ fontSize: '14px' }}
                   spellCheck={false}
                   placeholder="Edit your HTML code here..."
                 />
               </div>
             ) : (
-              <div className="flex overflow-auto max-h-[30vh] sm:max-h-44">
+              <div className="flex overflow-auto max-h-[35vh] sm:max-h-44" style={{ maxHeight: 'calc(35vh - env(safe-area-inset-bottom, 0px))' }}>
                 {/* Line Numbers */}
                 <div className="flex-shrink-0 py-2 sm:py-4 px-2 sm:px-3 bg-bg-primary/50 text-right select-none border-r border-white/5">
                   {Array.from({ length: highlightHTML(html).lineCount }, (_, i) => (
@@ -1595,7 +1624,8 @@ body {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/70 backdrop-blur-md"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
           >
             <div className="absolute inset-0" onClick={() => setShowRefine(false)} />
             <motion.div
@@ -1603,7 +1633,8 @@ body {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-md overflow-hidden"
+              className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-md overflow-hidden max-h-[85vh] flex flex-col"
+              style={{ maxHeight: 'calc(85vh - env(safe-area-inset-bottom, 0px))' }}
             >
               <div className="flex items-center justify-between p-4 border-b border-white/5">
                 <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
@@ -1617,7 +1648,7 @@ body {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="p-4 space-y-4">
+              <div className="p-3 sm:p-4 space-y-4 overflow-y-auto flex-1" style={{ maxHeight: 'calc(85vh - 120px)' }}>
                 {/* Quick refine buttons */}
                 <div>
                   <label className="text-sm text-text-secondary mb-2 block font-medium">Quick refinements:</label>
