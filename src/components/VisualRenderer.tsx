@@ -383,7 +383,7 @@ export default function ${componentName}() {
   }, [isFullscreen]);
 
   return (
-    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-12 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-14 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Fullscreen Close Button */}
       {isFullscreen && (
         <button

@@ -209,7 +209,7 @@ function AppContent() {
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="fixed top-3 left-3 z-50 p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-          style={{ top: 'calc(env(safe-area-inset-top, 12px) + 60px)', left: 'env(safe-area-inset-left, 12px)' }}
+          style={{ top: 'calc(env(safe-area-inset-top, 12px) + 8px)', left: 'env(safe-area-inset-left, 12px)' }}
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
         >
           <Menu className="w-6 h-6 text-white" />
@@ -250,7 +250,7 @@ function AppContent() {
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="fixed top-3 left-3 z-50 lg:hidden p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-        style={{ top: 'calc(env(safe-area-inset-top, 12px) + 60px)', left: 'env(safe-area-inset-left, 12px)' }}
+        style={{ top: 'calc(env(safe-area-inset-top, 12px) + 8px)', left: 'env(safe-area-inset-left, 12px)' }}
         aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >
         {sidebarOpen ? (
@@ -267,7 +267,7 @@ function AppContent() {
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
         w-[90vw] max-w-[340px] sm:max-w-[360px]
-        pt-16 lg:pt-0
+        pt-14 lg:pt-0
         overflow-y-auto overflow-x-hidden
       `} style={{ 
         paddingBottom: 'env(safe-area-inset-bottom)',
