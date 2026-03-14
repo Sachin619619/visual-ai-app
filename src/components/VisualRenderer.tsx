@@ -366,6 +366,34 @@ export default function ${componentName}() {
     URL.revokeObjectURL(url);
   };
 
+  // Export as Vue Component
+  const handleExportVue = () => {
+    if (!html) return;
+    
+    // Convert HTML to a Vue 3 component
+    const componentName = 'GeneratedComponent';
+    const vueCode = `<template>
+  <div v-html="htmlContent"></div>
+</template>
+
+<script setup>
+const htmlContent = \`${html.replace(/`/g, '\\`').replace(/\$/g, '\\$').replace(/"/g, '\\"')}\`;
+</script>
+
+<style scoped>
+/* Add component styles here */
+</style>
+`;
+    
+    const blob = new Blob([vueCode], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${componentName}.vue`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   // Export as standalone CSS file
   const handleExportCSS = () => {
     if (!html) return;
@@ -1094,6 +1122,12 @@ body {
                         className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
                       >
                         <FileType className="w-4 h-4" /> Export as React
+                      </button>
+                      <button
+                        onClick={() => { handleExportVue(); setShowMoreMenu(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold text-green-400">V</span> Export as Vue
                       </button>
                       <button
                         onClick={() => { handleExportCSS(); setShowMoreMenu(false); }}
