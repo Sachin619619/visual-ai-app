@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2 } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
-import { AI_PROVIDERS, setApiKey } from '../lib/ai-providers';
+import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt } from '../lib/ai-providers';
 
 interface InputPanelProps {
   onGenerate: (prompt: string, model: ModelProvider) => void;
@@ -124,6 +124,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('visual-ai-dark-mode');
     return saved !== null ? saved === 'true' : true;
@@ -178,6 +179,21 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       handleSubmit(e);
+    }
+  };
+
+  const handleEnhancePrompt = async () => {
+    if (!prompt.trim() || isEnhancing || isLoading) return;
+    
+    setIsEnhancing(true);
+    try {
+      const apiKey = getApiKey();
+      const enhanced = await enhancePrompt(prompt, model, apiKey);
+      setPrompt(enhanced);
+    } catch (error) {
+      console.error('Failed to enhance prompt:', error);
+    } finally {
+      setIsEnhancing(false);
     }
   };
 
@@ -265,14 +281,30 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
       <form onSubmit={handleSubmit} className="p-3 sm:p-5 flex-1 flex flex-col gap-4 sm:gap-5">
         <div>
           <label className="text-sm text-text-secondary mb-2 block font-medium">Describe what you want</label>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="e.g., Show me a line chart of sales data..."
-            className="input-field h-28 sm:h-44 resize-none text-sm"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="e.g., Show me a line chart of sales data..."
+              className="input-field h-28 sm:h-44 resize-none text-sm pr-12"
+              disabled={isLoading || isEnhancing}
+            />
+            <button
+              type="button"
+              onClick={handleEnhancePrompt}
+              disabled={!prompt.trim() || isEnhancing || isLoading}
+              className="absolute right-2 top-2 p-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Enhance prompt with AI"
+            >
+              {isEnhancing ? (
+                <div className="w-4 h-4 border-2 border-accent-primary/30 border-t-accent-primary rounded-full animate-spin" />
+              ) : (
+                <Wand2 className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+          <p className="text-xs text-text-muted mt-1">✨ Use the wand to enhance your prompt</p>
         </div>
 
         <div>

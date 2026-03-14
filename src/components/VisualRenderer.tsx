@@ -62,6 +62,7 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [showSaveTemplate, setShowSaveTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [showTemplates, setShowTemplates] = useState(false);
+  const [exportQuality, setExportQuality] = useState(2);
 
   // Keyboard shortcuts list
   const KEYBOARD_SHORTCUTS = [
@@ -103,7 +104,13 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   };
 
   // Export as PNG
-  const handleExportPNG = async () => {
+  const handleExportPNG = async (e?: React.MouseEvent) => {
+    // If shift is held, cycle through quality
+    if (e?.shiftKey) {
+      setExportQuality(prev => prev >= 3 ? 1 : prev + 1);
+      return;
+    }
+    
     if (!iframeRef.current) return;
     try {
       // Get the iframe document
@@ -126,7 +133,7 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
       // Use html2canvas on the content
       const canvas = await html2canvas(container, {
         backgroundColor: '#0f0f23',
-        scale: 2,
+        scale: exportQuality,
         logging: false,
         useCORS: true,
       });
@@ -379,13 +386,13 @@ export default function ${componentName}() {
                 <Undo2 className="w-5 h-5 sm:w-5 sm:h-5" />
               </motion.button>
             )}
-            {/* Redo Button */}
+            {/* Redo Button - hidden on small mobile */}
             {onRedo && (
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={onRedo}
-                className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
                 title="Redo (⌘+Shift+Z)"
               >
                 <Redo2 className="w-5 h-5 sm:w-5 sm:h-5" />
@@ -401,12 +408,12 @@ export default function ${componentName}() {
             >
               {previewTheme === 'dark' ? <Sun className="w-5 h-5 sm:w-5 sm:h-5" /> : <Moon className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
-            {/* Keyboard Shortcuts Help Button */}
+            {/* Keyboard Shortcuts Help Button - hidden on mobile */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowShortcuts(true)}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Keyboard Shortcuts"
             >
               <Keyboard className="w-5 h-5 sm:w-5 sm:h-5" />
@@ -431,29 +438,34 @@ export default function ${componentName}() {
             >
               {copied ? <Check className="w-5 h-5 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleExportPNG}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title="Export as PNG"
-            >
-              <FileImage className="w-5 h-5 sm:w-5 sm:h-5" />
-            </motion.button>
+            <div className="relative">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleExportPNG}
+                className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title={`Export as PNG (${exportQuality}x quality)`}
+              >
+                <FileImage className="w-5 h-5 sm:w-5 sm:h-5" />
+              </motion.button>
+              <div className="absolute -bottom-1 -right-1 text-[8px] bg-accent-primary/80 text-white px-1 rounded">{exportQuality}x</div>
+            </div>
+            {/* Export SVG - hidden on mobile */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportSVG}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as SVG"
             >
               <span className="w-5 h-5 sm:w-5 sm:h-5 flex items-center justify-center text-xs font-bold">SVG</span>
             </motion.button>
+            {/* Export React - hidden on mobile */}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportReact}
-              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden sm:flex p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as React"
             >
               <FileType className="w-5 h-5 sm:w-5 sm:h-5" />
@@ -468,8 +480,8 @@ export default function ${componentName}() {
             >
               {copiedImage ? <Check className="w-5 h-5 sm:w-5 sm:h-5 text-green-400" /> : <Clipboard className="w-5 h-5 sm:w-5 sm:h-5" />}
             </motion.button>
-            {/* Save as Template */}
-            <div className="relative">
+            {/* Save as Template - hidden on mobile */}
+            <div className="relative hidden sm:block">
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}

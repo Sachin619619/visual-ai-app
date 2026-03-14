@@ -576,3 +576,86 @@ Rules:
   
   return generateDefaultUI(prompt);
 }
+
+// Enhance prompt using AI
+export const enhancePrompt = async (prompt: string, model: ModelProvider, apiKey: string): Promise<string> => {
+  const enhancementPrompt = `You are a prompt enhancer for a UI generator. Improve the given prompt to get better results from an AI UI generator.
+
+Make the prompt more detailed and specific. Add:
+- Specific colors, fonts, and visual details
+- Layout preferences (grid, flex, stacked)
+- Animation preferences
+- Interaction details
+- Responsive behavior notes
+
+Return ONLY the enhanced prompt, nothing else. Keep it under 200 words.`;
+
+  if (!apiKey) {
+    // Simple enhancement without API key
+    return prompt + '. Make it visually stunning with modern design, smooth animations, dark theme, and professional styling.';
+  }
+
+  try {
+    let response;
+    
+    if (model === 'openai' || model === 'openrouter') {
+      response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            { role: 'system', content: enhancementPrompt },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7
+        })
+      });
+      
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || prompt;
+    }
+    
+    if (model === 'gemini') {
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }] }]
+        })
+      });
+      
+      const data = await response.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || prompt;
+    }
+    
+    if (model === 'claude') {
+      response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-opus-20240229',
+          messages: [
+            { role: 'user', content: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }
+          ],
+          max_tokens: 500
+        })
+      });
+      
+      const data = await response.json();
+      return data.content?.[0]?.text || prompt;
+    }
+    
+    return prompt;
+  } catch (error) {
+    console.error('Prompt enhancement failed:', error);
+    return prompt;
+  }
+};
