@@ -232,7 +232,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     <motion.div 
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-[85vw] max-w-[320px] sm:w-80 sm:max-w-none h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
+      className="w-[90vw] max-w-[340px] sm:w-80 sm:max-w-none h-full bg-bg-secondary border-r border-white/5 flex flex-col overflow-hidden"
     >
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -291,7 +291,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             View All <Grid3X3 className="w-3 h-3" />
           </button>
         </div>
-        <div className="flex sm:grid sm:grid-cols-4 gap-2 overflow-x-auto sm:overflow-visible pb-2 -mb-2 sm:mb-0 sm:pb-0 scrollbar-hide px-1">
+        <div className="flex sm:grid sm:grid-cols-4 gap-1.5 overflow-x-auto sm:overflow-visible pb-2 -mb-2 sm:mb-0 sm:pb-0 scrollbar-hide px-1">
           {TEMPLATES.slice(0, 8).map((template, index) => {
             const Icon = template.icon;
             return (
@@ -305,11 +305,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 sm:flex-none flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[60px] group w-[72px] sm:w-auto"
+                className="flex-shrink-0 sm:flex-none flex flex-col items-center gap-1 p-2 rounded-lg sm:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[52px] sm:min-h-[60px] group w-[60px] sm:w-auto"
                 title={template.name}
               >
-                <Icon className="w-5 h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[10px] text-text-secondary font-medium truncate w-full text-center">{template.name}</span>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center">{template.name}</span>
               </motion.button>
             );
           })}

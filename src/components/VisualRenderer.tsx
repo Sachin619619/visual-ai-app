@@ -315,7 +315,7 @@ export default function ${componentName}() {
   }, [isFullscreen]);
 
   return (
-    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-14 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`flex-1 h-full w-full flex flex-col bg-bg-primary relative overflow-hidden pt-12 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Fullscreen Close Button */}
       {isFullscreen && (
         <button
@@ -329,7 +329,7 @@ export default function ${componentName}() {
       )}
 
       {/* Toolbar - compact toolbar for mobile with proper spacing */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-80px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''} style={{ maxWidth: 'calc(100vw - 70px)' }}`}>
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-60px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -825,19 +825,19 @@ export default function ${componentName}() {
             <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 text-left max-w-sm mx-auto">
-              {QUICK_PROMPTS.map((item, index) => (
+            <div className="grid grid-cols-3 xs:grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4 text-left max-w-md mx-auto">
+              {QUICK_PROMPTS.slice(0, 12).map((item, index) => (
                 <motion.button
                   key={item.key}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-3 sm:p-4 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[80px] sm:min-h-[90px] flex flex-col justify-between"
+                  className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[56px] sm:min-h-[70px] flex flex-col justify-between"
                 >
-                  <p className="text-accent-primary text-xs sm:text-sm font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
-                  <p className="text-text-muted text-[10px] sm:text-xs">Click to generate</p>
+                  <p className="text-accent-primary text-[10px] sm:text-xs font-medium group-hover:text-accent-secondary transition-colors">{item.label}</p>
+                  <p className="text-text-muted text-[8px] sm:text-[10px] hidden xs:block">Generate</p>
                 </motion.button>
               ))}
             </div>
