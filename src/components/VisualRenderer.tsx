@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
@@ -58,6 +58,10 @@ export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model
   const [refinementText, setRefinementText] = useState('');
   const [previewTheme, setPreviewTheme] = useState<PreviewTheme>('dark');
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [copiedImage, setCopiedImage] = useState(false);
+  const [showSaveTemplate, setShowSaveTemplate] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [showTemplates, setShowTemplates] = useState(false);
 
   // Keyboard shortcuts list
   const KEYBOARD_SHORTCUTS = [
@@ -202,6 +206,65 @@ export default function ${componentName}() {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  // Copy to clipboard as image
+  const handleCopyToClipboard = async () => {
+    if (!iframeRef.current) return;
+    try {
+      const iframe = iframeRef.current;
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) return;
+      
+      const bodyContent = iframeDoc.body.cloneNode(true) as HTMLElement;
+      
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.background = previewTheme === 'dark' ? '#0f0f23' : '#ffffff';
+      container.appendChild(bodyContent);
+      document.body.appendChild(container);
+      
+      const canvas = await html2canvas(container, {
+        backgroundColor: previewTheme === 'dark' ? '#0f0f23' : '#ffffff',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      document.body.removeChild(container);
+      
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          setCopiedImage(true);
+          setTimeout(() => setCopiedImage(false), 2000);
+        }
+      });
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
+  };
+
+  // Save as template
+  const handleSaveTemplate = () => {
+    if (!templateName.trim() || !html) return;
+    const templates = JSON.parse(localStorage.getItem('visual-ai-templates') || '[]');
+    templates.push({
+      id: Date.now().toString(),
+      name: templateName.trim(),
+      html,
+      createdAt: new Date().toISOString()
+    });
+    localStorage.setItem('visual-ai-templates', JSON.stringify(templates));
+    setTemplateName('');
+    setShowSaveTemplate(false);
+  };
+
+  // Load saved templates
+  const savedTemplates = JSON.parse(localStorage.getItem('visual-ai-templates') || '[]');
 
   useEffect(() => {
     if (html && iframeRef.current) {
@@ -395,6 +458,81 @@ export default function ${componentName}() {
             >
               <FileType className="w-5 h-5 sm:w-5 sm:h-5" />
             </motion.button>
+            {/* Copy to Clipboard as Image */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleCopyToClipboard}
+              className="p-3 sm:p-2.5 rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[44px] min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title={copiedImage ? "Copied!" : "Copy as Image"}
+            >
+              {copiedImage ? <Check className="w-5 h-5 sm:w-5 sm:h-5 text-green-400" /> : <Clipboard className="w-5 h-5 sm:w-5 sm:h-5" />}
+            </motion.button>
+            {/* Save as Template */}
+            <div className="relative">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={() => setShowSaveTemplate(!showSaveTemplate)}
+                className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  showSaveTemplate ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
+                }`}
+                title="Save as Template"
+              >
+                <Bookmark className="w-5 h-5 sm:w-5 sm:h-5" />
+              </motion.button>
+              {/* Save Template Dropdown */}
+              {showSaveTemplate && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="absolute top-full right-0 mt-2 p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-20 min-w-[200px]"
+                >
+                  <p className="text-xs text-text-muted mb-2">Save Current UI</p>
+                  <input
+                    type="text"
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    placeholder="Template name..."
+                    className="w-full px-3 py-2 rounded-lg bg-bg-primary border border-white/10 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-primary"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTemplate()}
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={handleSaveTemplate}
+                      disabled={!templateName.trim()}
+                      className="flex-1 px-3 py-2 rounded-lg bg-accent-primary text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setShowTemplates(!showTemplates)}
+                      className="px-3 py-2 rounded-lg bg-white/10 text-text-secondary text-sm hover:bg-white/20 transition-colors"
+                    >
+                      Templates ({savedTemplates.length})
+                    </button>
+                  </div>
+                  {/* Templates List */}
+                  {showTemplates && savedTemplates.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-white/10 max-h-40 overflow-y-auto">
+                      {savedTemplates.map((t: any) => (
+                        <button
+                          key={t.id}
+                          onClick={() => {
+                            // This would need to be handled by parent - for now just show notification
+                            setShowSaveTemplate(false);
+                            setShowTemplates(false);
+                          }}
+                          className="w-full text-left px-2 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors truncate"
+                        >
+                          {t.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </div>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
