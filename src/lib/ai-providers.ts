@@ -44,12 +44,13 @@ export const getApiKey = () => apiKey;
 // Generate UI based on prompt
 export const generateUI = async (
   prompt: string,
-  model: ModelProvider
+  model: ModelProvider,
+  contextHtml?: string
 ): Promise<string> => {
   // If API key is set, use real AI
   if (apiKey) {
     try {
-      const result = await generateWithAI(prompt, model, apiKey);
+      const result = await generateWithAI(prompt, model, apiKey, contextHtml);
       return result;
     } catch (error) {
       console.error('AI generation failed:', error);
@@ -97,12 +98,18 @@ export const chatWithAI = async (message: string): Promise<string> => {
 const generateWithAI = async (
   prompt: string,
   model: ModelProvider,
-  apiKey: string
+  apiKey: string,
+  contextHtml?: string
 ): Promise<string> => {
   // Enhance prompt for better UI generation
   const enhancedPrompt = await enhancePrompt(prompt, model, apiKey);
   
-  const uiPrompt = `${enhancedPrompt}
+  // Build context from previous HTML if provided
+  const contextSection = contextHtml 
+    ? `\n\nREFERENCE DESIGN (use as inspiration but create something new):\n${contextHtml.substring(0, 2000)}`
+    : '';
+  
+  const uiPrompt = `${enhancedPrompt}${contextSection}
 
 CRITICAL: You MUST output ONLY raw HTML code. NO markdown, NO explanations, NO text before or after.
 

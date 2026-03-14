@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2 } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
-import { ModelProvider, PreviewTheme, StyleFrame } from '../types';
+import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats } from '../types';
 import { AI_PROVIDERS } from '../lib/ai-providers';
 import html2canvas from 'html2canvas';
 
@@ -18,6 +18,7 @@ interface VisualRendererProps {
   onQuickGenerate?: (prompt: string) => void;
   onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
   onShare?: () => void;
+  generationStats?: GenerationStats | null;
 }
 
 // Quick start prompts for empty state cards
@@ -52,7 +53,7 @@ function highlightHTML(code: string): string {
     .replace(/(&gt;)/g, '<span class="text-yellow-400">$1</span>');
 }
 
-export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare }: VisualRendererProps) {
+export function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -325,11 +326,12 @@ body {
     setIsRemixing(true);
     
     try {
-      // Use the iframe content to create a variation
-      const remixPrompt = `Create a variation of this UI design with different colors, layout, or styling. Keep the same type of component but make it visually distinct. Make it dark-themed with modern styling using Tailwind CSS.`;
+      // Use the iframe content as context for creating a variation
+      const remixPrompt = `Create a visually different variation of this UI design. Change the colors to a different palette, modify the layout slightly, and add your own creative touches. Keep the same type of component but make it feel fresh and unique. Make it dark-themed with modern styling using Tailwind CSS.`;
       
-      // Call the parent generation function with a remix prompt
+      // Call the parent generation function with context
       if (onQuickGenerate) {
+        // We need to pass the current HTML as context - this will be handled by parent
         onQuickGenerate(remixPrompt);
       }
     } catch (error) {
@@ -465,6 +467,11 @@ body {
               >
                 <span className="text-xs">{AI_PROVIDERS[model]?.icon}</span>
                 <span className="hidden sm:inline">{AI_PROVIDERS[model]?.name || model}</span>
+                {generationStats && (
+                  <span className="ml-1 text-green-400" title={`Generated in ${generationStats.time}ms`}>
+                    • {(generationStats.time / 1000).toFixed(1)}s
+                  </span>
+                )}
               </motion.div>
             )}
             {/* Style Frame Selector */}

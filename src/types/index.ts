@@ -61,3 +61,8 @@ export interface CardData {
   stats?: { label: string; value: string | number }[];
   tags?: string[];
 }
+
+export interface GenerationStats {
+  time: number;
+  model: string;
+}

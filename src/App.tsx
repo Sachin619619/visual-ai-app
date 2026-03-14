@@ -5,6 +5,7 @@ import { ChatWidget } from './components/ChatWidget';
 import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI } from './lib/ai-providers';
+import { AI_PROVIDERS } from './lib/ai-providers';
 import { Menu, X, Sparkles } from 'lucide-react';
 
 // Helper to encode/decode HTML for sharing
@@ -29,6 +30,7 @@ function AppContent() {
   const [htmlHistory, setHtmlHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
+  const [generationStats, setGenerationStats] = useState<{ time: number; model: string } | null>(null);
   const [history, setHistory] = useState<PromptHistory[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [siteAuth, setSiteAuth] = useState<boolean | null>(null);
@@ -134,7 +136,8 @@ function AppContent() {
   }, []);
 
   // All useCallbacks must be defined BEFORE any conditional returns
-  const handleGenerate = useCallback(async (prompt: string, model: ModelProvider) => {
+  const handleGenerate = useCallback(async (prompt: string, model: ModelProvider, contextHtml?: string) => {
+    const startTime = Date.now();
     setIsLoading(true);
     setLastModel(model);
     
@@ -148,7 +151,7 @@ function AppContent() {
     setHistory(prev => [historyItem, ...prev]);
     
     try {
-      const generatedHtml = await generateUI(prompt, model);
+      const generatedHtml = await generateUI(prompt, model, contextHtml);
       // Add to undo history
       setHtmlHistory(prev => {
         // If we're not at the end of history, truncate future history
@@ -157,9 +160,14 @@ function AppContent() {
       });
       setHistoryIndex(prev => prev >= 0 ? prev + 1 : 0);
       setHtml(generatedHtml);
+      
+      // Track generation stats
+      const generationTime = Date.now() - startTime;
+      setGenerationStats({ time: generationTime, model: AI_PROVIDERS[model]?.name || model });
+      
       // Clear draft prompt after successful generation
       localStorage.removeItem('visual-ai-draft');
-      showToast('success', 'UI generated successfully! ✨');
+      showToast('success', `UI generated in ${(generationTime / 1000).toFixed(1)}s! ✨`);
     } catch (error: any) {
       console.error('Error generating UI:', error);
       let errorMessage = 'Failed to generate UI. Please try again.';
@@ -183,8 +191,8 @@ function AppContent() {
 
   const handleQuickGenerate = useCallback((prompt: string) => {
     setPrompt(prompt);
-    handleGenerate(prompt, 'openai');
-  }, [handleGenerate]);
+    handleGenerate(prompt, 'openai', html);
+  }, [handleGenerate, html]);
 
   const handleToggleFavorite = useCallback((id: string) => {
     setHistory(prev => prev.map(item => 
@@ -199,10 +207,10 @@ function AppContent() {
   }, [showToast]);
 
   const handleRefinePrompt = useCallback((_: string, refinement: string) => {
-    // Use the refinement as a new prompt
+    // Use the refinement as a new prompt with current HTML as context
     setPrompt(refinement);
-    handleGenerate(refinement, 'openai');
-  }, [handleGenerate]);
+    handleGenerate(refinement, 'openai', html);
+  }, [handleGenerate, html]);
 
   // Share design via URL
   const handleShare = useCallback(() => {
@@ -358,6 +366,7 @@ function AppContent() {
           onQuickGenerate={handleQuickGenerate}
           onRefinePrompt={handleRefinePrompt}
           onShare={handleShare}
+          generationStats={generationStats}
         />
       </div>
 
