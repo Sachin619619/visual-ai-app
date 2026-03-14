@@ -200,6 +200,21 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   const [isEditingCode, setIsEditingCode] = useState(false);
   const [editedCode, setEditedCode] = useState('');
 
+  // Load saved viewport from localStorage on mount
+  useEffect(() => {
+    const savedViewport = localStorage.getItem('visual-ai-viewport');
+    if (savedViewport && VIEWPORTS.some(v => v.id === savedViewport)) {
+      setViewportSize(savedViewport as ViewportSize);
+    }
+  }, []);
+
+  // Save viewport to localStorage when changed
+  const handleViewportChange = (viewportId: ViewportSize) => {
+    setViewportSize(viewportId);
+    localStorage.setItem('visual-ai-viewport', viewportId);
+    setShowViewportSelector(false);
+  };
+
   // Color scheme definitions for instant theme switching
   const COLOR_SCHEMES = [
     { id: 'violet', name: 'Violet', primary: '#8b5cf6', secondary: '#06b6d4' },
@@ -243,12 +258,6 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
     `;
     setColorScheme(schemeId);
     setShowColorSchemes(false);
-  };
-
-  // Handle viewport change
-  const handleViewportChange = (viewportId: ViewportSize) => {
-    setViewportSize(viewportId);
-    setShowViewportSelector(false);
   };
 
   // Toggle animations
@@ -1062,28 +1071,44 @@ body {
               >
                 {viewportSize === 'mobile' ? <Smartphone className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : viewportSize === 'tablet' ? <Tablet className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : viewportSize === 'wide' ? <MonitorPlay className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Monitor className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
               </motion.button>
+              {/* Viewport dimension indicator */}
+              {viewportSize !== 'desktop' && (
+                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-accent-primary font-mono whitespace-nowrap">
+                  {VIEWPORTS.find(v => v.id === viewportSize)?.width}×{VIEWPORTS.find(v => v.id === viewportSize)?.height}
+                </div>
+              )}
               {/* Viewport Dropdown */}
               {showViewportSelector && (
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-20 min-w-[140px]"
+                  className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-20 min-w-[180px]"
                 >
-                  <p className="text-xs text-text-muted px-2 pb-2 mb-2 border-b border-white/5">Viewport</p>
+                  <p className="text-xs text-text-muted px-2 pb-2 mb-2 border-b border-white/5 flex items-center justify-between">
+                    <span>Viewport</span>
+                    {viewportSize !== 'desktop' && (
+                      <span className="text-[10px] bg-accent-primary/20 px-1.5 py-0.5 rounded text-accent-primary">
+                        {VIEWPORTS.find(v => v.id === viewportSize)?.width} × {VIEWPORTS.find(v => v.id === viewportSize)?.height}
+                      </span>
+                    )}
+                  </p>
                   {VIEWPORTS.map((viewport) => {
                     const Icon = viewport.icon;
                     return (
                       <button
                         key={viewport.id}
                         onClick={() => handleViewportChange(viewport.id)}
-                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                           viewportSize === viewport.id 
                             ? 'bg-accent-primary/20 text-accent-primary' 
                             : 'text-text-secondary hover:bg-white/5 hover:text-text-primary'
                         }`}
                       >
-                        <Icon className="w-4 h-4" />
-                        {viewport.name}
+                        <div className="flex items-center gap-2">
+                          <Icon className="w-4 h-4" />
+                          {viewport.name}
+                        </div>
+                        <span className="text-[10px] text-text-muted">{viewport.width}×{viewport.height}</span>
                       </button>
                     );
                   })}
