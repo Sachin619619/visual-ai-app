@@ -277,15 +277,16 @@ const generateWithAI = async (
     if (data.error) throw new Error(`Anthropic error: ${data.error?.message || JSON.stringify(data.error)}`);
     rawHtml = data.content?.[0]?.text || '';
   } else if (model === 'kimi') {
-    // Kimi API
-    if (!kimiApiKey) {
-      throw new Error('🌙 Please set your Kimi API key in settings to use Kimi K2.5');
+    // Kimi API - uses same key field (auto-detect)
+    if (!apiKey && !kimiApiKey) {
+      throw new Error('🌙 Please set your API key in settings to use Kimi K2.5');
     }
+    const kimikey = kimiApiKey || apiKey;
     response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${kimiApiKey}`
+        'Authorization': `Bearer ${kimikey}`
       },
       body: JSON.stringify({
         model: 'kimi-k2.5',

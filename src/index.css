@@ -253,12 +253,28 @@ body {
   .btn-primary {
     padding: 14px 20px;
     min-height: 52px;
+    font-size: 15px;
+  }
+  
+  .btn-secondary {
+    padding: 12px 16px;
+    min-height: 48px;
+    font-size: 14px;
   }
   
   button, 
   [role="button"] {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  /* Better spacing on mobile */
+  .p-4 {
+    padding: 16px;
+  }
+  
+  .gap-3 {
+    gap: 12px;
   }
   
   /* Improve sidebar touch area */
@@ -399,6 +415,62 @@ body {
   }
 }
 
+/* Enhanced button styles */
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Better icon button styling */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+  transform: scale(1.05);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile-friendly icon buttons */
+@media (max-width: 640px) {
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 /* Better button active states */
 .btn-primary:active:not(:disabled) {
   transform: scale(0.98);
@@ -508,6 +580,26 @@ button,
   .mobile-form-group label {
     font-size: 13px;
     margin-bottom: 6px;
+  }
+  
+  /* Better mobile navigation */
+  .mobile-nav {
+    padding: 12px;
+  }
+  
+  /* Improved mobile text sizes */
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  
+  .text-lg {
+    font-size: 1rem;
+  }
+  
+  /* Better mobile card styling */
+  .card-mobile {
+    border-radius: 12px;
+    padding: 16px;
   }
 }
 
