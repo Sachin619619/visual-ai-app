@@ -864,7 +864,27 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               )}
             </button>
           </div>
-          <p className="text-[10px] sm:text-xs text-text-muted mt-1">✨ Use the wand to enhance your prompt</p>
+          <p className="text-[10px] sm:text-xs text-text-muted mt-1">Transform any topic into a stunning visual — not just text.</p>
+          {/* Visual Mode Template Chips */}
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {[
+              { label: 'Infographic:', placeholder: '[topic]', prefix: 'Create a stunning animated infographic about: ' },
+              { label: 'Dashboard:', placeholder: '[metrics]', prefix: 'Create a beautiful data dashboard showing: ' },
+              { label: 'Compare:', placeholder: '[A vs B]', prefix: 'Create a stunning visual comparison of ' },
+              { label: 'Timeline:', placeholder: '[topic]', prefix: 'Create an animated timeline of the history of: ' },
+              { label: 'Data Story:', placeholder: '[dataset]', prefix: 'Create a beautiful data story visualization for: ' },
+            ].map((tpl) => (
+              <button
+                key={tpl.label}
+                type="button"
+                onClick={() => setPrompt(tpl.prefix)}
+                className="text-[10px] px-2 py-1 rounded-full bg-accent-primary/15 text-accent-primary border border-accent-primary/25 hover:bg-accent-primary/25 transition-all"
+                title={`${tpl.label} ${tpl.placeholder}`}
+              >
+                {tpl.label} <span className="text-text-muted">{tpl.placeholder}</span>
+              </button>
+            ))}
+          </div>
           {/* Draft indicator - shows when prompt has content (draft auto-saved) */}
           {prompt.trim() && (
             <p className="text-[9px] sm:text-[10px] text-cyan-400 mt-1 flex items-center gap-1">

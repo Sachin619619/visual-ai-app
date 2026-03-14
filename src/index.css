@@ -687,6 +687,12 @@ button,
   }
 }
 
+/* Loading grid scroll animation */
+@keyframes gridScroll {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 40px 40px, 40px 40px; }
+}
+
 /* Better empty state animations */
 @keyframes float {
   0%, 100% {

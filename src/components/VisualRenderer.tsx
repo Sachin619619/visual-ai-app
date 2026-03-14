@@ -33,44 +33,38 @@ interface VisualRendererProps {
   generationStats?: GenerationStats | null;
 }
 
-// Quick start prompts for empty state cards
+// Quick start prompts for empty state cards — visual-first
 const QUICK_PROMPTS = [
-  { key: 'charts', prompt: 'Create a beautiful interactive line chart showing monthly revenue data for 2024 with tooltips and a legend', label: '📈 Charts' },
-  { key: 'radar', prompt: 'Create a radar chart showing skills analysis with speed, reliability, comfort, safety metrics', label: '🕸️ Radar' },
-  { key: 'polar', prompt: 'Create a polar area chart showing regional distribution of users across continents', label: '🌊 Polar' },
-  { key: 'timeline', prompt: 'Build a vertical timeline component showing a product launch roadmap with milestones and dates', label: '🗓️ Timelines' },
-  { key: 'cards', prompt: 'Design a responsive grid of stat cards showing KPI metrics with icons, numbers and trend indicators', label: '📊 Cards' },
-  { key: 'forms', prompt: 'Build a modern contact form with name, email, subject, message fields and a submit button with validation styling', label: '📋 Forms' },
-  { key: 'landing', prompt: 'Design a complete landing page with hero, features section, pricing, testimonials, and footer', label: '🖥️ Landing' },
-  { key: 'sidebar', prompt: 'Build a collapsible sidebar navigation with icons, labels, active states, and smooth expand/collapse animations', label: '📑 Sidebar' },
-  { key: 'pricing', prompt: 'Create a pricing table with 3 tiers, monthly/yearly toggle, feature lists and CTA buttons', label: '💰 Pricing' },
-  { key: 'dashboard', prompt: 'Create a dark-themed analytics dashboard with multiple widgets, charts and data tables', label: '📈 Dashboard' },
-  { key: 'gallery', prompt: 'Design an image gallery with masonry layout, lightbox on click, and smooth hover animations', label: '🖼️ Gallery' },
-  { key: 'profile', prompt: 'Create a user profile card with avatar, bio, social links, and skill tags', label: '👤 Profile' },
-  { key: 'carousel', prompt: 'Build an auto-scrolling image carousel with navigation dots and prev/next buttons', label: '🎠 Carousel' },
-  { key: 'animation', prompt: 'Create an animated loading skeleton with shimmer effect for content placeholders', label: '⚡ Loading' },
-  { key: 'table', prompt: 'Build a responsive data table with sortable columns, pagination, and search input', label: '📋 Table' },
-  { key: 'tabs', prompt: 'Create an interactive tabs component with multiple tabs and an accordion FAQ section', label: '🔽 Tabs' },
-  { key: 'footer', prompt: 'Create a responsive website footer with company logo, navigation links, social media icons, newsletter signup, and copyright text', label: '🦶 Footer' },
-  { key: 'error404', prompt: 'Design a creative 404 error page with illustration, "Page Not Found" message, helpful links, and a search box', label: '❌ 404 Page' },
-  { key: 'settings', prompt: 'Create a settings page with sections for account, privacy, notifications, and theme toggle with form inputs and switches', label: '⚙️ Settings' },
-  // New quick prompts
-  { key: 'notification', prompt: 'Create a notification toast component with icon, message, close button, and slide-in animation', label: '🔔 Toast' },
-  { key: 'upload', prompt: 'Build a drag-and-drop file upload zone with progress bar, file preview, and upload complete state', label: '📤 Upload' },
-  { key: 'comments', prompt: 'Create a comments section with user avatars, timestamps, reply functionality, and nested replies', label: '💬 Comments' },
-  { key: 'slider', prompt: 'Design a range slider component with value labels, custom thumb styling, and smooth interactions', label: '🎚️ Slider' },
-  { key: 'progress', prompt: 'Build various progress indicators including linear bars, circular spinners, and percentage display', label: '⏳ Progress' },
-  { key: 'datepicker', prompt: 'Create a stylish date picker calendar component with month navigation and date selection', label: '📅 Date Picker' },
-  { key: 'skeleton', prompt: 'Create elegant skeleton loading placeholders with shimmer animation for content loading states', label: '✨ Skeleton' },
-  { key: 'alert', prompt: 'Design alert banner components with different types (success, warning, error, info) and dismissible option', label: '⚠️ Alerts' },
-  { key: 'widget', prompt: 'Build a beautiful clock widget showing current time, date, and a modern digital clock design', label: '🕐 Widget' },
-  { key: 'badge', prompt: 'Design a collection of badges and tags with different colors, sizes, and subtle hover effects', label: '🏷️ Badges' },
-  { key: 'files', prompt: 'Create a file browser interface with folder hierarchy, file icons, selection states, and grid/list view toggle', label: '📁 Files' },
-  { key: 'modal', prompt: 'Create a beautiful modal dialog with overlay, header, body content, and action buttons with smooth animations', label: '💭 Modal' },
-  { key: 'login', prompt: 'Create a modern login form with email, password fields, remember me checkbox, and login button', label: '🔑 Login' },
-  { key: 'cart', prompt: 'Create a shopping cart component showing product items with images, quantities, prices, and a checkout summary', label: '🛒 Cart' },
-  { key: 'product', prompt: 'Design a beautiful product card with image placeholder, product title, price, rating stars, and Add to Cart button', label: '🛍️ Product' },
-  { key: 'portfolio', prompt: 'Build a personal portfolio section with project cards, skills tags, about section, and contact information', label: '💼 Portfolio' },
+  // Visual explainers
+  { key: 'photosynthesis', prompt: 'Create a stunning animated infographic explaining how photosynthesis works — show the sun, chloroplasts, CO2 in, O2 out, glucose production, with labeled diagram and step-by-step flow', label: '🌿 Photosynthesis' },
+  { key: 'internet', prompt: 'Create a beautiful animated network diagram explaining how the internet works — show devices, routers, ISPs, DNS, servers with animated data packet flow between nodes', label: '🌐 How Internet Works' },
+  { key: 'blockchain', prompt: 'Create a visual explainer for blockchain technology — show linked blocks with hashes, decentralized nodes, transaction flow, with animated chain building', label: '⛓️ Blockchain' },
+  { key: 'solar-system', prompt: 'Create a stunning animated solar system infographic showing all planets with relative sizes, orbital paths, and key facts for each planet in info cards', label: '🪐 Solar System' },
+  { key: 'brain', prompt: 'Create a beautiful visual infographic about the human brain — labeled diagram of brain regions with functions, animated neural connection sparks, key stats in gradient cards', label: '🧠 Human Brain' },
+  // Data / Charts
+  { key: 'world-population', prompt: 'Create a stunning dashboard showing world population by continent — use a large bar chart, pie chart showing percentages, and stat cards with population numbers for Asia, Africa, Europe, Americas, Oceania', label: '🌍 World Population' },
+  { key: 'tech-companies', prompt: 'Create a beautiful data visualization comparing top tech companies (Apple, Microsoft, Google, Amazon, Meta) — show market cap, revenue, employees in bar charts and stat cards with logos as colored icons', label: '📊 Tech Giants' },
+  { key: 'climate-data', prompt: 'Create a climate change data dashboard — show global temperature rise over decades as an animated line chart, CO2 levels chart, sea level rise chart, with alarming stat cards in red/orange theme', label: '🌡️ Climate Data' },
+  { key: 'crypto-dashboard', prompt: 'Create a cryptocurrency portfolio dashboard — show price charts for BTC, ETH, SOL with sparklines, portfolio value, percentage changes with green/red indicators, and animated price ticker', label: '₿ Crypto Dashboard' },
+  // Comparisons
+  { key: 'iphone-android', prompt: 'Create a stunning visual comparison of iPhone vs Android — side-by-side cards with category scores (ecosystem, customization, privacy, price, camera), a radar chart, and feature comparison table with checkmarks', label: '📱 iPhone vs Android' },
+  { key: 'react-vue', prompt: 'Create a beautiful visual comparison of React vs Vue vs Angular — compare performance, learning curve, ecosystem, popularity with charts, rating bars, and pros/cons cards per framework', label: '⚛️ React vs Vue vs Angular' },
+  { key: 'diet-comparison', prompt: 'Create a visual comparison of popular diets (Keto, Mediterranean, Vegan, Intermittent Fasting) — compare macros with charts, health benefits with icon lists, difficulty ratings with star indicators', label: '🥗 Diet Comparison' },
+  // Timelines
+  { key: 'space-timeline', prompt: 'Create a stunning animated timeline of space exploration milestones — from Sputnik 1957 to Mars missions 2030s, with mission icons, key achievements, country flags, and animated connecting line', label: '🚀 Space Exploration' },
+  { key: 'ai-timeline', prompt: 'Create a beautiful timeline of AI history from 1950 to 2025 — mark key events like Turing Test, Deep Blue, AlexNet, GPT, ChatGPT with icons, descriptions, and visual impact indicators', label: '🤖 AI History Timeline' },
+  { key: 'internet-history', prompt: 'Create an animated timeline of the internet age from ARPANET 1969 to 2024 — show key inventions, major websites launch, mobile revolution, social media era with year markers and tech icons', label: '📡 Internet History' },
+  // Dashboards
+  { key: 'analytics', prompt: 'Create a beautiful dark analytics dashboard with: total users 1.2M (+12%), revenue $84K (+8%), conversion 3.4% (-1%), daily active users line chart over 30 days, traffic sources pie chart, top pages table', label: '📈 Analytics Dashboard' },
+  { key: 'fitness', prompt: 'Create a fitness tracking dashboard — weekly workout streak calendar, calories burned bar chart, heart rate line chart, sleep quality ring chart, personal records stat cards, all in a sporty dark theme', label: '💪 Fitness Tracker' },
+  { key: 'weather', prompt: 'Create a stunning weather dashboard — current temp with animated condition, 7-day forecast cards, humidity/wind/UV index gauges, hourly temperature line chart, all in a beautiful gradient blue/purple theme', label: '⛅ Weather Dashboard' },
+  // Infographics
+  { key: 'coffee', prompt: 'Create a beautiful infographic about coffee — show coffee bean to cup journey with illustrated steps, world top coffee producing countries bar chart, caffeine content comparison chart for different drinks, fun facts in info cards', label: '☕ Coffee Infographic' },
+  { key: 'money', prompt: 'Create a visually stunning personal finance infographic — show income allocation pie chart (50/30/20 rule), compound interest growth line chart, savings milestones timeline, budgeting tips in icon cards', label: '💰 Personal Finance' },
+  { key: 'ocean', prompt: 'Create a beautiful ocean depth infographic — show ocean zones from surface to hadal zone with gradient depth colors, creatures at each zone as icons, pressure and temperature data, amazing facts in floating cards', label: '🌊 Ocean Depths' },
+  // Fun / Creative
+  { key: 'pizza', prompt: 'Create a fun and beautiful pizza anatomy infographic — show ingredient layers as an exploded diagram, most popular topping rankings as a bar chart, pizza consumption by country, and fun facts in colorful cards', label: '🍕 Pizza Infographic' },
+  { key: 'music', prompt: 'Create a music genres visual map — show genres as interconnected bubbles with size = popularity, timeline of music evolution, top streaming stats by genre in a bar chart, all in a neon dark theme', label: '🎵 Music Genres' },
 ];
 
 // Viewport size configurations
@@ -176,6 +170,41 @@ const QuickStartGrid = memo(({ items, onClick, disabled }: {
 
 QuickStartGrid.displayName = 'QuickStartGrid';
 
+// Cycling loading messages
+const LOADING_MESSAGES = [
+  'Painting your infographic...',
+  'Building beautiful charts...',
+  'Designing your visual story...',
+  'Adding animations and glow...',
+  'Composing the layout...',
+  'Crafting gradient magic...',
+  'Rendering your dashboard...',
+  'Creating visual excellence...',
+];
+
+const LoadingMessage = memo(() => {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setIndex(i => (i + 1) % LOADING_MESSAGES.length), 2200);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <AnimatePresence mode="wait">
+      <motion.p
+        key={index}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.35 }}
+        className="text-sm sm:text-base text-text-muted"
+      >
+        {LOADING_MESSAGES[index]}
+      </motion.p>
+    </AnimatePresence>
+  );
+});
+LoadingMessage.displayName = 'LoadingMessage';
+
 export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -202,6 +231,7 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   const [showViewportSelector, setShowViewportSelector] = useState(false);
   const [isEditingCode, setIsEditingCode] = useState(false);
   const [editedCode, setEditedCode] = useState('');
+  const [showRevisualizeMenu, setShowRevisualizeMenu] = useState(false);
 
   // Load saved viewport from localStorage on mount
   useEffect(() => {
@@ -1248,6 +1278,51 @@ body {
                 <Shuffle className={`w-4 h-4 sm:w-5 sm:h-5 ${isRemixing ? 'animate-spin' : ''}`} />
               </motion.button>
             )}
+            {/* Re-visualize Button - convert to different format */}
+            {html && (
+              <div className="relative hidden md:block">
+                <motion.button
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  onClick={() => setShowRevisualizeMenu(!showRevisualizeMenu)}
+                  disabled={isRemixing}
+                  className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-cyan-400 transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
+                  title="Re-visualize as different format"
+                >
+                  <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
+                </motion.button>
+                {showRevisualizeMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="absolute top-full right-0 mt-2 p-2 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl z-30 min-w-[200px]"
+                  >
+                    <p className="text-xs text-text-muted px-2 pb-2 mb-1 border-b border-white/5 font-medium">Re-visualize as...</p>
+                    {[
+                      { label: 'Timeline', icon: '🗓️', prompt: 'Convert this into a beautiful animated vertical timeline with dates, icons, and milestone descriptions.' },
+                      { label: 'Dashboard', icon: '📊', prompt: 'Convert this into a dark analytics dashboard with stat cards, charts, and data visualizations.' },
+                      { label: 'Infographic', icon: '🎯', prompt: 'Convert this into a stunning infographic with icons, visual sections, and animated elements.' },
+                      { label: 'Comparison', icon: '⚖️', prompt: 'Convert this into a visual side-by-side comparison with categories, ratings, and pros/cons cards.' },
+                      { label: 'Mind Map', icon: '🧠', prompt: 'Convert this into a visual mind map / concept diagram with a central node and radiating connections.' },
+                      { label: 'Data Story', icon: '📈', prompt: 'Convert this into a data story with charts, big numbers, trend indicators, and narrative sections.' },
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => {
+                          if (onQuickGenerate) {
+                            onQuickGenerate(`${item.prompt}\n\nOriginal content context: Use this design as data source: create a completely new ${item.label.toLowerCase()} visual that presents the same information in a ${item.label.toLowerCase()} format.`);
+                          }
+                          setShowRevisualizeMenu(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                      >
+                        <span>{item.icon}</span> Show as {item.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+            )}
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1414,9 +1489,33 @@ body {
                       disabled={isRemixing}
                       className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors disabled:opacity-50"
                     >
-                      <Shuffle className={`w-4 h-4 ${isRemixing ? 'animate-spin' : ''}`} /> 
+                      <Shuffle className={`w-4 h-4 ${isRemixing ? 'animate-spin' : ''}`} />
                       {isRemixing ? 'Generating...' : 'Generate Variation'}
                     </button>
+                  )}
+                  {/* Re-visualize - mobile */}
+                  {html && (
+                    <>
+                      <div className="border-t border-white/10 my-1" />
+                      <p className="text-[10px] text-text-muted px-3 py-1 uppercase tracking-wider">Re-visualize as</p>
+                      {[
+                        { label: 'Timeline', icon: '🗓️', prompt: 'Convert this into a beautiful animated vertical timeline.' },
+                        { label: 'Dashboard', icon: '📊', prompt: 'Convert this into a dark analytics dashboard with stat cards and charts.' },
+                        { label: 'Infographic', icon: '🎯', prompt: 'Convert this into a stunning infographic with icons and animated elements.' },
+                        { label: 'Comparison', icon: '⚖️', prompt: 'Convert this into a visual side-by-side comparison.' },
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={() => {
+                            if (onQuickGenerate) onQuickGenerate(item.prompt);
+                            setShowMoreMenu(false);
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-cyan-400 transition-colors"
+                        >
+                          <span>{item.icon}</span> Show as {item.label}
+                        </button>
+                      ))}
+                    </>
                   )}
                   <div className="border-t border-white/10 my-1" />
                   {/* Reset All */}
@@ -1809,42 +1908,78 @@ body {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-20 flex items-center justify-center bg-bg-primary"
+            className="absolute inset-0 z-20 flex items-center justify-center bg-bg-primary overflow-hidden"
             style={{ paddingBottom: '80px' }}
           >
-            <div className="flex flex-col items-center gap-6 sm:gap-8">
-              {/* Enhanced spinner with multiple rotating rings and glow effect */}
-              <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-bg-tertiary" />
-                {/* Outer ring with gradient */}
-                <div className="absolute inset-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-transparent border-t-accent-primary animate-spin" style={{ animationDuration: '1.2s' }}>
-                  <div className="absolute inset-0 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.5)]" />
-                </div>
-                {/* Middle ring - reverse direction */}
-                <div className="absolute inset-1 w-18 h-18 sm:w-22 sm:h-22 rounded-full border-4 border-transparent border-b-accent-secondary animate-spin" style={{ animationDuration: '1.8s', animationDirection: 'reverse' }} />
-                {/* Inner ring */}
-                <div className="absolute inset-3 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-transparent border-t-cyan-400 animate-spin" style={{ animationDuration: '2.2s' }} />
-                {/* Center glow */}
-                <div className="absolute inset-0 m-auto w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-accent-primary shadow-[0_0_20px_rgba(139,92,246,0.8)] animate-pulse" />
-                {/* Outer glow effect */}
-                <div className="absolute -inset-4 rounded-full bg-accent-primary/10 blur-xl animate-pulse" style={{ animationDuration: '2s' }} />
-              </div>
-              <div className="text-center px-4">
-                <p className="text-lg sm:text-xl font-medium text-text-primary mb-2">Generating your visualization</p>
-                <p className="text-sm sm:text-base text-text-muted animate-pulse">Crafting beautiful UI components...</p>
-              </div>
-              {/* Progress dots with staggered animation */}
-              <div className="flex gap-2">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-accent-primary"
-                    style={{
-                      animation: 'pulse 1.5s ease-in-out infinite',
-                      animationDelay: `${i * 0.2}s`,
-                    }}
+            {/* Animated background grid */}
+            <div className="absolute inset-0 opacity-10" style={{
+              backgroundImage: 'linear-gradient(rgba(139,92,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.3) 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+              animation: 'gridScroll 4s linear infinite'
+            }} />
+            {/* Ambient glow orbs */}
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-accent-primary/10 blur-3xl animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-accent-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+
+            <div className="relative flex flex-col items-center gap-6 sm:gap-8 z-10">
+              {/* Visual building animation */}
+              <div className="relative w-48 h-32 sm:w-64 sm:h-40">
+                {/* Animated bars building up like a chart */}
+                {[
+                  { h: '60%', delay: '0s', color: '#8b5cf6' },
+                  { h: '90%', delay: '0.15s', color: '#7c3aed' },
+                  { h: '45%', delay: '0.3s', color: '#06b6d4' },
+                  { h: '75%', delay: '0.45s', color: '#0891b2' },
+                  { h: '100%', delay: '0.6s', color: '#8b5cf6' },
+                  { h: '55%', delay: '0.75s', color: '#10b981' },
+                  { h: '80%', delay: '0.9s', color: '#06b6d4' },
+                ].map((bar, i) => (
+                  <div key={i} className="absolute bottom-0 flex flex-col justify-end"
+                    style={{ left: `${i * 14 + 1}%`, width: '10%', height: '100%' }}>
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: bar.h, opacity: 0.85 }}
+                      transition={{ duration: 0.6, delay: parseFloat(bar.delay), repeat: Infinity, repeatType: 'reverse', repeatDelay: 1.5, ease: 'easeOut' }}
+                      style={{ background: `linear-gradient(180deg, ${bar.color}, ${bar.color}88)`, borderRadius: '4px 4px 2px 2px', boxShadow: `0 0 10px ${bar.color}44` }}
+                    />
+                  </div>
+                ))}
+                {/* Baseline */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20" />
+                {/* Sparkle elements */}
+                {[
+                  { top: '10%', left: '15%', delay: '0.2s' },
+                  { top: '20%', left: '70%', delay: '0.7s' },
+                  { top: '5%', left: '50%', delay: '1.1s' },
+                ].map((spark, i) => (
+                  <motion.div key={i}
+                    className="absolute w-1.5 h-1.5 rounded-full bg-accent-primary"
+                    style={{ top: spark.top, left: spark.left }}
+                    animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.2, delay: parseFloat(spark.delay), repeat: Infinity, repeatDelay: 0.8 }}
                   />
                 ))}
+              </div>
+
+              <div className="text-center px-4">
+                <motion.p
+                  className="text-lg sm:text-xl font-semibold text-text-primary mb-2"
+                  animate={{ opacity: [1, 0.6, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  Crafting your visual...
+                </motion.p>
+                <LoadingMessage />
+              </div>
+
+              {/* Animated progress bar */}
+              <div className="w-48 sm:w-64 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: 'linear-gradient(90deg, #8b5cf6, #06b6d4)' }}
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                />
               </div>
             </div>
           </motion.div>
@@ -1878,119 +2013,109 @@ body {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute inset-0 overflow-auto py-4 sm:py-10 px-3 sm:px-4 flex flex-col items-center justify-center"
+            className="absolute inset-0 overflow-auto py-4 sm:py-8 px-3 sm:px-4 flex flex-col items-center justify-start"
           >
-          <div className="text-center max-w-[280px] xs:max-w-xs sm:max-w-md w-full">
-            {/* Enhanced animated gradient orb with better effects */}
-            <div className="relative mb-3 sm:mb-6 mx-auto w-16 h-16 sm:w-32 sm:h-32">
-              {/* Outer glow layers with pulsing animation */}
-              <motion.div 
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-xl"
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                  opacity: [0.3, 0.5, 0.3]
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
+          <div className="text-center max-w-3xl w-full mx-auto">
+            {/* Hero section */}
+            <motion.div
+              className="mb-4 sm:mb-6"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              {/* Mini preview of visual types */}
+              <div className="hidden sm:flex justify-center gap-3 mb-4 opacity-70">
+                {[
+                  { icon: '📊', label: 'Charts' },
+                  { icon: '🗺️', label: 'Diagrams' },
+                  { icon: '📋', label: 'Dashboards' },
+                  { icon: '🗓️', label: 'Timelines' },
+                  { icon: '🎯', label: 'Infographics' },
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + i * 0.07 }}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl bg-bg-secondary/60 border border-white/5"
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    <span className="text-[10px] text-text-muted">{item.label}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="relative mb-2 mx-auto w-14 h-14 sm:w-20 sm:h-20">
+                <motion.div
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-primary/40 to-accent-secondary/40 blur-xl"
+                  animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.div
+                  className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/25 to-accent-secondary/25 flex items-center justify-center border border-white/15 backdrop-blur-sm"
+                  animate={{ scale: [1, 1.04, 1], rotate: [0, 1, -1, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <motion.span
+                    className="text-2xl sm:text-4xl"
+                    animate={{ y: [0, -4, 0], scale: [1, 1.08, 1] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                  >✨</motion.span>
+                </motion.div>
+              </div>
+
+              <h2 className="font-heading text-base sm:text-2xl font-bold mb-1 gradient-text">
+                Transform Any Topic into a Visual
+              </h2>
+              <p className="text-text-secondary text-xs sm:text-sm max-w-sm mx-auto">
+                Ask about anything — get a <span className="text-accent-primary font-medium">beautiful infographic, chart, or dashboard</span> instead of a wall of text.
+              </p>
+            </motion.div>
+
+            {/* Example prompt chips */}
+            <motion.div
+              className="hidden sm:flex flex-wrap justify-center gap-2 mb-5 max-w-lg mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {[
+                'Explain quantum computing',
+                'Show world GDP by country',
+                'iPhone vs Android',
+                'History of the internet',
+                'How vaccines work',
+              ].map((ex, i) => (
+                <button
+                  key={ex}
+                  onClick={() => onQuickGenerate && onQuickGenerate(`Create a stunning visual infographic: ${ex}`)}
+                  disabled={isLoading}
+                  className="px-3 py-1.5 text-xs rounded-full bg-bg-secondary/80 border border-white/8 text-text-secondary hover:border-accent-primary/50 hover:text-accent-primary hover:bg-accent-primary/10 transition-all disabled:opacity-50"
+                  style={{ transitionDelay: `${i * 30}ms` }}
+                >
+                  {ex}
+                </button>
+              ))}
+            </motion.div>
+
+            {/* Quick Start Grid */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+              <p className="text-[10px] sm:text-xs text-text-muted mb-2 sm:mb-3 uppercase tracking-wider font-medium">
+                Or try one of these
+              </p>
+              <QuickStartGrid
+                items={QUICK_PROMPTS.slice(0, 12)}
+                onClick={onQuickGenerate!}
+                disabled={isLoading}
               />
-              <motion.div 
-                className="absolute inset-2 rounded-full bg-gradient-to-br from-accent-primary/40 to-accent-secondary/40 blur-2xl"
-                animate={{ 
-                  scale: [1, 1.15, 1],
-                  opacity: [0.4, 0.6, 0.4]
-                }}
-                transition={{ 
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.3
-                }}
-              />
-              {/* Main orb with gradient background animation */}
-              <motion.div 
-                className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 flex items-center justify-center border border-white/20 backdrop-blur-sm"
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  rotate: [0, 2, -2, 0]
-                }}
-                transition={{ 
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <motion.span 
-                  className="text-2xl sm:text-5xl"
-                  animate={{ 
-                    y: [0, -5, 0],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >🎨</motion.span>
-              </motion.div>
-              {/* Floating particles */}
-              <motion.div 
-                className="absolute top-2 right-2 w-2 h-2 bg-accent-primary/80 rounded-full"
-                animate={{ 
-                  y: [0, -10, 0],
-                  opacity: [0.8, 0.2, 0.8]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-              <motion.div 
-                className="absolute bottom-3 left-2 w-1.5 h-1.5 bg-accent-secondary/80 rounded-full"
-                animate={{ 
-                  y: [0, -8, 0],
-                  opacity: [0.6, 0.2, 0.6]
-                }}
-                transition={{ 
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5
-                }}
-              />
-              <motion.div 
-                className="absolute top-1/2 right-0 w-1 h-1 bg-cyan-400/60 rounded-full"
-                animate={{ 
-                  y: [0, -6, 0],
-                  opacity: [0.5, 0.1, 0.5]
-                }}
-                transition={{ 
-                  duration: 1.8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.8
-                }}
-              />
-            </div>
-            <h2 className="font-heading text-lg sm:text-2xl font-semibold mb-2 gradient-text">Visual AI Generator</h2>
-            <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
-              Describe what you want to build and I'll generate beautiful visualizations instantly.
-            </p>
-            <QuickStartGrid
-              items={QUICK_PROMPTS.slice(0, 8)}
-              onClick={onQuickGenerate!}
-              disabled={isLoading}
-            />
-            
+            </motion.div>
+
             {/* Saved Templates Section */}
             {savedTemplates.length > 0 && (
-              <div className="mt-8 max-w-sm mx-auto">
+              <div className="mt-6 max-w-sm mx-auto">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-text-secondary text-sm font-medium">📁 My Templates</h3>
-                  <button 
+                  <h3 className="text-text-secondary text-sm font-medium">My Templates</h3>
+                  <button
                     onClick={() => {
                       if (confirm('Delete all saved templates?')) {
                         localStorage.removeItem('visual-ai-templates');
@@ -2036,9 +2161,9 @@ body {
                 </div>
               </div>
             )}
-            
-            {/* Keyboard shortcut hint - always visible on mobile */}
-            <p className="text-xs sm:text-sm text-text-muted mt-6 sm:mt-8 flex items-center justify-center gap-2">
+
+            {/* Keyboard shortcut hint */}
+            <p className="text-xs text-text-muted mt-5 flex items-center justify-center gap-2">
               <span className="hidden sm:inline">
                 <kbd className="px-2 py-1 bg-bg-tertiary rounded text-text-secondary">⌘</kbd>
                 <span className="mx-1">+</span>
@@ -2049,6 +2174,7 @@ body {
                 <kbd className="px-1.5 py-0.5 bg-bg-tertiary rounded text-text-secondary text-[10px]">⌘</kbd>
                 <span className="text-[10px]">+</span>
                 <kbd className="px-1.5 py-0.5 bg-bg-tertiary rounded text-text-secondary text-[10px]">↵</kbd>
+                <span className="text-[10px] ml-1">to generate</span>
               </span>
             </p>
           </div>

@@ -1,0 +1,168 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - img [ref=e11]
+          - generic [ref=e13]:
+            - heading "Visual AI" [level=1] [ref=e14]
+            - paragraph [ref=e15]: Generate stunning UIs
+        - generic [ref=e16]:
+          - button "Switch to Light Mode" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+          - button "Keyboard Shortcuts" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: Quick Start
+          - generic [ref=e30]:
+            - button "Templates" [ref=e32] [cursor=pointer]:
+              - img [ref=e33]
+              - text: Templates
+            - button "View All" [ref=e35] [cursor=pointer]:
+              - text: View All
+              - img [ref=e36]
+        - generic [ref=e38]:
+          - button "Line Chart" [ref=e39] [cursor=pointer]:
+            - img [ref=e40]
+            - generic [ref=e42]: Line Chart
+          - button "Bar Chart" [ref=e43] [cursor=pointer]:
+            - img [ref=e44]
+            - generic [ref=e46]: Bar Chart
+          - button "Pie Chart" [ref=e47] [cursor=pointer]:
+            - img [ref=e48]
+            - generic [ref=e51]: Pie Chart
+          - button "Timeline" [ref=e52] [cursor=pointer]:
+            - img [ref=e53]
+            - generic [ref=e55]: Timeline
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - generic [ref=e58]: Describe what you want
+          - generic [ref=e59]:
+            - textbox "e.g., Show me a line chart of sales data..." [ref=e60]
+            - button "Enhance prompt with AI" [disabled] [ref=e61]:
+              - img [ref=e62]
+          - paragraph [ref=e65]: Transform any topic into a stunning visual — not just text.
+          - generic [ref=e66]:
+            - 'button "Infographic: [topic]" [ref=e67] [cursor=pointer]'
+            - 'button "Dashboard: [metrics]" [ref=e68] [cursor=pointer]'
+            - 'button "Compare: [A vs B]" [ref=e69] [cursor=pointer]'
+            - 'button "Timeline: [topic]" [ref=e70] [cursor=pointer]'
+            - 'button "Data Story: [dataset]" [ref=e71] [cursor=pointer]'
+          - button "Add Reference Image" [ref=e73] [cursor=pointer]:
+            - img [ref=e74]
+            - generic [ref=e78]: Add Reference Image
+          - paragraph [ref=e79]:
+            - generic [ref=e80]: ⌘+Enter
+            - generic [ref=e81]: ⌘+Z
+            - generic [ref=e82]: ⌘+L
+            - button "Tips" [ref=e83] [cursor=pointer]:
+              - img [ref=e84]
+              - generic [ref=e86]: Tips
+        - generic [ref=e87]:
+          - generic [ref=e88]: AI Model
+          - combobox [ref=e90] [cursor=pointer]:
+            - option "🤖 OpenAI GPT-4" [selected]
+            - option "🧠 Claude 3"
+            - option "✨ Gemini Pro"
+            - option "🔗 OpenRouter (Free)"
+            - option "🌙 Kimi K2.5"
+            - option "💻 Local Model"
+          - generic [ref=e92]: Requires API key in settings
+        - generic [ref=e94]:
+          - generic [ref=e95]: Style Frame
+          - generic [ref=e96]:
+            - button "Card" [ref=e97] [cursor=pointer]:
+              - img [ref=e98]
+              - generic [ref=e100]: Card
+            - button "Modal" [ref=e101] [cursor=pointer]:
+              - img [ref=e102]
+              - generic [ref=e106]: Modal
+            - button "Full Width" [ref=e107] [cursor=pointer]:
+              - img [ref=e108]
+              - generic [ref=e113]: Full Width
+            - button "Floating" [ref=e114] [cursor=pointer]:
+              - img [ref=e115]
+              - generic [ref=e117]: Floating
+            - button "Glass" [ref=e118] [cursor=pointer]:
+              - img [ref=e119]
+              - generic [ref=e121]: Glass
+        - button "Generate" [disabled] [ref=e122]:
+          - img [ref=e123]
+          - generic [ref=e126]: Generate
+        - paragraph [ref=e127]: Press ⌘ + Enter to submit
+    - button "API Settings" [ref=e129] [cursor=pointer]:
+      - generic [ref=e130]:
+        - img [ref=e131]
+        - generic [ref=e135]: API Settings
+      - img [ref=e136]
+    - button "Recent prompts" [ref=e139] [cursor=pointer]:
+      - generic [ref=e140]:
+        - img [ref=e141]
+        - generic [ref=e144]: Recent prompts
+      - img [ref=e145]
+  - generic [ref=e150]:
+    - generic [ref=e152]:
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - generic [ref=e156]: 📊
+            - generic [ref=e157]: Charts
+          - generic [ref=e158]:
+            - generic [ref=e159]: 🗺️
+            - generic [ref=e160]: Diagrams
+          - generic [ref=e161]:
+            - generic [ref=e162]: 📋
+            - generic [ref=e163]: Dashboards
+          - generic [ref=e164]:
+            - generic [ref=e165]: 🗓️
+            - generic [ref=e166]: Timelines
+          - generic [ref=e167]:
+            - generic [ref=e168]: 🎯
+            - generic [ref=e169]: Infographics
+        - generic [ref=e173]: ✨
+        - heading "Transform Any Topic into a Visual" [level=2] [ref=e174]
+        - paragraph [ref=e175]: Ask about anything — get a beautiful infographic, chart, or dashboard instead of a wall of text.
+      - generic [ref=e176]:
+        - button "Explain quantum computing" [ref=e177] [cursor=pointer]
+        - button "Show world GDP by country" [ref=e178] [cursor=pointer]
+        - button "iPhone vs Android" [ref=e179] [cursor=pointer]
+        - button "History of the internet" [ref=e180] [cursor=pointer]
+        - button "How vaccines work" [ref=e181] [cursor=pointer]
+      - generic [ref=e182]:
+        - paragraph [ref=e183]: Or try one of these
+        - generic [ref=e184]:
+          - button "🌿 Photosynthesis" [ref=e185] [cursor=pointer]:
+            - paragraph [ref=e186]: 🌿 Photosynthesis
+          - button "🌐 How Internet Works" [ref=e187] [cursor=pointer]:
+            - paragraph [ref=e188]: 🌐 How Internet Works
+          - button "⛓️ Blockchain" [ref=e189] [cursor=pointer]:
+            - paragraph [ref=e190]: ⛓️ Blockchain
+          - button "🪐 Solar System" [ref=e191] [cursor=pointer]:
+            - paragraph [ref=e192]: 🪐 Solar System
+          - button "🧠 Human Brain" [ref=e193] [cursor=pointer]:
+            - paragraph [ref=e194]: 🧠 Human Brain
+          - button "🌍 World Population" [ref=e195] [cursor=pointer]:
+            - paragraph [ref=e196]: 🌍 World Population
+          - button "📊 Tech Giants" [ref=e197] [cursor=pointer]:
+            - paragraph [ref=e198]: 📊 Tech Giants
+          - button "🌡️ Climate Data" [ref=e199] [cursor=pointer]:
+            - paragraph [ref=e200]: 🌡️ Climate Data
+          - button "₿ Crypto Dashboard" [ref=e201] [cursor=pointer]:
+            - paragraph [ref=e202]: ₿ Crypto Dashboard
+          - button "📱 iPhone vs Android" [ref=e203] [cursor=pointer]:
+            - paragraph [ref=e204]: 📱 iPhone vs Android
+          - button "⚛️ React vs Vue vs Angular" [ref=e205] [cursor=pointer]:
+            - paragraph [ref=e206]: ⚛️ React vs Vue vs Angular
+          - button "🥗 Diet Comparison" [ref=e207] [cursor=pointer]:
+            - paragraph [ref=e208]: 🥗 Diet Comparison
+      - paragraph [ref=e209]:
+        - generic [ref=e210]: ⌘+Enterto generate
+    - iframe [ref=e213]:
+      
+  - button "Open AI Assistant" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+```

@@ -655,8 +655,16 @@ function AppContent() {
   // Close sidebar on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && sidebarOpen) {
-        setSidebarOpen(false);
+      if (e.key === 'Escape') {
+        if (showShortcuts) {
+          setShowShortcuts(false);
+        } else if (showFavorites) {
+          setShowFavorites(false);
+        } else if (showGallery) {
+          setShowGallery(false);
+        } else if (sidebarOpen) {
+          setSidebarOpen(false);
+        }
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
         e.preventDefault();
@@ -706,9 +714,9 @@ function AppContent() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite]);
+  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite, showShortcuts, showFavorites, showGallery, sidebarOpen]);
 
-  if (siteAuth === null) {
+  if (siteAuth === null || siteAuth === false) {
     return (
       <div className="min-h-[100dvh] w-full flex items-center justify-center flex-col gap-5 p-5 pt-20 relative overflow-x-hidden">
         {/* Mobile menu button - always visible on login screen */}
