@@ -1,12 +1,12 @@
-import { memo, useState, useEffect } from 'react';
+import { memo, useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image as ImageIcon, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb, ImagePlus, Trash2 } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
 import { QuickRefine, PromptTemplates } from './QuickRefine';
 
 interface InputPanelProps {
-  onGenerate: (prompt: string, model: ModelProvider) => void;
+  onGenerate: (prompt: string, model: ModelProvider, contextHtml?: string, images?: { url: string; name: string }[]) => void;
   onRefine?: (refinement: string) => void;
   isLoading: boolean;
   history: PromptHistory[];
@@ -315,7 +315,7 @@ const TEMPLATES = [
   {
     id: 'media-gallery',
     name: 'Media Gallery',
-    icon: Image,
+    icon: ImageIcon,
     prompt: 'Create a media gallery with lightbox, thumbnail grid, filters, and masonry layout'
   },
   {
@@ -453,6 +453,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const [showTips, setShowTips] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<{ id: string; url: string; name: string }[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Use external theme prop if provided, otherwise use local state
   const isDarkMode = theme !== undefined ? theme === 'dark' : (() => {
@@ -566,17 +568,20 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
         try {
           const apiKey = getApiKey();
           const enhanced = await enhancePrompt(prompt, model, apiKey);
-          onGenerate(enhanced, model);
+          // Pass images along with the enhanced prompt
+          onGenerate(enhanced, model, undefined, uploadedImages.length > 0 ? uploadedImages : undefined);
         } catch (error) {
           console.error('Auto-enhance failed:', error);
-          onGenerate(prompt, model);
+          onGenerate(prompt, model, undefined, uploadedImages.length > 0 ? uploadedImages : undefined);
         } finally {
           setIsEnhancing(false);
         }
       } else {
-        onGenerate(prompt, model);
+        onGenerate(prompt, model, undefined, uploadedImages.length > 0 ? uploadedImages : undefined);
       }
       setPrompt('');
+      // Clear uploaded images after generation
+      setUploadedImages([]);
     }
   };
 
@@ -599,6 +604,42 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     } finally {
       setIsEnhancing(false);
     }
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const url = event.target?.result as string;
+          setUploadedImages(prev => [...prev, {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            url,
+            name: file.name
+          }]);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Remove uploaded image
+  const removeImage = (id: string) => {
+    setUploadedImages(prev => prev.filter(img => img.id !== id));
+  };
+
+  // Trigger file input click
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -803,6 +844,56 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               Draft auto-saved
             </p>
           )}
+          
+          {/* Image Upload Section */}
+          <div className="mt-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+            
+            {/* Uploaded Images Preview */}
+            {uploadedImages.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {uploadedImages.map((img) => (
+                  <div key={img.id} className="relative group">
+                    <img 
+                      src={img.url} 
+                      alt={img.name}
+                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-white/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(img.id)}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="w-3 h-3 text-white" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Upload Button */}
+            <button
+              type="button"
+              onClick={triggerFileInput}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-bg-tertiary hover:bg-white/10 border border-white/5 text-xs sm:text-sm text-text-secondary transition-colors"
+            >
+              <ImagePlus className="w-4 h-4" />
+              <span>Add Reference Image</span>
+            </button>
+            
+            {uploadedImages.length > 0 && (
+              <p className="text-[10px] text-text-muted mt-1">
+                {uploadedImages.length} image{uploadedImages.length > 1 ? 's' : ''} attached • Will be included in prompt
+              </p>
+            )}
+          </div>
           {/* Keyboard shortcuts hint & Tips button */}
           <p className="text-[9px] sm:text-[10px] text-text-muted mt-1.5 flex flex-wrap gap-2 items-center">
             <span className="bg-bg-tertiary px-1.5 py-0.5 rounded">

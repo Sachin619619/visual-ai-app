@@ -236,22 +236,28 @@ function AppContent() {
   }, []);
 
   // All useCallbacks must be defined BEFORE any conditional returns
-  const handleGenerate = useCallback(async (prompt: string, model: ModelProvider, contextHtml?: string) => {
+  const handleGenerate = useCallback(async (prompt: string, model: ModelProvider, contextHtml?: string, images?: { url: string; name: string }[]) => {
     const startTime = Date.now();
     setIsLoading(true);
     setLastModel(model);
     
+    // Add images context to prompt if provided
+    let fullPrompt = prompt;
+    if (images && images.length > 0) {
+      fullPrompt = `${prompt}\n\nPlease reference the following attached image(s) for design inspiration: ${images.map(img => img.name).join(', ')}.`;
+    }
+    
     // Add to history
     const historyItem: PromptHistory = {
       id: Date.now().toString(),
-      prompt,
+      prompt: fullPrompt,
       model,
       timestamp: new Date()
     };
     setHistory(prev => [historyItem, ...prev]);
     
     try {
-      const generatedHtml = await generateUI(prompt, model, contextHtml);
+      const generatedHtml = await generateUI(fullPrompt, model, contextHtml);
       // Add to undo history
       setHtmlHistory(prev => {
         // If we're not at the end of history, truncate future history
