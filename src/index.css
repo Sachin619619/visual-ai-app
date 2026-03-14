@@ -288,6 +288,29 @@ body {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+  
+  /* Mobile toolbar specific fixes */
+  .mobile-toolbar {
+    padding-left: 60px;
+    gap: 4px;
+  }
+  
+  .mobile-toolbar button,
+  .mobile-toolbar [role="button"] {
+    min-height: 36px;
+    min-width: 36px;
+    padding: 6px;
+  }
+  
+  /* Hide less essential toolbar buttons on mobile */
+  .mobile-toolbar .mobile-hide-extra {
+    display: none;
+  }
+  
+  /* Quick actions visible on mobile */
+  .mobile-quick-action {
+    display: flex;
+  }
 }
 
 /* Extra small screens */
@@ -421,6 +444,56 @@ button,
   .toolbar-gap {
     gap: 4px;
   }
+  
+  /* Improve sidebar padding on mobile */
+  .sidebar-content {
+    padding: 16px;
+  }
+  
+  /* Better template buttons on mobile */
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  /* Improve form elements on mobile */
+  .mobile-form-group {
+    margin-bottom: 16px;
+  }
+  
+  .mobile-form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+}
+
+/* Better empty state animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced loading animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 3s linear infinite;
 }
 
 /* Prevent layout shift on mobile */
@@ -489,6 +562,55 @@ button,
     padding: 16px 16px;
     font-size: 16px; /* Prevents iOS zoom on focus */
   }
+  
+  /* Improve textarea on mobile */
+  textarea.input-field {
+    min-height: 100px;
+  }
+}
+
+/* Better empty state on mobile */
+@media (max-width: 400px) {
+  .empty-state-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  .empty-state-grid button {
+    padding: 12px 8px !important;
+    min-height: 56px !important;
+  }
+  
+  .empty-state-grid button span {
+    font-size: 10px !important;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Better button active states for mobile */
+@media (hover: none) and (pointer: coarse) {
+  button:active:not(:disabled),
+  [role="button"]:active:not(:disabled) {
+    transform: scale(0.96);
+    opacity: 0.9;
+  }
+}
+
+/* Improved toolbar button spacing */
+.toolbar-btn {
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.toolbar-btn:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 /* Select styles */
@@ -514,4 +636,13 @@ button,
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+}
+
+/* Better select on mobile */
+@media (max-width: 640px) {
+  .select-field {
+    padding: 14px 40px 14px 14px;
+    font-size: 15px;
+    min-height: 48px;
+  }
 }
