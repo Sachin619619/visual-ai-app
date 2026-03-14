@@ -191,6 +191,7 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   const [colorScheme, setColorScheme] = useState('violet');
   const [isRemixing, setIsRemixing] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showCopyMenu, setShowCopyMenu] = useState(false);
   const [viewportSize, setViewportSize] = useState<ViewportSize>('desktop');
   const [animationsPaused, setAnimationsPaused] = useState(false);
   const [showViewportSelector, setShowViewportSelector] = useState(false);
@@ -319,6 +320,44 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   // Copy code to clipboard
   const handleCopyCode = () => {
     navigator.clipboard.writeText(html);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Quick copy HTML only (extract body content)
+  const handleCopyHTML = () => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const bodyContent = tempDiv.querySelector('body')?.innerHTML || html;
+    navigator.clipboard.writeText(bodyContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Quick copy CSS only (extract from style tags)
+  const handleCopyCSS = () => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const styles = tempDiv.querySelectorAll('style');
+    let cssContent = '';
+    styles.forEach(style => { cssContent += style.textContent + '\n'; });
+    if (!cssContent) cssContent = '/* No inline CSS found in <style> tags */';
+    navigator.clipboard.writeText(cssContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Quick copy JS only (extract from script tags)
+  const handleCopyJS = () => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const scripts = tempDiv.querySelectorAll('script');
+    let jsContent = '';
+    scripts.forEach(script => { 
+      if (script.textContent) jsContent += script.textContent + '\n'; 
+    });
+    if (!jsContent) jsContent = '// No inline JavaScript found in <script> tags';
+    navigator.clipboard.writeText(jsContent);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -853,16 +892,51 @@ body {
                 <Star className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
             )}
-            {/* Copy and Export - always visible */}
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={handleCopyCode}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-              title={copied ? "Copied!" : "Copy HTML"}
-            >
-              {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </motion.button>
+            {/* Copy menu with options */}
+            <div className="relative">
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={() => setShowCopyMenu(!showCopyMenu)}
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Copy options"
+              >
+                {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-4 h-4 sm:w-5 sm:h-5" />}
+              </motion.button>
+              {/* Copy dropdown menu */}
+              {showCopyMenu && html && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-0 top-full mt-2 w-40 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl py-1 z-50"
+                >
+                  <button
+                    onClick={() => { handleCopyCode(); setShowCopyMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <FileCode className="w-4 h-4" /> Copy Full HTML
+                  </button>
+                  <button
+                    onClick={() => { handleCopyHTML(); setShowCopyMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold text-orange-400">&lt;&gt;</span> Copy HTML Only
+                  </button>
+                  <button
+                    onClick={() => { handleCopyCSS(); setShowCopyMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold text-blue-400">#</span> Copy CSS Only
+                  </button>
+                  <button
+                    onClick={() => { handleCopyJS(); setShowCopyMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
+                  >
+                    <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold text-yellow-400">JS</span> Copy JS Only
+                  </button>
+                </motion.div>
+              )}
+            </div>
             <motion.button
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
