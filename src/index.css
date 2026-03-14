@@ -872,10 +872,39 @@ button,
   }
 }
 
+/* Safe area padding utility */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 16px);
+}
+
 /* Fix FAB button overlap with chat widget */
 @media (max-width: 640px) {
   .fab-bottom-offset {
     bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  }
+  
+  /* Better safe area for FAB */
+  .mobile-fab {
+    bottom: calc(90px + env(safe-area-inset-bottom, 20px)) !important;
+    right: 16px !important;
+  }
+}
+
+/* Ensure sidebar doesn't go off screen */
+@media (max-width: 640px) {
+  .sidebar-panel {
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+    max-width: 85vw;
+  }
+  
+  /* Adjust toolbar for mobile */
+  .toolbar-container {
+    padding-left: 56px;
+    gap: 4px;
   }
 }
 

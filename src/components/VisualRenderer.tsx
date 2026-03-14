@@ -156,7 +156,7 @@ const QuickStartGrid = memo(({ items, onClick, disabled }: {
   onClick: (prompt: string) => void;
   disabled: boolean;
 }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+  <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
     {items.map((item, index) => (
       <QuickStartButton
         key={item.key}
@@ -1814,8 +1814,8 @@ body {
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 20px) + 80px)' }}
+          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-30 lg:hidden mobile-fab"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 20px) + 90px)' }}
         >
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}
