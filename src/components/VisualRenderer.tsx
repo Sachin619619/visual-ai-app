@@ -234,7 +234,7 @@ export default function ${componentName}() {
   }, [isFullscreen]);
 
   return (
-    <div className={`flex-1 h-full lg:h-full w-full lg:w-auto flex flex-col bg-bg-primary relative overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`flex-1 h-full lg:h-full w-full lg:w-auto flex flex-col bg-bg-primary relative overflow-hidden pt-14 sm:pt-16 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Fullscreen Close Button */}
       {isFullscreen && (
         <button
@@ -248,7 +248,7 @@ export default function ${componentName}() {
       )}
 
       {/* Toolbar - compact toolbar for mobile with proper spacing */}
-      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-70px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
+      <div className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-wrap justify-end gap-1 max-w-[calc(100vw-80px)] sm:max-w-none overflow-x-auto py-1 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -664,7 +664,7 @@ export default function ${componentName}() {
             <p className="text-text-secondary text-sm sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 text-left max-w-sm mx-auto">
               {QUICK_PROMPTS.map((item, index) => (
                 <motion.button
                   key={item.key}

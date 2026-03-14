@@ -185,7 +185,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
     <motion.div 
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-72 sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
+      className="w-[280px] sm:w-80 h-full bg-bg-secondary border-r border-white/5 flex flex-col"
     >
       {/* Header */}
       <div className="p-3 sm:p-5 border-b border-white/5 sticky top-0 bg-bg-secondary z-10">

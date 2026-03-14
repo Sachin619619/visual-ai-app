@@ -248,7 +248,7 @@ function AppContent() {
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:w-80
         bg-bg-secondary
-        w-72 sm:w-80 max-w-[85vw] xs:max-w-[360px]
+        w-[280px] sm:w-80 max-w-[85vw] xs:max-w-[320px]
         pt-16 lg:pt-0
         overflow-y-auto
       `} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>

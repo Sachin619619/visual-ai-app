@@ -114,7 +114,7 @@ export function ChatWidget() {
       {/* Floating Button - positioned to not overlap with mobile menu button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow hover:scale-105 transition-transform"
+        className="fixed bottom-6 right-4 z-40 lg:z-50 w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-glow"
         style={{ 
           bottom: 'calc(env(safe-area-inset-bottom, 20px) + 20px)', 
           right: 'calc(env(safe-area-inset-right, 16px) + 16px)',
