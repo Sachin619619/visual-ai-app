@@ -1,6 +1,6 @@
 import { memo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
 
@@ -447,6 +447,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
   const [hasApiKey, setHasApiKey] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showTips, setShowTips] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
   const [isEnhancing, setIsEnhancing] = useState(false);
   
@@ -773,8 +774,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
               Draft auto-saved
             </p>
           )}
-          {/* Keyboard shortcuts hint */}
-          <p className="text-[9px] sm:text-[10px] text-text-muted mt-1.5 flex flex-wrap gap-2">
+          {/* Keyboard shortcuts hint & Tips button */}
+          <p className="text-[9px] sm:text-[10px] text-text-muted mt-1.5 flex flex-wrap gap-2 items-center">
             <span className="bg-bg-tertiary px-1.5 py-0.5 rounded">
               {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+Enter
             </span>
@@ -784,6 +785,13 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
             <span className="bg-bg-tertiary px-1.5 py-0.5 rounded">
               {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+L
             </span>
+            <button
+              onClick={() => setShowTips(true)}
+              className="ml-auto flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
+              <Lightbulb className="w-3 h-3" />
+              <span>Tips</span>
+            </button>
           </p>
         </div>
 
@@ -1137,6 +1145,53 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
               <div className="flex items-center justify-between">
                 <span className="text-sm text-text-secondary">Toggle code preview</span>
                 <kbd className="px-2 py-1 bg-bg-tertiary rounded text-xs text-text-primary">⌘ + Shift + C</kbd>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Prompt Tips Modal */}
+      {showTips && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setShowTips(false)} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative bg-bg-secondary rounded-xl border border-white/10 w-full max-w-sm overflow-hidden"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-yellow-400" />
+                Writing Better Prompts
+              </h3>
+              <button
+                onClick={() => setShowTips(false)}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+              <div className="bg-accent-primary/10 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-accent-primary mb-1">🎯 Be Specific</h4>
+                <p className="text-xs text-text-secondary">Describe exact colors, layouts, and components you want. "A dark dashboard with purple accents" is better than "a cool dashboard".</p>
+              </div>
+              <div className="bg-accent-secondary/10 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-accent-secondary mb-1">📐 Mention Dimensions</h4>
+                <p className="text-xs text-text-secondary">Include sizes like "full-width", "compact cards", or specific dimensions for better results.</p>
+              </div>
+              <div className="bg-green-500/10 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-green-400 mb-1">✨ Use the Enhance Button</h4>
+                <p className="text-xs text-text-secondary">The wand icon ✨ automatically improves your prompt for better, more detailed results.</p>
+              </div>
+              <div className="bg-cyan-500/10 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-cyan-400 mb-1">🔄 Iterate & Refine</h4>
+                <p className="text-xs text-text-secondary">Generate, review, then ask for changes like "make the buttons rounder" or "change to a blue theme".</p>
+              </div>
+              <div className="bg-yellow-500/10 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-yellow-400 mb-1">📋 Use Templates</h4>
+                <p className="text-xs text-text-secondary">Start with a template above to get a solid foundation, then customize it.</p>
               </div>
             </div>
           </motion.div>
