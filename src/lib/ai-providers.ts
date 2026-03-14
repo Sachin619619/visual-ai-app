@@ -111,15 +111,7 @@ const generateWithAI = async (
   
   const uiPrompt = `${enhancedPrompt}${contextSection}
 
-CRITICAL: You MUST output ONLY raw HTML code. NO markdown, NO explanations, NO text before or after.
-
-Your response must:
-- Start EXACTLY with <!DOCTYPE html> or <html>
-- End with </html>
-- Contain ONLY valid HTML with inline CSS/JS
-- Work immediately when saved as .html file
-
-Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output ONLY the raw HTML.`;
+🚨 STRICT INSTRUCTION: Output NOTHING except HTML code. Start with <!DOCTYPE html> or <html>. End with </html>. NO other text allowed. Your output will be rendered directly as a webpage. Any non-HTML text will break the preview. Do NOT include explanations, markdown, or code blocks. ONLY HTML.`;
 
   let response;
   let rawHtml = '';
@@ -137,7 +129,7 @@ Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output
       body: JSON.stringify({
         model: selectedFreeModel,
         messages: [
-          { role: 'system', content: 'STRICT OUTPUT RULE - ABSOLUTE REQUIREMENT: You are an HTML generator. Your ENTIRE response must be ONLY raw HTML code. Start with <!DOCTYPE html> or <html>. Do NOT include ANY text before, after, or around the HTML. No markdown, no code blocks (```), no explanations, no "Here is the HTML", nothing. Just pure HTML that works when saved as .html. Include Tailwind CSS via CDN. Dark theme. Make it visually stunning.' },
+          { role: 'system', content: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks, NO explanations, NO "Here is", NOTHING except HTML. Your response will be used directly as a web page. If you include any non-HTML text, it will break. Render ONLY HTML.' },
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.1,
@@ -159,7 +151,7 @@ Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'STRICT OUTPUT RULE: Your ONLY output must be raw HTML code starting with <!DOCTYPE html> or <html>. NEVER output markdown, NEVER output explanations. Output ONLY valid HTML with inline CSS/JS that works immediately.' },
+          { role: 'system', content: 'CRITICAL: Output ONLY raw HTML. Start your response with <!DOCTYPE html> or <html>. NO text before, NO text after, NO markdown, NO code blocks, NO explanations. Your response will be used directly as a web page. Render ONLY HTML.' },
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.3
@@ -206,12 +198,11 @@ Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output
   return cleanHtmlOutput(rawHtml);
 };
 
-// Clean HTML output - aggressively extract HTML from any AI response
-const cleanHtmlOutput = (html: string): string => {
-  console.log('🔍 Raw input to cleanHtmlOutput:', html.substring(0, 300));
+// Clean HTML output - AGGRESSIVELY extract ONLY HTML content
+export const cleanHtmlOutput = (html: string): string => {
+  console.log('🔍 Raw input to cleanHtmlOutput:', html.substring(0, 500));
   
-  // First, unescape any HTML entities that might have been double-escaped
-  // This handles cases where AI returns &lt; instead of <
+  // Step 1: First, unescape any HTML entities that might have been double-escaped
   let cleaned = html
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -223,44 +214,33 @@ const cleanHtmlOutput = (html: string): string => {
   // Also handle escaped backslashes
   cleaned = cleaned.replace(/\\</g, '<').replace(/\\>/g, '>');
   
-  // First, check if it's already valid HTML - return as-is if it looks good
-  if (cleaned.trim().startsWith('<!DOCTYPE html') || cleaned.trim().startsWith('<html')) {
-    console.log('✅ HTML already valid, returning as-is');
-    return cleaned;
-  }
-  
-  // If still wrapped in code block, try generic removal
+  // Step 2: Strip markdown code blocks completely
   if (cleaned.startsWith('```')) {
     cleaned = cleaned.replace(/^```[a-z]*\n?/, '');
     cleaned = cleaned.replace(/```$/, '');
   }
   
-  // Also remove common text prefixes AI might add
-  cleaned = cleaned.replace(/^(Here's|Here is|Sure,|Of course|Here you go|Here is the|Here\'s the|Here is a|As requested|Below is|I\'ve created|Created|Done|Generated).*?(\n|$)/i, '');
+  // Step 3: AGGRESSIVE - ONLY accept content that STARTS with HTML tags
+  // Trim and check what we're dealing with
+  const trimmed = cleaned.trim();
   
-  // Find HTML content and extract it
-  const htmlMatch = cleaned.match(/<html[\s\S]*<\/html>/i);
-  if (htmlMatch) {
-    console.log('✅ Extracted HTML with <html> tags');
-    return htmlMatch[0];
+  // If it starts with DOCTYPE, html, or body - accept it
+  if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html') || trimmed.startsWith('<body')) {
+    console.log('✅ HTML starts correctly with DOCTYPE/html/body');
+    return trimmed;
   }
   
-  const doctypeMatch = cleaned.match(/<!DOCTYPE html>[\s\S]*/i);
-  if (doctypeMatch) {
-    console.log('✅ Extracted HTML with DOCTYPE');
-    return doctypeMatch[0];
+  // Step 4: Try to find and extract HTML starting from <html or <!DOCTYPE
+  const htmlStartMatch = trimmed.match(/<!DOCTYPE<html[\s\S]*/i) || trimmed.match(/<html[\s\S]*/i);
+  if (htmlStartMatch) {
+    console.log('✅ Found HTML starting point, extracting');
+    return htmlStartMatch[0];
   }
   
-  // Last resort: look for any HTML-like content with body tags
-  const bodyMatch = cleaned.match(/<body[\s\S]*<\/body>/i);
-  if (bodyMatch) {
-    console.log('⚠️ Extracted from <body> tags, wrapping in HTML');
-    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.tailwindcss.com"><\/script></head>${bodyMatch[0]}</html>`;
-  }
-  
-  // If nothing found, log warning and return cleaned
-  console.log('⚠️ No HTML structure found, returning cleaned text');
-  return cleaned;
+  // Step 5: If there's no valid HTML starting point, REJECT the entire response
+  // This is the aggressive fix - don't try to salvage broken responses
+  console.log('❌ REJECTED - Response does not start with valid HTML');
+  throw new Error('Invalid AI response: Output does not start with HTML. Please try again.');
 };
 
 // Enhance prompt for better results
