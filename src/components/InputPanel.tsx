@@ -15,6 +15,12 @@ interface InputPanelProps {
   onClearHistory?: () => void;
   styleFrame?: StyleFrame;
   onStyleFrameChange?: (frame: StyleFrame) => void;
+  theme?: 'dark' | 'light';
+  onToggleTheme?: () => void;
+  onShare?: () => void;
+  onExport?: () => void;
+  onSaveFavorite?: (name?: string) => void;
+  generationStats?: { time: number; model: string } | null;
 }
 
 // Template definitions
@@ -424,7 +430,7 @@ const TemplateButton = memo(({ template, onClick, isLoading, onClose }: {
 
 TemplateButton.displayName = 'TemplateButton';
 
-export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange }: InputPanelProps) {
+export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onSaveFavorite, generationStats }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>('openai');
   const [freeModel, setFreeModelState] = useState(() => {
@@ -443,6 +449,13 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
   const [isEnhancing, setIsEnhancing] = useState(false);
+  
+  // Use external theme prop if provided, otherwise use local state
+  const isDarkMode = theme !== undefined ? theme === 'dark' : (() => {
+    const saved = localStorage.getItem('visual-ai-dark-mode');
+    return saved !== null ? saved === 'true' : true;
+  })();
+  
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('visual-ai-dark-mode');
     return saved !== null ? saved === 'true' : true;
@@ -453,11 +466,14 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
     return saved === 'true';
   });
 
-  // Apply dark/light mode to document
+  // Apply dark/light mode to document - use theme prop if provided
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-    localStorage.setItem('visual-ai-dark-mode', String(darkMode));
-  }, [darkMode]);
+    const effectiveDarkMode = theme !== undefined ? theme === 'dark' : darkMode;
+    document.documentElement.setAttribute('data-theme', effectiveDarkMode ? 'dark' : 'light');
+    if (theme === undefined) {
+      localStorage.setItem('visual-ai-dark-mode', String(darkMode));
+    }
+  }, [darkMode, theme]);
 
   // Save auto-enhance preference
   useEffect(() => {
@@ -604,11 +620,17 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
           <div className="flex items-center gap-0.5 sm:gap-1">
             <button
               type="button"
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={() => {
+                if (onToggleTheme) {
+                  onToggleTheme();
+                } else {
+                  setDarkMode(!darkMode);
+                }
+              }}
               className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />}
+              {isDarkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />}
             </button>
             <button
               type="button"
@@ -618,6 +640,36 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
             >
               <Keyboard className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
             </button>
+            {onExport && (
+              <button
+                type="button"
+                onClick={onExport}
+                className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                title="Export HTML"
+              >
+                <Download className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              </button>
+            )}
+            {onShare && (
+              <button
+                type="button"
+                onClick={onShare}
+                className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                title="Share Design"
+              >
+                <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              </button>
+            )}
+            {onSaveFavorite && (
+              <button
+                type="button"
+                onClick={() => onSaveFavorite()}
+                className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                title="Save to Favorites"
+              >
+                <Star className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />
+              </button>
+            )}
             {onClose && (
               <button
                 type="button"
@@ -631,6 +683,18 @@ export const InputPanel = memo(function InputPanel({ onGenerate, isLoading, hist
           </div>
         </div>
       </div>
+
+      {/* Generation Stats */}
+      {generationStats && (
+        <div className="px-2.5 sm:px-4 py-2 border-b border-white/5 bg-accent-primary/5">
+          <div className="flex items-center justify-between text-[10px] sm:text-xs">
+            <span className="text-text-muted">Last generation:</span>
+            <span className="text-accent-primary font-medium">
+              {(generationStats.time / 1000).toFixed(1)}s • {generationStats.model}
+            </span>
+          </div>
+        </div>
+      )}
 
         {/* Templates Gallery - horizontal scroll on mobile */}
       <div className="px-2.5 sm:px-4 py-2.5 sm:py-3.5 border-b border-white/5">
