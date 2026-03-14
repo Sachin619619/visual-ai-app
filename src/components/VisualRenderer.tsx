@@ -635,6 +635,74 @@ body {
                 )}
               </motion.div>
             )}
+            {/* Essential actions always visible on mobile - Clear, Fullscreen, Share */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={onClear}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Clear (⌘+L)"
+            >
+              <Trash2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
+            >
+              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
+            </motion.button>
+            {onShare && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onShare}
+                className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                title="Share via URL"
+              >
+                <Share2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {/* Copy and Export - always visible */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleCopyCode}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title={copied ? "Copied!" : "Copy HTML"}
+            >
+              {copied ? <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleExportPNG}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title={`Export as PNG (${exportQuality}x quality)`}
+            >
+              <FileImage className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </motion.button>
+            {/* Copy to Clipboard as Image */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleCopyToClipboard}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title={copiedImage ? "Copied!" : "Copy as Image"}
+            >
+              {copiedImage ? <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-green-400" /> : <Clipboard className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
+            </motion.button>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleDownload}
+              className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              title="Download HTML"
+            >
+              <Download className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </motion.button>
             {/* Style Frame Selector */}
             <div className="relative">
               <motion.button
@@ -942,11 +1010,11 @@ body {
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={handleExportPNG}
                 className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
-                title={`Export as PNG (${exportQuality}x quality)`}
+                title={`Export as PNG (${exportQuality}x quality, hold Shift to cycle)`}
               >
                 <FileImage className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
               </motion.button>
-              <div className="absolute -bottom-1 -right-1 text-[7px] sm:text-[8px] bg-accent-primary/80 text-white px-1 rounded hidden sm:block">{exportQuality}x</div>
+              <div className="absolute -bottom-1 -right-1 text-[7px] sm:text-[8px] bg-accent-primary/80 text-white px-1.5 rounded-full hidden sm:block">{exportQuality}x</div>
             </div>
             {/* Export options hidden on mobile - in more menu */}
             <motion.button
@@ -1388,21 +1456,21 @@ body {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute inset-0 overflow-auto py-6 sm:py-10 px-4 flex flex-col items-center justify-center"
+            className="absolute inset-0 overflow-auto py-4 sm:py-10 px-3 sm:px-4 flex flex-col items-center justify-center"
           >
           <div className="text-center max-w-[280px] xs:max-w-xs sm:max-w-md w-full">
             {/* Animated gradient orb */}
-            <div className="relative mb-4 sm:mb-6 mx-auto w-20 h-20 sm:w-32 sm:h-32">
+            <div className="relative mb-3 sm:mb-6 mx-auto w-16 h-16 sm:w-32 sm:h-32">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent-primary/30 to-accent-secondary/30 blur-2xl animate-pulse" />
               <div className="relative w-full h-full rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center border border-white/10 backdrop-blur-sm">
-                <span className="text-3xl sm:text-5xl animate-bounce">🎨</span>
+                <span className="text-2xl sm:text-5xl animate-bounce">🎨</span>
               </div>
             </div>
             <h2 className="font-heading text-lg sm:text-2xl font-semibold mb-2 gradient-text">Visual AI Generator</h2>
             <p className="text-text-secondary text-xs sm:text-base mb-4 sm:mb-6">
               Describe what you want to build and I'll generate beautiful visualizations instantly.
             </p>
-            <div className="grid grid-cols-3 xs:grid-cols-4 gap-1.5 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+            <div className="grid grid-cols-3 xs:grid-cols-4 gap-1 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
               {QUICK_PROMPTS.slice(0, 12).map((item, index) => (
                 <motion.button
                   key={item.key}
@@ -1411,9 +1479,9 @@ body {
                   transition={{ delay: index * 0.05 }}
                   onClick={() => onQuickGenerate?.(item.prompt)}
                   disabled={isLoading}
-                  className="p-2 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[52px] sm:min-h-[70px] flex flex-col justify-center gap-1"
+                  className="p-2 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[48px] sm:min-h-[70px] flex flex-col justify-center gap-1"
                 >
-                  <p className="text-accent-primary text-[10px] sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
+                  <p className="text-accent-primary text-[9px] sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
                 </motion.button>
               ))}
             </div>
@@ -1518,12 +1586,12 @@ body {
         </div>
       </div>
       
-      {/* Mobile FAB - Quick Actions */}
+      {/* Mobile FAB - Quick Actions - positioned to avoid overlap */}
       {html && !isLoading && (
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="fixed bottom-20 right-4 z-30 lg:hidden"
+          className="fixed bottom-6 right-6 z-30 lg:hidden"
         >
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}
