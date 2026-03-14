@@ -43,6 +43,9 @@ const QUICK_PROMPTS = [
   { key: 'animation', prompt: 'Create an animated loading skeleton with shimmer effect for content placeholders', label: '⚡ Loading' },
   { key: 'table', prompt: 'Build a responsive data table with sortable columns, pagination, and search input', label: '📋 Table' },
   { key: 'tabs', prompt: 'Create an interactive tabs component with multiple tabs and an accordion FAQ section', label: '🔽 Tabs' },
+  { key: 'footer', prompt: 'Create a responsive website footer with company logo, navigation links, social media icons, newsletter signup, and copyright text', label: '🦶 Footer' },
+  { key: 'error404', prompt: 'Design a creative 404 error page with illustration, "Page Not Found" message, helpful links, and a search box', label: '❌ 404 Page' },
+  { key: 'settings', prompt: 'Create a settings page with sections for account, privacy, notifications, and theme toggle with form inputs and switches', label: '⚙️ Settings' },
 ];
 
 // Viewport size configurations
@@ -1370,7 +1373,11 @@ body {
                       { label: '✨ Add animations', prompt: 'Add smooth animations, transitions, and hover effects to all elements' },
                       { label: '🎨 Modernize', prompt: 'Modernize the design with contemporary styling, rounded corners, and fresh look' },
                       { label: '📱 Mobile responsive', prompt: 'Make it fully responsive with proper mobile layouts' },
-                      { label: '🔵 Change to blue scheme', prompt: 'Change the color scheme to blue tones' },
+                      { label: '🔵 Change to blue', prompt: 'Change the color scheme to blue tones' },
+                      { label: '🟢 Change to green', prompt: 'Change the color scheme to green tones' },
+                      { label: '🔴 Change to red', prompt: 'Change the color scheme to red tones' },
+                      { label: '💎 Glassmorphism', prompt: 'Add glassmorphism effect with blur, transparency, and subtle borders' },
+                      { label: '📊 Add charts', prompt: 'Add charts like line, bar, or pie charts to visualize data' },
                     ].map((item) => (
                       <button
                         key={item.label}

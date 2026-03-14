@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel } from '../lib/ai-providers';
 
@@ -126,6 +126,30 @@ const TEMPLATES = [
     name: 'Portfolio',
     icon: Briefcase,
     prompt: 'Build a personal portfolio section with project cards, skills tags, about section, and contact information'
+  },
+  {
+    id: 'footer',
+    name: 'Footer',
+    icon: Layout,
+    prompt: 'Create a responsive website footer with company logo, navigation links, social media icons, newsletter signup, and copyright text'
+  },
+  {
+    id: 'error404',
+    name: '404 Page',
+    icon: AlertCircle,
+    prompt: 'Design a creative 404 error page with illustration, "Page Not Found" message, helpful links, and a search box'
+  },
+  {
+    id: 'profile',
+    name: 'Profile',
+    icon: User,
+    prompt: 'Build a user profile page with avatar, cover image, bio, stats (followers, posts), and action buttons'
+  },
+  {
+    id: 'settings',
+    name: 'Settings',
+    icon: Settings,
+    prompt: 'Create a settings page with sections for account, privacy, notifications, and theme toggle with form inputs and switches'
   }
 ];
 
