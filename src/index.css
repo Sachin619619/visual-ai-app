@@ -1000,6 +1000,12 @@ button,
   .quick-prompts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* Better sidebar on very small screens */
+  .sidebar-panel {
+    width: 92vw !important;
+    max-width: 92vw !important;
+  }
 }
 
 /* Safe area padding utility */
@@ -1017,9 +1023,9 @@ button,
     bottom: calc(80px + env(safe-area-inset-bottom, 20px));
   }
   
-  /* Better safe area for FAB */
+  /* Better safe area for FAB - positioned above chat widget */
   .mobile-fab {
-    bottom: calc(100px + env(safe-area-inset-bottom, 20px)) !important;
+    bottom: calc(60px + env(safe-area-inset-bottom, 20px)) !important;
     right: 16px !important;
   }
   
