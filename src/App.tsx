@@ -297,7 +297,7 @@ function AppContent() {
       {/* Mobile Menu Toggle Button - always visible on mobile/tablet, top-left fixed */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-2 left-2 z-50 lg:hidden p-2.5 sm:p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[44px] min-w-[44px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+        className="fixed top-2 left-2 z-50 lg:hidden p-2.5 sm:p-3 bg-bg-secondary/95 backdrop-blur-md rounded-xl border border-white/10 shadow-xl min-h-[48px] min-w-[48px] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
         style={{ top: 'calc(env(safe-area-inset-top, 8px) + 8px)', left: 'calc(env(safe-area-inset-left, 8px) + 8px)' }}
         aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >

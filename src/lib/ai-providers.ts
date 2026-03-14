@@ -130,15 +130,17 @@ Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output
       body: JSON.stringify({
         model: selectedFreeModel,
         messages: [
-          { role: 'system', content: 'STRICT OUTPUT RULE: You are an HTML generator. Your ONLY output must be raw HTML code starting with <!DOCTYPE html> or <html>. NEVER output markdown, NEVER output explanations, NEVER output text before or after the HTML. The HTML must be complete and work immediately when saved as a .html file. Include Tailwind CSS via CDN. Make it dark-themed and visually stunning.' },
+          { role: 'system', content: 'STRICT OUTPUT RULE - ABSOLUTE REQUIREMENT: You are an HTML generator. Your ENTIRE response must be ONLY raw HTML code. Start with <!DOCTYPE html> or <html>. Do NOT include ANY text before, after, or around the HTML. No markdown, no code blocks (```), no explanations, no "Here is the HTML", nothing. Just pure HTML that works when saved as .html. Include Tailwind CSS via CDN. Dark theme. Make it visually stunning.' },
           { role: 'user', content: uiPrompt }
         ],
-        temperature: 0.3,
-        stop: ['```', 'Explanation:', 'Here is']
+        temperature: 0.1,
+        max_tokens: 4000,
+        stop: ['```', 'Explanation:', 'Here is', 'Here\'s', 'Sure,', 'Here\'s the']
       })
     });
     
     const data = await response.json();
+    console.log('📡 OpenRouter raw response:', data.choices?.[0]?.message?.content?.substring(0, 500));
     rawHtml = data.choices?.[0]?.message?.content || uiPrompt;
   } else if (model === 'openai') {
     response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -197,8 +199,16 @@ Do NOT wrap in code blocks. Do NOT add explanations. Do NOT use markdown. Output
   return cleanHtmlOutput(rawHtml);
 };
 
-// Clean HTML output - strip markdown code blocks
+// Clean HTML output - aggressively extract HTML from any AI response
 const cleanHtmlOutput = (html: string): string => {
+  console.log('🔍 Raw input to cleanHtmlOutput:', html.substring(0, 300));
+  
+  // First, check if it's already valid HTML - return as-is if it looks good
+  if (html.trim().startsWith('<!DOCTYPE html') || html.trim().startsWith('<html')) {
+    console.log('✅ HTML already valid, returning as-is');
+    return html;
+  }
+  
   // Remove markdown code block wrappers
   let cleaned = html.replace(/^```html\n/, '').replace(/^```\n/, '');
   cleaned = cleaned.replace(/\n```$/, '');
@@ -209,17 +219,31 @@ const cleanHtmlOutput = (html: string): string => {
     cleaned = cleaned.replace(/```$/, '');
   }
   
+  // Also remove common text prefixes AI might add
+  cleaned = cleaned.replace(/^(Here's|Here is|Sure,|Of course|Here you go|Here is the|Here\'s the|Here is a|As requested|Below is|I\'ve created|Created|Done|Generated).*?(\n|$)/i, '');
+  
   // Find HTML content and extract it
   const htmlMatch = cleaned.match(/<html[\s\S]*<\/html>/i);
   if (htmlMatch) {
+    console.log('✅ Extracted HTML with <html> tags');
     return htmlMatch[0];
   }
   
   const doctypeMatch = cleaned.match(/<!DOCTYPE html>[\s\S]*/i);
   if (doctypeMatch) {
+    console.log('✅ Extracted HTML with DOCTYPE');
     return doctypeMatch[0];
   }
   
+  // Last resort: look for any HTML-like content with body tags
+  const bodyMatch = cleaned.match(/<body[\s\S]*<\/body>/i);
+  if (bodyMatch) {
+    console.log('⚠️ Extracted from <body> tags, wrapping in HTML');
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.tailwindcss.com"><\/script></head>${bodyMatch[0]}</html>`;
+  }
+  
+  // If nothing found, log warning and return cleaned
+  console.log('⚠️ No HTML structure found, returning cleaned text');
   return cleaned;
 };
 

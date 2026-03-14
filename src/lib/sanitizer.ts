@@ -393,7 +393,9 @@ const getThemeStyles = (theme: PreviewTheme) => {
 };
 
 export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark'): string => {
+  console.log('🧹 Sanitizer input (first 300 chars):', html.substring(0, 300));
   const sanitized = sanitizeHtml(html);
+  console.log('🧹 Sanitizer output (first 300 chars):', sanitized.substring(0, 300));
   const themeStyles = getThemeStyles(theme);
   
   return `

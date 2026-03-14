@@ -408,7 +408,9 @@ body {
   useEffect(() => {
     if (html && iframeRef.current) {
       try {
+        console.log('🎨 HTML received by VisualRenderer:', html.substring(0, 500));
         const content = createSandboxContent(html, previewTheme);
+        console.log('🎨 Generated iframe content (first 500 chars):', content.substring(0, 500));
         const iframe = iframeRef.current;
         iframe.srcdoc = content;
         setError(null);
@@ -441,16 +443,16 @@ body {
       {isFullscreen && (
         <button
           onClick={() => setIsFullscreen(false)}
-          className="absolute top-4 right-16 z-50 p-2.5 bg-bg-secondary/80 backdrop-blur-glass rounded-lg text-text-secondary hover:text-text-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="absolute top-4 right-16 z-50 p-2.5 bg-bg-secondary/80 backdrop-blur-glass rounded-lg text-text-secondary hover:text-text-primary transition-colors min-h-[48px] min-w-[48px] flex items-center justify-center"
           title="Exit Fullscreen (Esc)"
           style={{ top: 'env(safe-area-inset-top, 16px)' }}
         >
-          <Minimize2 className="w-4 h-4" />
+          <Minimize2 className="w-5 h-5" />
         </button>
       )}
 
       {/* Toolbar - compact toolbar for mobile with proper spacing and overflow handling */}
-      <div className={`absolute top-1 right-1 sm:top-3 sm:right-3 z-10 flex flex-wrap justify-end gap-0.5 sm:gap-1 max-w-[calc(100vw-52px)] xs:max-w-[calc(100vw-56px)] sm:max-w-none overflow-x-auto py-0.5 sm:py-1 ${isFullscreen ? 'right-16' : ''}`}>
+      <div className={`absolute top-1 right-1 sm:top-3 sm:right-3 z-10 flex flex-wrap justify-end gap-1 sm:gap-1.5 max-w-[calc(100vw-56px)] xs:max-w-[calc(100vw-60px)] sm:max-w-none overflow-x-auto py-1 px-0.5 sm:py-1.5 ${isFullscreen ? 'right-16' : ''}`}>
         {html && (
           <>
             {/* Model Indicator Badge - hidden on very small screens */}
@@ -512,7 +514,7 @@ body {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={onUndo}
-                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
                 title="Undo (⌘+Z)"
               >
                 <Undo2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -524,7 +526,7 @@ body {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={onRedo}
-                className="hidden sm:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+                className="hidden xs:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
                 title="Redo (⌘+Shift+Z)"
               >
                 <Redo2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -535,7 +537,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setPreviewTheme(prev => prev === 'dark' ? 'light' : 'dark')}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={previewTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {previewTheme === 'dark' ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -546,7 +548,7 @@ body {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={() => setShowColorSchemes(!showColorSchemes)}
-                className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
+                className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
                   showColorSchemes ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
                 }`}
                 title="Color Scheme"
@@ -595,7 +597,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowCode(!showCode)}
-              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center ${
+              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl backdrop-blur-md transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
                 showCode ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
               }`}
               title="Toggle Code Preview"
@@ -608,7 +610,7 @@ body {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={() => setShowMoreMenu(!showMoreMenu)}
-                className={`p-2 rounded-lg backdrop-blur-md transition-all min-h-[36px] min-w-[36px] flex items-center justify-center ${
+                className={`p-2 rounded-lg backdrop-blur-md transition-all min-h-[40px] min-w-[40px] flex items-center justify-center ${
                   showMoreMenu ? 'bg-accent-primary/20 text-accent-primary' : 'bg-bg-secondary/90 text-text-secondary hover:text-text-primary hover:scale-105 active:scale-95'
                 }`}
                 title="More Options"
@@ -647,7 +649,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleCopyCode}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={copied ? "Copied!" : "Copy HTML"}
             >
               {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <FileCode className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -657,7 +659,7 @@ body {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={handleExportPNG}
-                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
                 title={`Export as PNG (${exportQuality}x quality)`}
               >
                 <FileImage className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -669,7 +671,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportSVG}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as SVG"
             >
               <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">SVG</span>
@@ -679,7 +681,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportReact}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as React"
             >
               <FileType className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -689,7 +691,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleExportCSS}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
               title="Export as CSS"
             >
               <FileCode2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -699,7 +701,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleCopyToClipboard}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={copiedImage ? "Copied!" : "Copy as Image"}
             >
               {copiedImage ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> : <Clipboard className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -773,7 +775,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowRefine(true)}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Refine Prompt"
             >
               <Wand2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -782,7 +784,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={handleDownload}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Download HTML"
             >
               <Download className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -793,7 +795,7 @@ body {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={onShare}
-                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
                 title="Share via URL"
               >
                 <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -806,7 +808,7 @@ body {
                 animate={{ scale: 1, opacity: 1 }}
                 onClick={handleRemix}
                 disabled={isRemixing}
-                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
                 title={isRemixing ? "Generating variation..." : "Generate Variation"}
               >
                 <Shuffle className={`w-4 h-4 sm:w-5 sm:h-5 ${isRemixing ? 'animate-spin' : ''}`} />
@@ -816,7 +818,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Preview"}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -826,7 +828,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => setShowShortcuts(true)}
-              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Keyboard Shortcuts"
             >
               <Keyboard className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -835,7 +837,7 @@ body {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={onClear}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-text-primary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center hover:scale-105 active:scale-95"
               title="Clear (⌘+L)"
             >
               <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />

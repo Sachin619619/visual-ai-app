@@ -150,6 +150,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
+  const [hasApiKey, setHasApiKey] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
@@ -189,7 +190,12 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
   useEffect(() => {
     const saved = localStorage.getItem('visual-ai-api-key');
     if (saved) {
+      console.log('[API Key] Loading from localStorage:', saved.substring(0, 8) + '...');
       setApiKey(saved);
+      setHasApiKey(true);
+      setApiKeyInput(saved); // Also populate the input field for visibility
+    } else {
+      console.log('[API Key] No key found in localStorage');
     }
     
     // Load saved free model
@@ -207,16 +213,21 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
 
   const handleSaveApiKey = () => {
     if (apiKeyInput.trim()) {
+      console.log('[API Key] Saving to localStorage:', apiKeyInput.trim().substring(0, 8) + '...');
       localStorage.setItem('visual-ai-api-key', apiKeyInput.trim());
       setApiKey(apiKeyInput.trim());
-      setApiKeyInput('');
+      setHasApiKey(true);
+      setApiKeyInput(''); // Clear input after saving
       setShowSettings(false);
     }
   };
 
   const handleClearApiKey = () => {
+    console.log('[API Key] Clearing from localStorage');
     localStorage.removeItem('visual-ai-api-key');
     setApiKey('');
+    setHasApiKey(false);
+    setApiKeyInput('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -326,7 +337,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             View All <Grid3X3 className="w-2.5 h-2.5" />
           </button>
         </div>
-        <div className="flex xs:grid xs:grid-cols-4 gap-1 overflow-x-auto xs:overflow-visible pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
+        <div className="flex gap-1.5 overflow-x-auto xs:overflow-visible pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
           {TEMPLATES.slice(0, 8).map((template, index) => {
             const Icon = template.icon;
             return (
@@ -340,11 +351,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-1.5 rounded-lg sm:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[44px] xs:min-h-[48px] sm:min-h-[52px] group w-[44px] xs:w-auto"
+                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1.5 p-2 rounded-xl sm:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] xs:min-h-[52px] sm:min-h-[56px] group w-[48px] xs:w-auto"
                 title={template.name}
               >
-                <Icon className="w-3.5 h-3.5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[8px] sm:text-[9px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
+                <Icon className="w-4 h-4 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
               </motion.button>
             );
           })}
@@ -520,6 +531,22 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             animate={{ height: 'auto' }}
             className="px-2.5 sm:px-4 pb-2.5 sm:pb-4"
           >
+            {/* API Key Status Indicator */}
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg mb-2 sm:mb-3 ${
+              hasApiKey ? 'bg-green-500/10 border border-green-500/30' : 'bg-bg-tertiary border border-white/5'
+            }`}>
+              {hasApiKey ? (
+                <>
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  <span className="text-[10px] sm:text-xs text-green-400">API Key saved</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                  <span className="text-[10px] sm:text-xs text-yellow-400">No API key set</span>
+                </>
+              )}
+            </div>
             <p className="text-[10px] sm:text-xs text-text-muted mb-2 sm:mb-3">
               Add your API key to enable real AI generation.
             </p>
