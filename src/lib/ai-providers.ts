@@ -69,6 +69,11 @@ export const generateUI = async (
     return generateForm();
   }
 
+  // Tabs/Accordion responses
+  if (lowerPrompt.includes('tab') || lowerPrompt.includes('accordion') || lowerPrompt.includes('fold') || lowerPrompt.includes('collapse')) {
+    return generateTabsAccordion();
+  }
+
   // Pricing responses
   if (lowerPrompt.includes('pricing') || lowerPrompt.includes('price') || lowerPrompt.includes('plan') || lowerPrompt.includes('subscription')) {
     return generatePricing();
@@ -354,6 +359,75 @@ const generateForm = () => `
       Send Message 🚀
     </button>
   </form>
+</div>
+`;
+
+const generateTabsAccordion = () => `
+<div class="card shadow">
+  <h2 style="margin-bottom: 24px;">🔽 Tabs & Accordion</h2>
+  
+  <!-- Tabs Section -->
+  <div style="margin-bottom: 32px;">
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #94a3b8;">Tabs</h3>
+    <div style="display: flex; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px;">
+      <button onclick="document.querySelectorAll('.tab-content').forEach(c => c.style.display='none'); document.getElementById('tab1').style.display='block'; this.style.borderBottom='2px solid #8b5cf6'; this.style.color='#fff';" style="padding: 12px 20px; background: none; border: none; border-bottom: 2px solid #8b5cf6; color: #fff; cursor: pointer; font-size: 14px; font-weight: 500;">Overview</button>
+      <button onclick="document.querySelectorAll('.tab-content').forEach(c => c.style.display='none'); document.getElementById('tab2').style.display='block'; this.style.borderBottom='2px solid #8b5cf6'; this.style.color='#fff';" style="padding: 12px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: #64748b; cursor: pointer; font-size: 14px;">Features</button>
+      <button onclick="document.querySelectorAll('.tab-content').forEach(c => c.style.display='none'); document.getElementById('tab3').style.display='block'; this.style.borderBottom='2px solid #8b5cf6'; this.style.color='#fff';" style="padding: 12px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: #64748b; cursor: pointer; font-size: 14px;">Pricing</button>
+    </div>
+    <div id="tab1" class="tab-content" style="display: block; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+      <h4 style="margin-bottom: 8px;">Welcome to Our Platform</h4>
+      <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">Get started with our powerful tools and features designed to help you succeed. We're here to support your journey every step of the way.</p>
+    </div>
+    <div id="tab2" class="tab-content" style="display: none; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="padding: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+          <span style="font-size: 20px;">⚡</span>
+          <div style="font-weight: 500; margin-top: 8px;">Fast Performance</div>
+        </div>
+        <div style="padding: 12px; background: rgba(6, 182, 212, 0.1); border-radius: 8px;">
+          <span style="font-size: 20px;">🔒</span>
+          <div style="font-weight: 500; margin-top: 8px;">Secure</div>
+        </div>
+      </div>
+    </div>
+    <div id="tab3" class="tab-content" style="display: none; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+      <div style="text-align: center;">
+        <div style="font-size: 32px; font-weight: 700;">$29<span style="font-size: 14px; color: #64748b;">/mo</span></div>
+        <button style="margin-top: 12px; padding: 10px 24px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border: none; border-radius: 8px; color: #fff; cursor: pointer;">Get Started</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Accordion Section -->
+  <div>
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #94a3b8;">Accordion</h3>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden;">
+        <button onclick="const c=this.nextElementSibling; c.style.display=c.style.display==='none'?'block':'none';" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.03); border: none; color: #fff; text-align: left; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+          What is this product about? <span>▼</span>
+        </button>
+        <div style="padding: 16px; background: rgba(255,255,255,0.02); color: #94a3b8; font-size: 14px; display: none;">
+          Our platform provides powerful tools for building, deploying, and scaling your applications with ease.
+        </div>
+      </div>
+      <div style="border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden;">
+        <button onclick="const c=this.nextElementSibling; c.style.display=c.style.display==='none'?'block':'none';" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.03); border: none; color: #fff; text-align: left; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+          How do I get started? <span>▼</span>
+        </button>
+        <div style="padding: 16px; background: rgba(255,255,255,0.02); color: #94a3b8; font-size: 14px; display: none;">
+          Simply sign up for an account and follow our quickstart guide to begin building your first project.
+        </div>
+      </div>
+      <div style="border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden;">
+        <button onclick="const c=this.nextElementSibling; c.style.display=c.style.display==='none'?'block':'none';" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.03); border: none; color: #fff; text-align: left; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+          Is there a free trial? <span>▼</span>
+        </button>
+        <div style="padding: 16px; background: rgba(255,255,255,0.02); color: #94a3b8; font-size: 14px; display: none;">
+          Yes! We offer a 14-day free trial with full access to all features. No credit card required.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 

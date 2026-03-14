@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2 } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt } from '../lib/ai-providers';
 
@@ -102,6 +102,12 @@ const TEMPLATES = [
     name: 'Landing',
     icon: Layout,
     prompt: 'Design a complete landing page with hero, features section, pricing, testimonials, and footer'
+  },
+  {
+    id: 'tabs',
+    name: 'Tabs & Accordion',
+    icon: ChevronDownCircle,
+    prompt: 'Create an interactive tabs component with multiple tabs and an accordion FAQ section with expand/collapse'
   }
 ];
 

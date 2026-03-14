@@ -273,6 +273,13 @@ export default function ${componentName}() {
   // Load saved templates
   const savedTemplates = JSON.parse(localStorage.getItem('visual-ai-templates') || '[]');
 
+  // Delete saved template
+  const handleDeleteTemplate = (id: string) => {
+    const templates = JSON.parse(localStorage.getItem('visual-ai-templates') || '[]');
+    const filtered = templates.filter((t: any) => t.id !== id);
+    localStorage.setItem('visual-ai-templates', JSON.stringify(filtered));
+  };
+
   useEffect(() => {
     if (html && iframeRef.current) {
       try {
@@ -830,6 +837,58 @@ export default function ${componentName}() {
                 </motion.button>
               ))}
             </div>
+            
+            {/* Saved Templates Section */}
+            {savedTemplates.length > 0 && (
+              <div className="mt-8 max-w-sm mx-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-text-secondary text-sm font-medium">📁 My Templates</h3>
+                  <button 
+                    onClick={() => {
+                      if (confirm('Delete all saved templates?')) {
+                        localStorage.removeItem('visual-ai-templates');
+                      }
+                    }}
+                    className="text-text-muted hover:text-red-400 text-xs"
+                  >
+                    Clear all
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 text-left">
+                  {savedTemplates.slice(0, 6).map((template: any, index: number) => (
+                    <motion.div
+                      key={template.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="relative group"
+                    >
+                      <button
+                        onClick={() => {
+                          const content = createSandboxContent(template.html, previewTheme);
+                          if (iframeRef.current) {
+                            iframeRef.current.srcdoc = content;
+                          }
+                        }}
+                        className="w-full p-2.5 sm:p-3 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer min-h-[60px] flex flex-col justify-between"
+                      >
+                        <p className="text-accent-primary text-xs font-medium truncate">{template.name}</p>
+                        <p className="text-text-muted text-[10px]">Click to load</p>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTemplate(template.id);
+                        }}
+                        className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {/* Keyboard shortcut hint - always visible on mobile */}
             <p className="text-xs sm:text-sm text-text-muted mt-6 sm:mt-8 flex items-center justify-center gap-2">
