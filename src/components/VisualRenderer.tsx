@@ -1360,8 +1360,35 @@ body {
                 </button>
               </div>
               <div className="p-4 space-y-4">
+                {/* Quick refine buttons */}
                 <div>
-                  <label className="text-sm text-text-secondary mb-2 block font-medium">How would you like to modify it?</label>
+                  <label className="text-sm text-text-secondary mb-2 block font-medium">Quick refinements:</label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: '🌙 Darker', prompt: 'Make the design darker with deeper shadows and richer dark tones' },
+                      { label: '☀️ Lighter', prompt: 'Make the design lighter with brighter colors and softer shadows' },
+                      { label: '✨ Add animations', prompt: 'Add smooth animations, transitions, and hover effects to all elements' },
+                      { label: '🎨 Modernize', prompt: 'Modernize the design with contemporary styling, rounded corners, and fresh look' },
+                      { label: '📱 Mobile responsive', prompt: 'Make it fully responsive with proper mobile layouts' },
+                      { label: '🔵 Change to blue scheme', prompt: 'Change the color scheme to blue tones' },
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => {
+                          if (onRefinePrompt) {
+                            onRefinePrompt(item.prompt, item.prompt);
+                            setShowRefine(false);
+                          }
+                        }}
+                        className="px-3 py-1.5 text-xs bg-bg-tertiary hover:bg-accent-primary/20 hover:text-accent-primary rounded-lg transition-colors border border-white/5"
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-text-secondary mb-2 block font-medium">Or describe what you want:</label>
                   <textarea
                     value={refinementText}
                     onChange={(e) => setRefinementText(e.target.value)}

@@ -28,6 +28,10 @@ export const FREE_MODELS: FreeModel[] = [
   { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash', icon: '🚀' },
   { id: 'deepseek/deepseek-prover:free', name: 'DeepSeek Prover', icon: '🧮' },
   { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', name: 'Nemotron 70B', icon: '🔷' },
+  { id: 'qwen/qwen3-8b:free', name: 'Qwen 3 8B', icon: '🔍' },
+  { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3 4B', icon: '💎' },
+  { id: 'deepseek/deepseek-coder-v2:free', name: 'DeepSeek Coder V2', icon: '💻' },
+  { id: 'anthropic/claude-3-5-haiku:free', name: 'Claude 3.5 Haiku', icon: '🎯' },
 ];
 
 // Global model selection for OpenRouter free models
