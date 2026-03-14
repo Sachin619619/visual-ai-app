@@ -83,11 +83,12 @@ const generateWithAI = async (
 
 IMPORTANT: You must output ONLY raw HTML code. No explanations, no markdown, no text.
 
-Generate a complete, single-file HTML UI component with:
-1. Inline CSS in <style> tags
-2. Inline JavaScript in <script> tags
-3. Dark theme with modern styling
-4. Tailwind CSS via CDN
+Generate a complete, single-file HTML UI component that WORKS IMMEDIATELY when rendered:
+
+1. Include Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
+2. Use Tailwind classes for all styling
+3. Make it dark-themed with modern styling
+4. Use inline styles as backup
 5. Make it visually stunning and interactive
 
 Output ONLY the raw HTML code - nothing else.`;
