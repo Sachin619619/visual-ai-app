@@ -320,10 +320,10 @@ function AppContent() {
       <div className={`
         fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:relative lg:translate-x-0 lg:w-80
-        bg-bg-secondary
+        lg:relative lg:translate-x-0 lg:w-80 lg:flex-shrink-0
+        bg-bg-secondary border-r border-white/5
         w-[85vw] max-w-[300px] xs:max-w-[320px] sm:max-w-[360px]
-        pt-12 lg:pt-0
+        pt-14 lg:pt-0
         overflow-y-auto overflow-x-hidden
       `} style={{ 
         paddingBottom: 'env(safe-area-inset-bottom)',
@@ -353,7 +353,7 @@ function AppContent() {
       )}
 
       {/* Center - Visual Renderer */}
-      <div className="flex-1 w-full lg:w-auto">
+      <div className="flex-1 min-w-0">
         <VisualRenderer
           html={html}
           isLoading={isLoading}

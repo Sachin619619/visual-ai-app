@@ -1,31 +1,56 @@
 import DOMPurify from 'dompurify';
 import { PreviewTheme } from '../types';
 
-// Configuration for DOMPurify
+// Configuration for DOMPurify - less aggressive to preserve more HTML
 const sanitizeConfig = {
   ALLOWED_TAGS: [
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'p', 'br', 'hr',
+    'p', 'br', 'hr', 'blockquote',
     'ul', 'ol', 'li',
-    'div', 'span', 'section', 'article', 'header', 'footer', 'main', 'nav',
-    'a', 'img', 'figure', 'figcaption',
-    'table', 'thead', 'tbody', 'tr', 'th', 'td',
-    'form', 'input', 'button', 'select', 'option', 'textarea', 'label',
-    'canvas', 'svg', 'path', 'rect', 'circle', 'line', 'text',
-    'style', 'script' // Allow but will be handled carefully
+    'div', 'span', 'section', 'article', 'header', 'footer', 'main', 'nav', 'aside',
+    'a', 'img', 'figure', 'figcaption', 'picture', 'source',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td', 'tfoot', 'caption',
+    'form', 'input', 'button', 'select', 'option', 'textarea', 'label', 'fieldset', 'legend',
+    'canvas', 'svg', 'path', 'rect', 'circle', 'line', 'text', 'g', 'defs', 'use', 'linearGradient', 'radialGradient', 'stop', 'clipPath', 'mask',
+    'style', 'link', 'meta', 'title',
+    'iframe', // Allow iframes for embeds
+    'audio', 'video', 'source',
+    'code', 'pre', 'kbd', 'samp',
+    'b', 'i', 'u', 'strong', 'em', 'del', 'ins', 'sub', 'sup',
+    'ul', 'ol', 'li',
+    'slot'
   ],
   ALLOWED_ATTR: [
-    'href', 'src', 'alt', 'title', 'class', 'className', 'id', 'style',
-    'type', 'name', 'value', 'placeholder', 'required',
-    'width', 'height', 'viewBox', 'fill', 'stroke', 'stroke-width',
-    'data-label', 'data-value', 'data-color'
+    'href', 'src', 'alt', 'title', 'class', 'className', 'id', 'style', 'target', 'rel',
+    'type', 'name', 'value', 'placeholder', 'required', 'disabled', 'readonly', 'checked', 'selected',
+    'width', 'height', 'viewBox', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
+    'data-label', 'data-value', 'data-color', 'data-chart-type', 'data-chart-data', 'data-labels', 'data-chart-label',
+    'aria-label', 'aria-hidden', 'role', 'tabindex',
+    'loading', 'decoding', 'crossorigin',
+    'preserveAspectRatio', 'd', 'cx', 'cy', 'r', 'rx', 'ry', 'x', 'y', 'x1', 'x2', 'y1', 'y2',
+    'transform', 'opacity', 'filter'
   ],
   ALLOW_DATA_ATTR: true,
+  ALLOW_UNKNOWN_PROTOCOLS: true,
+  ADD_TAGS: ['iframe'],
 };
 
 export const sanitizeHtml = (html: string): string => {
-  // First, remove any potentially dangerous script tags except for safe ones
-  let cleaned = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  // First, unescape any HTML entities that might have been double-escaped
+  // (e.g., &lt; -> <, &gt; -> >, &amp; -> &)
+  let cleaned = html
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+  
+  // Also handle escaped backslashes (e.g., \&lt; -> <)
+  cleaned = cleaned.replace(/\\</g, '<').replace(/\\>/g, '>');
+  
+  // Remove any potentially dangerous script tags except for safe ones
+  cleaned = cleaned.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
   
   // Remove event handlers
   cleaned = cleaned.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '');

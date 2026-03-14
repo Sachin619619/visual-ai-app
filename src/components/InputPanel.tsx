@@ -337,7 +337,7 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
             View All <Grid3X3 className="w-2.5 h-2.5" />
           </button>
         </div>
-        <div className="flex gap-1.5 overflow-x-auto xs:overflow-visible pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
+        <div className="flex gap-1.5 overflow-x-auto xs:overflow-x-visible overflow-y-hidden pb-2 -mb-2 xs:mb-0 xs:pb-0 scrollbar-hide px-1">
           {TEMPLATES.slice(0, 8).map((template, index) => {
             const Icon = template.icon;
             return (
@@ -351,11 +351,11 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1.5 p-2 rounded-xl sm:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] xs:min-h-[52px] sm:min-h-[56px] group w-[48px] xs:w-auto"
+                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-1.5 xs:gap-1.5 p-2 rounded-lg xs:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[44px] xs:min-h-[48px] sm:min-h-[56px] group w-[44px] xs:w-auto"
                 title={template.name}
               >
-                <Icon className="w-4 h-4 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
+                <Icon className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[8px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
               </motion.button>
             );
           })}
