@@ -308,9 +308,12 @@ function AppContent() {
     showToast('success', `Switched to ${theme === 'dark' ? 'light' : 'dark'} mode ☀️`);
   }, [theme, showToast]);
 
-  // Keyboard shortcut: Cmd/Ctrl + L to clear, Z to undo/redo
+  // Handle escape key to close sidebar on mobile
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && sidebarOpen) {
+        setSidebarOpen(false);
+      }
       if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
         e.preventDefault();
         handleClear();

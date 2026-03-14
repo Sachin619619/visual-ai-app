@@ -341,10 +341,10 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               <button
                 type="button"
                 onClick={onClose}
-                className="lg:hidden p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
+                className="lg:hidden p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close sidebar"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
+                <X className="w-5 h-5 sm:w-5 sm:h-5 text-text-secondary" />
               </button>
             )}
           </div>
@@ -372,16 +372,20 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
                 type="button"
                 onClick={() => {
                   setPrompt(template.prompt);
+                  // Close sidebar after selecting template on mobile
+                  if (onClose && window.innerWidth < 1024) {
+                    onClose();
+                  }
                 }}
                 disabled={isLoading}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-1.5 xs:gap-1.5 p-2 rounded-lg xs:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[44px] xs:min-h-[48px] sm:min-h-[56px] group w-[44px] xs:w-auto"
+                className="flex-shrink-0 xs:flex-none flex flex-col items-center gap-1 p-2 xs:p-2.5 rounded-lg xs:rounded-xl bg-bg-tertiary hover:bg-white/10 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] xs:min-h-[52px] sm:min-h-[56px] group w-[48px] xs:w-auto"
                 title={template.name}
               >
-                <Icon className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-accent-primary group-hover:text-accent-secondary transition-colors" />
-                <span className="text-[8px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
+                <Icon className="w-4 h-4 xs:w-4.5 xs:h-4.5 text-accent-primary group-hover:text-accent-secondary transition-colors" />
+                <span className="text-[9px] xs:text-[9px] sm:text-[10px] text-text-secondary font-medium truncate w-full text-center hidden xs:block">{template.name}</span>
               </motion.button>
             );
           })}
@@ -398,7 +402,8 @@ export function InputPanel({ onGenerate, isLoading, history, onClose, prompt: ex
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="e.g., Show me a line chart of sales data..."
-              className="input-field h-24 sm:h-40 resize-none text-xs sm:text-sm pr-10"
+              className="input-field h-24 sm:h-40 resize-none text-sm"
+              style={{ fontSize: '16px' }}
               disabled={isLoading || isEnhancing}
             />
             <button

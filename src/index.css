@@ -324,15 +324,47 @@ body {
   }
 }
 
-/* Extra small screens */
-@media (max-width: 380px) {
-  .btn-primary {
-    padding: 12px 16px;
-    font-size: 14px;
-  }
+/* Ensure modal content doesn't overflow on small screens */
+.modal-content {
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-  .input-field {
-    padding: 12px 14px;
+/* Better mobile modal handling */
+@media (max-width: 640px) {
+  .modal-content {
+    max-height: 80vh;
+    margin: 16px;
+    width: calc(100% - 32px) !important;
+  }
+}
+
+/* Fix toolbar overflow on small screens */
+@media (max-width: 768px) {
+  .toolbar-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .toolbar-container::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Ensure dropdown menus don't overflow viewport */
+.dropdown-menu {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* Fix select dropdown on mobile */
+@media (max-width: 640px) {
+  .select-field {
+    font-size: 16px; /* Prevents iOS zoom */
+    min-height: 48px;
   }
 }
 
