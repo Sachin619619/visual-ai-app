@@ -772,6 +772,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               }}
               className="p-2 sm:p-2.5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
               title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle theme"
             >
               {isDarkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-muted" />}
             </button>

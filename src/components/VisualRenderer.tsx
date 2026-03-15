@@ -2381,25 +2381,30 @@ body {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              {/* Mini preview of visual types */}
-              <div className="hidden sm:flex justify-center gap-3 mb-4 opacity-70">
+              {/* Quick category buttons — clickable to generate */}
+              <div className="hidden sm:flex justify-center gap-3 mb-4">
                 {[
-                  { icon: '📊', label: 'Charts' },
-                  { icon: '🗺️', label: 'Diagrams' },
-                  { icon: '📋', label: 'Dashboards' },
-                  { icon: '🗓️', label: 'Timelines' },
-                  { icon: '🎯', label: 'Infographics' },
+                  { icon: '📊', label: 'Charts & Dashboards', prompt: 'Create a beautiful dark analytics dashboard with stat cards (Users 1.2M, Revenue $84K, Conversion 3.4%), a 30-day animated line chart, traffic sources doughnut chart, and a top pages table. Violet/cyan accents.' },
+                  { icon: '🗺️', label: 'Diagrams & Maps', prompt: 'Create a beautiful world map visualization showing top countries by GDP with color-coded choropleth shading, legend, and key stats for the top 5 economies.' },
+                  { icon: '🎯', label: 'Infographics', prompt: 'Create a stunning animated infographic about artificial intelligence — show AI types, key milestones timeline from 1950 to 2025, top AI companies, and real-world applications grid.' },
+                  { icon: '🎨', label: 'Creative Visuals', prompt: 'Create a visually stunning creative showcase page — flowing gradient hero section, animated particle effects, bold typography, layered card compositions, and neon glow accents.' },
+                  { icon: '📈', label: 'Data Stories', prompt: 'Create a data story about climate change — narrative text sections combined with animated charts showing global temperature rise, CO2 levels, sea level changes, and future projections.' },
+                  { icon: '⚡', label: 'Animations', prompt: 'Create a showcase of beautiful CSS animations — bouncing elements, spinning loaders, morphing shapes, gradient transitions, particle systems, and parallax scrolling effects. Dark theme.' },
                 ].map((item, i) => (
-                  <motion.div
+                  <motion.button
                     key={item.label}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + i * 0.07 }}
-                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl bg-bg-secondary/60 border border-white/5"
+                    onClick={() => onQuickGenerate && onQuickGenerate(item.prompt)}
+                    disabled={isLoading}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl bg-bg-secondary/60 border border-white/5 hover:border-accent-primary/40 hover:bg-accent-primary/10 hover:opacity-100 opacity-70 transition-all cursor-pointer disabled:cursor-not-allowed"
+                    title={item.label}
+                    aria-label={item.label}
                   >
                     <span className="text-lg">{item.icon}</span>
                     <span className="text-[10px] text-text-muted">{item.label}</span>
-                  </motion.div>
+                  </motion.button>
                 ))}
               </div>
 
