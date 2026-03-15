@@ -959,6 +959,15 @@ function AppContent() {
           onStyleFrameChange={setStyleFrame}
           onRefine={(refinement) => handleRefinePrompt('', refinement)}
           contextHtml={html}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+          onShare={handleShare}
+          onExport={handleExport}
+          onExportPNG={handleExportPNG}
+          onExportPDF={handleExportPDF}
+          onExportCodePen={handleExportCodePen}
+          onSaveFavorite={handleSaveFavorite}
+          generationStats={generationStats}
         />
         </Suspense>
       </div>
