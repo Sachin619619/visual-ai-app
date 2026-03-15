@@ -664,7 +664,7 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.4,
-        max_tokens: 10000
+        max_tokens: 6000
       })
     });
     
@@ -682,6 +682,7 @@ const generateWithAI = async (
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
+      signal,
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [
@@ -689,7 +690,7 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.4,
-        max_tokens: 10000
+        max_tokens: 6000
       })
     });
     
@@ -700,9 +701,10 @@ const generateWithAI = async (
     response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal,
       body: JSON.stringify({
         contents: [{ parts: [{ text: `${SYSTEM_PROMPT}\n\n${uiPrompt}` }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 10000 }
+        generationConfig: { temperature: 0.4, maxOutputTokens: 6000 }
       })
     });
     
@@ -718,13 +720,14 @@ const generateWithAI = async (
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
+      signal,
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
         system: SYSTEM_PROMPT,
         messages: [
           { role: 'user', content: uiPrompt }
         ],
-        max_tokens: 10000
+        max_tokens: 6000
       })
     });
     
@@ -743,6 +746,7 @@ const generateWithAI = async (
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${kimikey}`
       },
+      signal,
       body: JSON.stringify({
         model: 'kimi-k2.5',
         messages: [
@@ -750,7 +754,7 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.3,
-        max_tokens: 10000
+        max_tokens: 6000
       })
     });
     
@@ -768,6 +772,7 @@ const generateWithAI = async (
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${minimaxApiKey}`
       },
+      signal,
       body: JSON.stringify({
         model: 'MiniMax-M2.5',
         messages: [
@@ -775,7 +780,7 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.3,
-        max_tokens: 10000
+        max_tokens: 6000
       })
     });
 
