@@ -1718,6 +1718,30 @@ body {
               </motion.button>
               <div className="absolute -bottom-1 -right-1 text-[7px] sm:text-[8px] bg-accent-primary/80 text-white px-1.5 rounded-full">{exportQuality}x</div>
             </div>
+            {/* CodePen export - visible on tablet+ */}
+            {onExportCodePen && html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onExportCodePen}
+                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-orange-400 transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+                title="Open in CodePen"
+              >
+                <span className="text-[10px] font-bold">CP</span>
+              </motion.button>
+            )}
+            {/* JSFiddle export - visible on tablet+ */}
+            {onExportJSFiddle && html && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onExportJSFiddle}
+                className="hidden md:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-blue-400 transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+                title="Open in JSFiddle"
+              >
+                <span className="text-[10px] font-bold">JF</span>
+              </motion.button>
+            )}
             {/* Save as Template - visible on tablet+ */}
             <div className="relative hidden md:block">
               <motion.button
