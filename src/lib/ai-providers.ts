@@ -860,11 +860,47 @@ Output ONLY the enhanced prompt text. No explanations. Make it detailed but not 
           temperature: 0.7
         })
       });
-      
+
       const data = await response.json();
       return data.choices?.[0]?.message?.content || prompt;
     }
-    
+
+    if (model === 'gemini' && apiKey) {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 200 }
+        })
+      });
+      const data = await response.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || prompt;
+    }
+
+    // Fallback for all other models: use OpenRouter free model if no specific apiKey
+    // (Kimi, MiniMax, Claude, local — route enhancement through OpenRouter for free)
+    const openRouterFallbackKey = apiKey || '';
+    if (openRouterFallbackKey) {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openRouterFallbackKey}`,
+          'HTTP-Referer': 'https://visual-ai-app.vercel.app',
+          'X-Title': 'Visual AI'
+        },
+        body: JSON.stringify({
+          model: selectedFreeModel,
+          messages: [{ role: 'user', content: `${enhancementPrompt}\n\nOriginal prompt: ${prompt}` }],
+          temperature: 0.7,
+          max_tokens: 200
+        })
+      });
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || prompt;
+    }
+
     return prompt;
   } catch (error) {
     console.error('Prompt enhancement failed:', error);
