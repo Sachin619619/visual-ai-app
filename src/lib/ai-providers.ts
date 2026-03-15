@@ -590,7 +590,12 @@ for(let ci=0;ci<weeks;ci+=4){
 11. Start with the HERO BANNER pattern — every visual should have a striking header
 12. AIM FOR DENSITY — pack in 8-15 visual elements per page: charts, stat cards, timelines, comparisons, flow diagrams. A sparse output is a FAILURE.
 13. Use clamp() for font-size to ensure responsive text: font-size: clamp(12px, 2vw, 18px)
-14. Every section should have a section header with an icon and gradient underline`;
+14. Every section should have a section header with an icon and gradient underline
+15. WRAP all chart canvases in <div style="position:relative;height:Xpx"> for proper sizing — never use canvas without a height-constrained wrapper
+16. Include at least ONE data table or comparison grid in addition to charts
+17. ALL numbers/statistics MUST use data-count for animated counting from zero
+18. Do NOT use Tailwind CSS class names — use only inline styles or CSS in <style> block`;
+
 
 
 // Generate with AI
