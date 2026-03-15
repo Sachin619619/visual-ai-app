@@ -2186,9 +2186,24 @@ body {
 
             {/* Quick Start Grid */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <p className="text-[10px] sm:text-xs text-text-muted mb-2 sm:mb-3 uppercase tracking-wider font-medium">
-                Or try one of these
-              </p>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <p className="text-[10px] sm:text-xs text-text-muted uppercase tracking-wider font-medium">
+                  Or try one of these
+                </p>
+                {onQuickGenerate && (
+                  <button
+                    onClick={() => {
+                      const random = QUICK_PROMPTS[Math.floor(Math.random() * QUICK_PROMPTS.length)];
+                      onQuickGenerate(random.prompt);
+                    }}
+                    disabled={isLoading}
+                    className="flex items-center gap-1.5 text-[10px] sm:text-xs text-accent-primary hover:text-accent-secondary transition-colors disabled:opacity-50 px-2 py-1 rounded-lg hover:bg-accent-primary/10"
+                  >
+                    <Shuffle className="w-3 h-3" />
+                    Surprise me!
+                  </button>
+                )}
+              </div>
               <QuickStartGrid
                 items={QUICK_PROMPTS}
                 onClick={onQuickGenerate!}
