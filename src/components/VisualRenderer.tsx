@@ -230,6 +230,16 @@ const LOADING_MESSAGES = [
   'Crafting gradient magic...',
   'Rendering your dashboard...',
   'Creating visual excellence...',
+  'Blending colors and gradients...',
+  'Weaving data into visuals...',
+  'Polishing the pixel perfect details...',
+  'Generating glassmorphism cards...',
+  'Animating the timeline...',
+  'Calibrating chart axes...',
+  'Sprinkling D3 magic dust...',
+  'Rendering neon glows...',
+  'Assembling the data story...',
+  'Tuning hover interactions...',
 ];
 
 const LoadingMessage = memo(() => {
@@ -401,6 +411,7 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
     { keys: ['⌘', 'E'], description: 'Export HTML' },
     { keys: ['⌘', 'P'], description: 'Export as PNG' },
     { keys: ['⌘', 'B'], description: 'Toggle theme' },
+    { keys: ['⌘', 'Shift', 'R'], description: 'Regenerate last prompt' },
     { keys: ['⌘', '/'], description: 'Show shortcuts' },
     { keys: ['Esc'], description: 'Exit fullscreen' },
     { keys: ['⌘', '+'], description: 'Zoom in' },

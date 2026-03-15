@@ -843,6 +843,11 @@ function AppContent() {
         e.preventDefault();
         handleSaveFavorite();
       }
+      // Cmd/Ctrl + Shift + R for regenerate (re-run last prompt)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+        handleRegenerate();
+      }
       // ? for shortcuts help
       if (e.key === '?' || (e.shiftKey && e.key === '/')) {
         e.preventDefault();
@@ -852,7 +857,7 @@ function AppContent() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prompt, isLoading, lastModel, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite, showShortcuts, showFavorites, showGallery, sidebarOpen]);
+  }, [prompt, isLoading, lastModel, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite, handleRegenerate, showShortcuts, showFavorites, showGallery, sidebarOpen]);
 
   if (siteAuth === null || siteAuth === false) {
     return (
