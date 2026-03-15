@@ -962,6 +962,25 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               </button>
             ))}
           </div>
+          {/* Recent prompts — only shown when textarea is empty */}
+          {!prompt.trim() && history.length > 0 && (
+            <div className="mt-2">
+              <p className="text-[9px] text-text-muted mb-1 uppercase tracking-wide">Recent</p>
+              <div className="flex flex-col gap-1">
+                {history.slice(0, 3).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setPrompt(item.prompt)}
+                    className="text-left text-[10px] px-2 py-1.5 rounded-lg bg-bg-tertiary border border-white/5 hover:border-accent-primary/30 hover:bg-accent-primary/10 text-text-muted hover:text-text-secondary transition-all line-clamp-1 truncate"
+                    title={item.prompt}
+                  >
+                    ↩ {item.prompt.slice(0, 60)}{item.prompt.length > 60 ? '…' : ''}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {/* Draft indicator - shows when prompt has content (draft auto-saved) */}
           {prompt.trim() && (
             <p className="text-[9px] sm:text-[10px] text-cyan-400 mt-1 flex items-center gap-1">
