@@ -1033,6 +1033,7 @@ function AppContent() {
           onExportCodePen={handleExportCodePen}
           onSaveFavorite={handleSaveFavorite}
           generationStats={generationStats}
+          currentHtmlLength={html.length}
         />
         </Suspense>
       </div>

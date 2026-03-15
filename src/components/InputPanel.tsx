@@ -27,6 +27,7 @@ interface InputPanelProps {
   onSaveFavorite?: (name?: string) => void;
   generationStats?: { time: number; model: string } | null;
   contextHtml?: string;
+  currentHtmlLength?: number;
 }
 
 // Template definitions
@@ -436,7 +437,7 @@ const TemplateButton = memo(({ template, onClick, isLoading, onClose }: {
 
 TemplateButton.displayName = 'TemplateButton';
 
-export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onExportPNG, onExportPDF, onExportCodePen, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
+export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onExportPNG, onExportPDF, onExportCodePen, onSaveFavorite, generationStats, contextHtml, currentHtmlLength }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
   const [model, setModel] = useState<ModelProvider>(() => {
     try {
@@ -831,10 +832,18 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
       {/* Generation Stats */}
       {generationStats && (
         <div className="px-2.5 sm:px-4 py-2 border-b border-white/5 bg-accent-primary/5">
-          <div className="flex items-center justify-between text-[10px] sm:text-xs">
+          <div className="flex items-center justify-between text-[10px] sm:text-xs flex-wrap gap-1">
             <span className="text-text-muted">Last generation:</span>
-            <span className="text-accent-primary font-medium">
-              {(generationStats.time / 1000).toFixed(1)}s • {generationStats.model}
+            <span className="text-accent-primary font-medium flex items-center gap-1.5">
+              <span>{(generationStats.time / 1000).toFixed(1)}s</span>
+              <span className="text-text-muted">·</span>
+              <span>{generationStats.model}</span>
+              {currentHtmlLength && currentHtmlLength > 0 && (
+                <>
+                  <span className="text-text-muted">·</span>
+                  <span className="text-text-muted">{(currentHtmlLength / 1024).toFixed(1)}KB</span>
+                </>
+              )}
             </span>
           </div>
         </div>
