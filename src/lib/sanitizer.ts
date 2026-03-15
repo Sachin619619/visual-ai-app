@@ -1137,12 +1137,16 @@ export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark')
   if (lc.startsWith('<!doctype') || lc.startsWith('<html')) {
     let doc = trimmed;
 
-    // Inject Chart.js CDN if absent
+    // Normalize ALL Chart.js CDN URLs to our pinned stable version (prevents double-load conflicts)
+    doc = doc.replace(/https?:\/\/cdn\.jsdelivr\.net\/npm\/chart\.js[^"'\s]*/gi, CHART_JS_CDN);
+    doc = doc.replace(/https?:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/[Cc]hart\.js[^"'\s]*/gi, CHART_JS_CDN);
+    doc = doc.replace(/https?:\/\/unpkg\.com\/chart\.js[^"'\s]*/gi, CHART_JS_CDN);
+
+    // Inject Chart.js CDN if still absent after normalization
     if (!doc.includes(CHART_JS_CDN)) {
       if (/<head[^>]*>/i.test(doc)) {
         doc = doc.replace(/<head([^>]*)>/i, `<head$1>\n  <script src="${CHART_JS_CDN}"><\/script>`);
       } else {
-        // No <head> — insert one after <html ...>
         doc = doc.replace(/<html([^>]*)>/i, `<html$1>\n<head>\n  <meta charset="UTF-8">\n  <script src="${CHART_JS_CDN}"><\/script>\n</head>`);
       }
     }

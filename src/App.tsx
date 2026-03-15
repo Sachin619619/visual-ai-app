@@ -388,9 +388,17 @@ function AppContent() {
     };
     setHistory(prev => [historyItem, ...prev]);
     
-    // Stream silently — accumulates tokens in background to avoid timeout,
-    // but never shows partial HTML (partial HTML renders as raw JS text in the iframe)
-    const onChunk = (_partial: string) => {};
+    // Show HTML as soon as a complete document is detected in the stream
+    const onChunk = (partial: string) => {
+      const stripped = partial
+        .replace(/^```html\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/```\s*$/m, '');
+      // Only render once we have a complete HTML document (has both opening and closing tags)
+      if (stripped.includes('<html') && stripped.includes('</html>')) {
+        setHtml(stripped);
+      }
+    };
 
     try {
       const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal, onChunk);
