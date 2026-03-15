@@ -8,10 +8,12 @@ interface Toast {
   id: string;
   type: ToastType;
   message: string;
+  action?: { label: string; onClick: () => void };
+  duration?: number;
 }
 
 interface ToastContextType {
-  showToast: (type: ToastType, message: string) => void;
+  showToast: (type: ToastType, message: string, action?: { label: string; onClick: () => void }) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -31,14 +33,19 @@ interface ToastProviderProps {
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = useCallback((type: ToastType, message: string) => {
+  const showToast = useCallback((
+    type: ToastType,
+    message: string,
+    action?: { label: string; onClick: () => void }
+  ) => {
     const id = Date.now().toString();
-    setToasts(prev => [...prev, { id, type, message }]);
-    
-    // Auto-remove after 4 seconds
+    // Errors stay longer (7s), success shorter (4s)
+    const duration = type === 'error' ? 7000 : type === 'warning' ? 5500 : 4000;
+    setToasts(prev => [...prev, { id, type, message, action, duration }]);
+
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
-    }, 4000);
+    }, duration);
   }, []);
 
   const removeToast = useCallback((id: string) => {
@@ -48,42 +55,50 @@ export function ToastProvider({ children }: ToastProviderProps) {
   const getIcon = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-400" />;
+        return <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />;
       case 'error':
-        return <AlertCircle className="w-5 h-5 text-red-400" />;
+        return <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />;
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
+        return <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />;
       case 'info':
       default:
-        return <Info className="w-5 h-5 text-blue-400" />;
+        return <Info className="w-5 h-5 text-blue-400 flex-shrink-0" />;
     }
   };
 
   const getBorderColor = (type: ToastType) => {
     switch (type) {
-      case 'success':
-        return 'border-l-green-400';
-      case 'error':
-        return 'border-l-red-400';
-      case 'warning':
-        return 'border-l-yellow-400';
+      case 'success': return 'border-l-green-400';
+      case 'error': return 'border-l-red-400';
+      case 'warning': return 'border-l-yellow-400';
       case 'info':
-      default:
-        return 'border-l-blue-400';
+      default: return 'border-l-blue-400';
+    }
+  };
+
+  const getActionColor = (type: ToastType) => {
+    switch (type) {
+      case 'success': return 'text-green-400 hover:bg-green-400/10';
+      case 'error': return 'text-red-400 hover:bg-red-400/10';
+      case 'warning': return 'text-yellow-400 hover:bg-yellow-400/10';
+      default: return 'text-blue-400 hover:bg-blue-400/10';
     }
   };
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      
-      {/* Toast Container - mobile responsive - positioned above FAB */}
-      <div 
+
+      {/* Toast Container */}
+      <div
         className="fixed bottom-20 sm:bottom-6 left-4 right-4 sm:right-4 z-[100] flex flex-col gap-2 sm:items-end"
-        style={{ 
+        style={{
           bottom: 'calc(env(safe-area-inset-bottom, 20px) + 70px)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)'
         }}
+        role="region"
+        aria-label="Notifications"
+        aria-live="polite"
       >
         <AnimatePresence>
           {toasts.map((toast) => (
@@ -92,13 +107,25 @@ export function ToastProvider({ children }: ToastProviderProps) {
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.9 }}
-              className={`flex items-center gap-3 px-4 py-3 bg-bg-secondary rounded-lg border border-white/10 border-l-4 ${getBorderColor(toast.type)} shadow-lg w-full sm:min-w-[280px] sm:max-w-sm`}
+              className={`flex items-start gap-3 px-4 py-3 bg-bg-secondary rounded-xl border border-white/10 border-l-4 ${getBorderColor(toast.type)} shadow-xl w-full sm:min-w-[300px] sm:max-w-sm`}
+              role="alert"
             >
               {getIcon(toast.type)}
-              <p className="text-sm text-text-primary flex-1 break-words">{toast.message}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-text-primary break-words leading-snug">{toast.message}</p>
+                {toast.action && (
+                  <button
+                    onClick={() => { toast.action!.onClick(); removeToast(toast.id); }}
+                    className={`mt-1.5 text-xs font-semibold px-2 py-1 rounded-md transition-colors ${getActionColor(toast.type)}`}
+                  >
+                    {toast.action.label}
+                  </button>
+                )}
+              </div>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
+                className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0 mt-0.5"
+                aria-label="Dismiss"
               >
                 <X className="w-4 h-4 text-text-muted" />
               </button>

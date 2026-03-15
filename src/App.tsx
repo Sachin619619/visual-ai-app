@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { InputPanel } from './components/InputPanel';
-import { VisualRenderer } from './components/VisualRenderer';
-import { ChatWidget } from './components/ChatWidget';
+import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
+const InputPanel = lazy(() => import('./components/InputPanel').then(m => ({ default: m.InputPanel })));
+const VisualRenderer = lazy(() => import('./components/VisualRenderer').then(m => ({ default: m.VisualRenderer })));
+const ChatWidget = lazy(() => import('./components/ChatWidget').then(m => ({ default: m.ChatWidget })));
 import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI, generateTitle } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
-import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal, Search } from 'lucide-react';
+import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal, Search, LayoutGrid, List } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 // Favorite design type
@@ -73,6 +73,7 @@ function AppContent() {
   const [gallerySearch, setGallerySearch] = useState('');
   const [historySearch, setHistorySearch] = useState('');
   const [_currentTitle, setCurrentTitle] = useState('');
+  const [galleryViewMode, setGalleryViewMode] = useState<'grid' | 'list'>('grid');
   const { showToast } = useToast();
   const cleanupRan = useRef(false);
   const promptSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -344,24 +345,38 @@ function AppContent() {
       console.error('Error generating UI:', error);
       const msg: string = error?.message || '';
       let errorMessage = 'Failed to generate UI. Please try again.';
-      
+      let retryAction: { label: string; onClick: () => void } | undefined;
+
       if (msg.includes('API key') || msg.includes('api key') || msg.includes('Please set')) {
         errorMessage = msg;
+      } else if (msg.includes('Network error') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        errorMessage = 'Network error. Check your internet connection.';
+        retryAction = {
+          label: 'Retry',
+          onClick: () => handleGenerate(fullPrompt, model, contextHtml, images)
+        };
       } else if (msg.includes('rate limit') || msg.includes('429')) {
         errorMessage = 'Rate limit exceeded. Please wait a moment.';
-      } else if (msg.includes('timeout')) {
-        errorMessage = 'Request timed out. Please try again.';
+        retryAction = {
+          label: 'Retry in 5s',
+          onClick: () => setTimeout(() => handleGenerate(fullPrompt, model, contextHtml, images), 5000)
+        };
+      } else if (msg.includes('timeout') || msg.includes('Timeout')) {
+        errorMessage = 'Request timed out. The model may be busy.';
+        retryAction = { label: 'Retry', onClick: () => handleGenerate(fullPrompt, model, contextHtml, images) };
       } else if (msg.includes('quota')) {
         errorMessage = 'API quota exceeded. Check your plan limits.';
       } else if (msg.includes('Insufficient credits') || msg.includes('insufficient credits')) {
         errorMessage = 'Insufficient API credits. Try a different model or provider.';
       } else if (msg.includes('OpenAI error') || msg.includes('Anthropic error') || msg.includes('Gemini error') || msg.includes('OpenRouter error')) {
         errorMessage = msg;
+        retryAction = { label: 'Retry', onClick: () => handleGenerate(fullPrompt, model, contextHtml, images) };
       } else if (msg) {
         errorMessage = msg;
+        retryAction = { label: 'Retry', onClick: () => handleGenerate(fullPrompt, model, contextHtml, images) };
       }
-      
-      showToast('error', errorMessage);
+
+      showToast('error', errorMessage, retryAction);
     } finally {
       setIsLoading(false);
     }
@@ -829,13 +844,20 @@ function AppContent() {
 
 
   return (
-    <div className="h-[100dvh] w-full flex overflow-hidden bg-bg-primary relative" style={{ 
-        paddingTop: 'env(safe-area-inset-top, 0px)', 
-        paddingRight: 'env(safe-area-inset-right, 0px)', 
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)', 
+    <div className="h-[100dvh] w-full flex overflow-hidden bg-bg-primary relative" style={{
+        paddingTop: 'env(safe-area-inset-top, 0px)',
+        paddingRight: 'env(safe-area-inset-right, 0px)',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         height: '100dvh'
       }}>
+      {/* Skip to main content - accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-1/2 focus:-translate-x-1/2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-accent-primary focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* Ambient background gradient */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent-primary/10 rounded-full blur-3xl" />
@@ -869,12 +891,13 @@ function AppContent() {
         w-[85vw] max-w-[300px] sm:max-w-[320px]
         pt-14 lg:pt-0
         overflow-y-auto overflow-x-hidden
-      `} style={{ 
+      `} style={{
         paddingBottom: 'env(safe-area-inset-bottom, 20px)',
         overscrollBehavior: 'contain',
         maxWidth: 'min(85vw, 300px)',
         width: 'min(85vw, 300px)'
       }}>
+        <Suspense fallback={<div className="flex-1 flex items-center justify-center p-8"><div className="w-6 h-6 border-2 border-accent-primary/30 border-t-accent-primary rounded-full animate-spin" /></div>}>
         <InputPanel
           onGenerate={handleGenerate}
           isLoading={isLoading}
@@ -889,6 +912,7 @@ function AppContent() {
           onRefine={(refinement) => handleRefinePrompt('', refinement)}
           contextHtml={html}
         />
+        </Suspense>
       </div>
 
       {/* Overlay for mobile - click to close sidebar */}
@@ -901,7 +925,8 @@ function AppContent() {
       )}
 
       {/* Center - Visual Renderer */}
-      <div className="flex-1 min-w-0">
+      <div id="main-content" className="flex-1 min-w-0">
+        <Suspense fallback={<div className="flex-1 h-full flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-primary/30 border-t-accent-primary rounded-full animate-spin" /></div>}>
         <VisualRenderer
           html={html}
           isLoading={isLoading}
@@ -927,10 +952,13 @@ function AppContent() {
           onToggleTheme={handleToggleTheme}
           generationStats={generationStats}
         />
+        </Suspense>
       </div>
 
       {/* Chat Widget */}
+      <Suspense fallback={null}>
       <ChatWidget />
+      </Suspense>
 
       {/* Keyboard Shortcuts Modal */}
       {showShortcuts && (
@@ -1096,6 +1124,25 @@ function AppContent() {
                 )}
               </h2>
               <div className="flex items-center gap-2">
+                {/* Grid/List toggle */}
+                {visualHistory.length > 0 && (
+                  <div className="flex items-center bg-bg-tertiary rounded-lg p-0.5 border border-white/5">
+                    <button
+                      onClick={() => setGalleryViewMode('grid')}
+                      className={`p-1.5 rounded-md transition-all ${galleryViewMode === 'grid' ? 'bg-accent-primary/20 text-accent-primary' : 'text-text-muted hover:text-text-primary'}`}
+                      title="Grid view"
+                    >
+                      <LayoutGrid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setGalleryViewMode('list')}
+                      className={`p-1.5 rounded-md transition-all ${galleryViewMode === 'list' ? 'bg-accent-primary/20 text-accent-primary' : 'text-text-muted hover:text-text-primary'}`}
+                      title="List view"
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
                 {visualHistory.length > 0 && (
                   <button
                     onClick={handleClearVisualHistory}
@@ -1145,7 +1192,7 @@ function AppContent() {
                   <p>No designs match "{gallerySearch}"</p>
                 </div>
               );
-              return (
+              return galleryViewMode === 'grid' ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {filtered.map((entry) => (
                     <div
@@ -1182,6 +1229,36 @@ function AppContent() {
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <span className="text-white font-medium">Load Design</span>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {filtered.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="group flex items-center gap-3 bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer p-3"
+                      onClick={() => handleLoadFromGallery(entry)}
+                    >
+                      {entry.thumbnail && (
+                        <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-bg-primary">
+                          <img
+                            src={entry.thumbnail}
+                            alt={entry.prompt || 'Generated design'}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-text-primary line-clamp-1 mb-0.5">
+                          {entry.prompt || 'No prompt'}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-accent-primary">{AI_PROVIDERS[entry.model]?.name || entry.model}</span>
+                          <span className="text-xs text-text-muted">{new Date(entry.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <span className="text-xs text-text-muted group-hover:text-accent-primary transition-colors flex-shrink-0">Load →</span>
                     </div>
                   ))}
                 </div>
