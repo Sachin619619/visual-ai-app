@@ -1,4 +1,5 @@
 import { ModelProvider } from '../types';
+import { OPENAI_TOOLS, needsSearch, executeTool, ToolCall } from './tools';
 
 // AI Provider configurations
 export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }> = {
@@ -121,7 +122,8 @@ export const generateUI = async (
   model: ModelProvider,
   contextHtml?: string,
   signal?: AbortSignal,
-  onChunk?: (partial: string) => void
+  onChunk?: (partial: string) => void,
+  onSearching?: (query: string | null) => void
 ): Promise<string> => {
   // Check the correct key for the selected provider
   if (model === 'kimi' && !kimiApiKey && !apiKey) {
@@ -142,7 +144,7 @@ export const generateUI = async (
       setTimeout(() => reject(new Error(`⏱️ Generation timed out after ${timeoutLabel}. Try a shorter prompt or faster model.`)), timeoutMs);
     });
     return await Promise.race([
-      generateWithAI(prompt, model, apiKey, contextHtml, signal, onChunk),
+      generateWithAI(prompt, model, apiKey, contextHtml, signal, onChunk, onSearching),
       timeoutPromise
     ]);
   } catch (error: any) {
@@ -658,6 +660,98 @@ async function parseSSEStream(
   return accumulated;
 }
 
+/**
+ * Runs one round of OpenAI-compatible tool calling, then streams the final response.
+ * If the model doesn't call any tools, streams the final response directly.
+ */
+async function generateWithToolsOpenAI(
+  endpoint: string,
+  headers: Record<string, string>,
+  modelId: string,
+  messages: any[],
+  signal: AbortSignal | undefined,
+  onChunk: ((partial: string) => void) | undefined,
+  onSearching?: (query: string | null) => void
+): Promise<string> {
+  // First pass: ask the model — it may call web_search or reply directly
+  const firstRes = await fetch(endpoint, {
+    method: 'POST',
+    headers,
+    signal,
+    body: JSON.stringify({
+      model: modelId,
+      messages,
+      tools: OPENAI_TOOLS,
+      tool_choice: 'auto',
+      max_tokens: 6000,
+      temperature: 0.4,
+    }),
+  });
+
+  if (!firstRes.ok) {
+    const err = await firstRes.json().catch(() => ({})) as any;
+    throw new Error(err.error?.message || `API error ${firstRes.status}`);
+  }
+
+  const firstData = await firstRes.json() as any;
+  if (firstData.error) throw new Error(firstData.error.message || JSON.stringify(firstData.error));
+
+  const choice = firstData.choices?.[0];
+  const assistantMsg = choice?.message;
+
+  // Model wants to call tools
+  if (choice?.finish_reason === 'tool_calls' && assistantMsg?.tool_calls?.length > 0) {
+    const toolCalls: ToolCall[] = assistantMsg.tool_calls.map((tc: any) => ({
+      id: tc.id,
+      name: tc.function.name,
+      arguments: JSON.parse(tc.function.arguments || '{}'),
+    }));
+
+    // Execute each tool call sequentially
+    const toolResultMsgs: any[] = [];
+    for (const tc of toolCalls) {
+      if (tc.name === 'web_search') onSearching?.(tc.arguments.query as string);
+      const result = await executeTool(tc, signal);
+      toolResultMsgs.push({
+        role: 'tool',
+        tool_call_id: tc.id,
+        content: result.content,
+      });
+    }
+    onSearching?.(null); // clear status
+
+    // Final request with tool results — stream the HTML response
+    const finalMessages = [...messages, assistantMsg, ...toolResultMsgs];
+    const finalRes = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      signal,
+      body: JSON.stringify({
+        model: modelId,
+        messages: finalMessages,
+        max_tokens: 6000,
+        temperature: 0.4,
+        stream: !!onChunk,
+      }),
+    });
+
+    if (!finalRes.ok) {
+      const err = await finalRes.json().catch(() => ({})) as any;
+      throw new Error(err.error?.message || `API error ${finalRes.status}`);
+    }
+
+    if (onChunk && finalRes.body) {
+      return parseSSEStream(finalRes, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    }
+    const finalData = await finalRes.json() as any;
+    if (finalData.error) throw new Error(finalData.error.message || JSON.stringify(finalData.error));
+    return finalData.choices?.[0]?.message?.content || '';
+  }
+
+  // No tool calls — the model replied directly (already complete, return as-is)
+  return assistantMsg?.content || '';
+}
+
 // Intelligently expand short or vague prompts into rich visual requests
 function enrichPrompt(prompt: string): string {
   const trimmed = prompt.trim();
@@ -696,7 +790,8 @@ const generateWithAI = async (
   apiKey: string,
   contextHtml?: string,
   signal?: AbortSignal,
-  onChunk?: (partial: string) => void
+  onChunk?: (partial: string) => void,
+  onSearching?: (query: string | null) => void
 ): Promise<string> => {
   // Build context from previous HTML if provided
   const contextSection = contextHtml
@@ -718,63 +813,67 @@ const generateWithAI = async (
   let rawHtml = '';
   
   if (model === 'openrouter') {
-    // Use OpenRouter API - allows browser calls
-    response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://visual-ai-app.vercel.app',
-        'X-Title': 'Visual AI'
-      },
-      signal,
-      body: JSON.stringify({
-        model: selectedFreeModel,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: uiPrompt }
-        ],
-        temperature: 0.4,
-        max_tokens: 6000,
-        stream: !!onChunk
-      })
-    });
-    if (onChunk && response.body) {
-      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    const orEndpoint = 'https://openrouter.ai/api/v1/chat/completions';
+    const orHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://visual-ai-app.vercel.app',
+      'X-Title': 'Visual AI',
+    };
+    const orMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: uiPrompt },
+    ];
+
+    // Use tool calling when the prompt needs live/current data
+    if (needsSearch(uiPrompt)) {
+      rawHtml = await generateWithToolsOpenAI(orEndpoint, orHeaders, selectedFreeModel, orMessages, signal, onChunk, onSearching);
     } else {
-      const data = await response.json();
-      if (data.error) {
-        const raw = data.error?.metadata?.raw || data.error?.metadata?.reasons?.join(', ') || '';
-        const msg = data.error?.message || JSON.stringify(data.error);
-        throw new Error(`OpenRouter error: ${msg}${raw ? ` — ${raw}` : ''}`);
+      response = await fetch(orEndpoint, {
+        method: 'POST',
+        headers: orHeaders,
+        signal,
+        body: JSON.stringify({ model: selectedFreeModel, messages: orMessages, temperature: 0.4, max_tokens: 6000, stream: !!onChunk }),
+      });
+      if (onChunk && response.body) {
+        rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+      } else {
+        const data = await response.json();
+        if (data.error) {
+          const raw = data.error?.metadata?.raw || data.error?.metadata?.reasons?.join(', ') || '';
+          const msg = data.error?.message || JSON.stringify(data.error);
+          throw new Error(`OpenRouter error: ${msg}${raw ? ` — ${raw}` : ''}`);
+        }
+        rawHtml = data.choices?.[0]?.message?.content || '';
       }
-      rawHtml = data.choices?.[0]?.message?.content || '';
     }
   } else if (model === 'openai') {
-    response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      signal,
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: uiPrompt }
-        ],
-        temperature: 0.4,
-        max_tokens: 6000,
-        stream: !!onChunk
-      })
-    });
-    if (onChunk && response.body) {
-      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    const oaEndpoint = 'https://api.openai.com/v1/chat/completions';
+    const oaHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    };
+    const oaMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: uiPrompt },
+    ];
+
+    if (needsSearch(uiPrompt)) {
+      rawHtml = await generateWithToolsOpenAI(oaEndpoint, oaHeaders, 'gpt-4o', oaMessages, signal, onChunk, onSearching);
     } else {
-      const data = await response.json();
-      if (data.error) throw new Error(`OpenAI error: ${data.error.message || JSON.stringify(data.error)}`);
-      rawHtml = data.choices?.[0]?.message?.content || '';
+      response = await fetch(oaEndpoint, {
+        method: 'POST',
+        headers: oaHeaders,
+        signal,
+        body: JSON.stringify({ model: 'gpt-4o', messages: oaMessages, temperature: 0.4, max_tokens: 6000, stream: !!onChunk }),
+      });
+      if (onChunk && response.body) {
+        rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+      } else {
+        const data = await response.json();
+        if (data.error) throw new Error(`OpenAI error: ${data.error.message || JSON.stringify(data.error)}`);
+        rawHtml = data.choices?.[0]?.message?.content || '';
+      }
     }
   } else if (model === 'gemini') {
     response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {

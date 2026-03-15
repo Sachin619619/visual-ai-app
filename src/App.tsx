@@ -86,6 +86,7 @@ function AppContent() {
   const [htmlHistory, setHtmlHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchingFor, setSearchingFor] = useState<string | null>(null);
   const [generationStats, setGenerationStats] = useState<{ time: number; model: string } | null>(null);
   const [history, setHistory] = useState<PromptHistory[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -388,6 +389,9 @@ function AppContent() {
     };
     setHistory(prev => [historyItem, ...prev]);
     
+    // Tool search status callback
+    const onSearching = (query: string | null) => setSearchingFor(query);
+
     // Show HTML as soon as a complete document is detected in the stream
     const onChunk = (partial: string) => {
       const stripped = partial
@@ -401,7 +405,7 @@ function AppContent() {
     };
 
     try {
-      const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal, onChunk);
+      const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal, onChunk, onSearching);
       // Add to undo history
       setHtmlHistory(prev => {
         // If we're not at the end of history, truncate future history
@@ -478,6 +482,7 @@ function AppContent() {
       showToast('error', errorMessage, retryAction);
     } finally {
       setIsLoading(false);
+      setSearchingFor(null);
       if (generationProgressTimer.current) clearInterval(generationProgressTimer.current);
     }
   }, [showToast, historyIndex, htmlHistory]);
@@ -1125,8 +1130,14 @@ function AppContent() {
       )}
 
       {/* Center - Visual Renderer */}
-      <div id="main-content" className="flex-1 min-w-0">
+      <div id="main-content" className="flex-1 min-w-0 relative">
         <Suspense fallback={<div className="flex-1 h-full flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-primary/30 border-t-accent-primary rounded-full animate-spin" /></div>}>
+        {searchingFor && (
+          <div style={{position:'absolute',top:12,left:'50%',transform:'translateX(-50%)',zIndex:50,display:'flex',alignItems:'center',gap:8,padding:'8px 18px',background:'rgba(139,92,246,0.15)',border:'1px solid rgba(139,92,246,0.4)',borderRadius:999,backdropFilter:'blur(12px)',boxShadow:'0 0 20px rgba(139,92,246,0.2)',whiteSpace:'nowrap'}}>
+            <span style={{width:8,height:8,borderRadius:'50%',background:'#8b5cf6',animation:'pulse 1.2s ease-in-out infinite',display:'inline-block'}} />
+            <span style={{fontSize:13,color:'#c4b5fd',fontFamily:'Inter,sans-serif'}}>Searching: <strong style={{color:'#f8fafc'}}>{searchingFor}</strong></span>
+          </div>
+        )}
         <VisualRenderer
           html={html}
           isLoading={isLoading}
