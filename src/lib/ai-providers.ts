@@ -442,6 +442,7 @@ for(let ci=0;ci<weeks;ci+=4){
 </div>
 
 💡 BUILT-IN AUTO-BEHAVIOURS (always available, no extra JS needed):
+- [data-count="1234000" data-compact="true" data-prefix="$"] → auto-animates counter with K/M/B compact format (e.g. $1.2M)
 - [data-count="1234" data-prefix="$" data-suffix="K" data-decimals="1"] → auto-animates counter from 0
 - [data-target="78%"] on a progress bar inner div → auto-animates width from 0 to target
 - [data-chart-type="bar" data-labels='[...]' data-chart-data='[...]'] → auto-creates Chart.js chart

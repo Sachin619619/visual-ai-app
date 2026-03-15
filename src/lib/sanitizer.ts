@@ -844,12 +844,27 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
       var suffix = el.getAttribute('data-suffix') || '';
       var decimals = parseInt(el.getAttribute('data-decimals') || '0');
       var duration = parseInt(el.getAttribute('data-duration') || '1500');
+      var compact = el.getAttribute('data-compact') === 'true';
       var start = Date.now();
       var frame = function() {
         var progress = Math.min((Date.now() - start) / duration, 1);
         var eased = 1 - Math.pow(1 - progress, 3);
         var value = target * eased;
-        el.textContent = prefix + value.toFixed(decimals) + suffix;
+        var formatted;
+        if (compact) {
+          if (Math.abs(target) >= 1e9) {
+            formatted = (value / 1e9).toFixed(1) + 'B';
+          } else if (Math.abs(target) >= 1e6) {
+            formatted = (value / 1e6).toFixed(1) + 'M';
+          } else if (Math.abs(target) >= 1e3) {
+            formatted = (value / 1e3).toFixed(1) + 'K';
+          } else {
+            formatted = value.toFixed(decimals);
+          }
+        } else {
+          formatted = value.toFixed(decimals);
+        }
+        el.textContent = prefix + formatted + suffix;
         if (progress < 1) requestAnimationFrame(frame);
       };
       requestAnimationFrame(frame);
