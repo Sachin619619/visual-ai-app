@@ -4,8 +4,9 @@ const VisualRenderer = lazy(() => import('./components/VisualRenderer').then(m =
 const ChatWidget = lazy(() => import('./components/ChatWidget').then(m => ({ default: m.ChatWidget })));
 import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
-import { generateUI, generateTitle, isApiKeyConfigured } from './lib/ai-providers';
+import { generateUI, generateTitle, isApiKeyConfigured, reviewAndImproveUI } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
+import { captureRenderedScreenshot } from './lib/ui-reviewer';
 
 // Demo visual shown when no API key is configured — lets users instantly see what the app does
 const DEMO_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
@@ -87,6 +88,8 @@ function AppContent() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [searchingFor, setSearchingFor] = useState<string | null>(null);
+  const [isImproving, setIsImproving] = useState(false);
+  const [improveStatus, setImproveStatus] = useState<string | null>(null);
   const [generationStats, setGenerationStats] = useState<{ time: number; model: string } | null>(null);
   const [history, setHistory] = useState<PromptHistory[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -517,6 +520,33 @@ function AppContent() {
     handleGenerate(lastPromptText, lastModel);
     showToast('success', 'Regenerating with last prompt... 🔄');
   }, [history, isLoading, lastModel, handleGenerate, showToast]);
+
+  // AI self-improvement loop: screenshot → vision critique → improved HTML
+  const handleImproveUI = useCallback(async () => {
+    if (!html || isLoading || isImproving) return;
+    setIsImproving(true);
+    try {
+      setImproveStatus('Rendering…');
+      const screenshot = await captureRenderedScreenshot(html);
+
+      setImproveStatus('Analyzing…');
+      const onChunk = (partial: string) => {
+        const stripped = partial.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/m, '');
+        if (stripped.includes('<html') && stripped.includes('</html>')) setHtml(stripped);
+      };
+
+      const improved = await reviewAndImproveUI(html, screenshot, lastModel, undefined, onChunk);
+      setHtml(improved);
+      setHtmlHistory(prev => [...prev, improved]);
+      setHistoryIndex(prev => prev + 1);
+      showToast('success', screenshot ? '✨ Visual reviewed and improved!' : '✨ Code reviewed and improved!');
+    } catch (err: any) {
+      showToast('error', err?.message || 'Improvement failed. Try again.');
+    } finally {
+      setIsImproving(false);
+      setImproveStatus(null);
+    }
+  }, [html, isLoading, isImproving, lastModel, showToast]);
 
   // Share design via URL
   const handleShare = useCallback(() => {
@@ -1166,6 +1196,9 @@ function AppContent() {
           theme={theme}
           onToggleTheme={handleToggleTheme}
           generationStats={generationStats}
+          onImproveUI={handleImproveUI}
+          isImproving={isImproving}
+          improveStatus={improveStatus}
         />
         </Suspense>
       </div>

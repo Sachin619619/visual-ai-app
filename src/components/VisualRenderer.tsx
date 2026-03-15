@@ -33,6 +33,9 @@ interface VisualRendererProps {
   theme?: 'dark' | 'light';
   onToggleTheme?: () => void;
   generationStats?: GenerationStats | null;
+  onImproveUI?: () => void;
+  isImproving?: boolean;
+  improveStatus?: string | null;
 }
 
 // Quick start prompts for empty state cards — visual-first
@@ -96,6 +99,23 @@ const QUICK_PROMPTS = [
   { key: 'real-estate', prompt: 'Create a property listing page — property cards with images, price, location, beds/baths/sqft, and agent contact button. Map view toggle, filters sidebar, and sort options. Modern card-based design.', label: '🏠 Real Estate' },
   { key: 'job-board', prompt: 'Create a job board dashboard — job cards with company logo, position title, salary range, location, and tags (remote, full-time, etc.). Search bar, filter by category, and application deadline indicators.', label: '💼 Job Board' },
   { key: 'ecommerce-admin', prompt: 'Create an e-commerce admin dashboard — orders table with status badges, revenue chart, top products list, customer stats, and inventory alerts. Professional dark admin theme.', label: '📊 E-commerce Admin' },
+  // Additional prompts
+  { key: 'social-media', prompt: 'Create a social media analytics dashboard — follower growth chart, engagement rate gauge, top posts list with likes/comments, demographics pie chart, and scheduled posts calendar. Professional dark theme.', label: '📱 Social Analytics' },
+  { key: 'banking', prompt: 'Create a modern banking dashboard — account balances with gradient cards, recent transactions list with icons, spending categories pie chart, credit score gauge, and transfer money section. Dark premium theme.', label: '🏦 Banking Dashboard' },
+  { key: 'education', prompt: 'Create an online learning dashboard — course progress cards with completion bars, video player with controls, quiz scores, certificates earned, and recommended next lessons. Modern dark design.', label: '🎓 Learning Platform' },
+  { key: 'hotel-booking', prompt: 'Create a hotel booking interface — room cards with images, amenities icons, price per night, ratings, and "Book Now" button. Date picker, guest count selector, and filter by price/stars.', label: '🏨 Hotel Booking' },
+  { key: 'flight-tracker', prompt: 'Create a flight tracking dashboard — live flight status cards with departure/arrival times, route map visualization, gate/terminal info, delay indicators, and nearby flights list.', label: '✈️ Flight Tracker' },
+  { key: 'restaurant-reservation', prompt: 'Create a restaurant reservation page — restaurant cards with cuisine, rating, price range, available time slots grid, party size selector, and confirmation summary.', label: '🍽️ Restaurant Booking' },
+  { key: 'todo-app', prompt: 'Create a beautiful todo app — task list with checkboxes, categories/tags, due dates, priority indicators, progress bar, and completed tasks section. Clean dark design with accent colors.', label: '✅ Todo App' },
+  { key: 'notes-app', prompt: 'Create a notes application — card-based notes with title, preview text, color tags, last edited time, and search functionality. Grid layout with hover effects.', label: '📝 Notes App' },
+  { key: 'calendar-app', prompt: 'Create a calendar dashboard — monthly view with event dots, upcoming events sidebar, create event form, color-coded event categories, and today indicator.', label: '📅 Calendar' },
+  { key: 'file-manager', prompt: 'Create a file manager interface — folder/file grid with icons, breadcrumb navigation, storage usage bar, search bar, and view toggle (grid/list). Dark modern theme.', label: '📁 File Manager' },
+  { key: 'code-editor', prompt: 'Create a code editor interface — file tabs, line-numbered code area with syntax highlighting, terminal panel, file explorer sidebar, and status bar. Dark VS Code-style theme.', label: '💻 Code Editor' },
+  { key: 'api-dashboard', prompt: 'Create an API monitoring dashboard — endpoint status cards with response times, uptime percentage, error rate chart, request volume graph, and recent API calls log.', label: '🔌 API Monitor' },
+  { key: 'server-metrics', prompt: 'Create a server metrics dashboard — CPU, memory, disk usage gauges, network traffic chart, active connections list, process table, and alert notifications.', label: '🖥️ Server Metrics' },
+  { key: 'iot-dashboard', prompt: 'Create an IoT smart home dashboard — device cards with on/off status, temperature/humidity sensors, energy usage chart, automation rules list, and device controls.', label: '🏠 Smart Home' },
+  { key: 'nft-gallery', prompt: 'Create an NFT gallery — collectible cards with artwork images, collection name, floor price, owners count, and activity history. Filter by collection, sort by price.', label: '🖼️ NFT Gallery' },
+  { key: 'stock-trading', prompt: 'Create a stock trading interface — live price chart with candlesticks, buy/sell buttons, order book, position summary, watchlist, and recent trades. Professional trading theme.', label: '📈 Stock Trading' },
 ];
 
 // Viewport size configurations
@@ -296,7 +316,7 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, onCancelGeneration, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, onCancelGeneration, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats, onImproveUI, isImproving, improveStatus }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -1363,6 +1383,20 @@ body {
                 title={`Regenerate (re-run last prompt)`}
               >
                 <RefreshCw className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
+            {/* AI Improve Button — screenshot + vision critique loop */}
+            {html && onImproveUI && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onImproveUI}
+                disabled={isLoading || isImproving}
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl bg-gradient-to-r from-violet-600/20 to-cyan-600/20 border border-violet-500/30 backdrop-blur-md text-violet-300 hover:text-white hover:border-violet-400/60 hover:from-violet-600/30 hover:to-cyan-600/30 transition-all min-h-[36px] sm:min-h-[44px] text-[11px] sm:text-xs font-medium hover:scale-105 active:scale-95 disabled:opacity-50"
+                title="AI reviews the screenshot and generates an improved version"
+              >
+                <Sparkles className={`w-3.5 h-3.5 ${isImproving ? 'animate-spin' : ''}`} />
+                <span>{isImproving ? (improveStatus || 'Improving…') : 'AI Improve'}</span>
               </motion.button>
             )}
             {/* Undo Button */}

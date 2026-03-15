@@ -626,6 +626,21 @@ for(let ci=0;ci<weeks;ci+=4){
 17. ALL numbers/statistics MUST use data-count for animated counting from zero
 18. Do NOT use Tailwind CSS class names — use only inline styles or CSS in <style> block`;
 
+const REVIEW_PROMPT = `You are doing a critical visual review of an HTML UI you just generated.
+${'{screenshot}' /* placeholder replaced at runtime */}
+
+Examine it carefully and identify EVERY issue:
+- Layout: cramped/overlapping elements, unbalanced whitespace, poor grid alignment
+- Colors: low contrast text, clashing hues, boring gradients, missing glow/depth
+- Charts: too small, missing labels/legend, weak colors, no animation config
+- Typography: inconsistent sizes, no hierarchy, missing gradient text on headings
+- Polish: missing hover effects, no entry animations, bland cards, sparse content
+- Density: fewer than 8–12 visual elements is a failure — add more charts, cards, stats
+
+Now generate a DRAMATICALLY IMPROVED version that fixes every issue.
+Make it jaw-dropping — the kind of visual someone would screenshot and share.
+Output ONLY the complete improved HTML document, nothing else.`;
+
 
 
 // Parse OpenAI-compatible SSE streaming response
@@ -1053,6 +1068,150 @@ export const cleanHtmlOutput = (html: string): string => {
   // Nothing looks like HTML — return as-is and let renderer show what it can
   console.warn('cleanHtmlOutput: no HTML found in response, returning raw text');
   return trimmed;
+};
+
+/**
+ * Sends the current HTML (and optionally a screenshot) back to the AI for a
+ * self-critique and improvement pass.  Works with all providers; vision models
+ * (GPT-4o, Claude, Gemini) receive the screenshot as an image message.
+ */
+export const reviewAndImproveUI = async (
+  html: string,
+  screenshotDataUrl: string | null,
+  model: ModelProvider,
+  signal?: AbortSignal,
+  onChunk?: (partial: string) => void
+): Promise<string> => {
+  const reviewText = REVIEW_PROMPT.replace(
+    "${'{screenshot}'} /* placeholder replaced at runtime */",
+    screenshotDataUrl
+      ? 'A screenshot of how it currently renders is attached as an image.'
+      : 'Here is the HTML code for review:'
+  );
+
+  const htmlSnippet = html.substring(0, 8000); // stay within token budget
+
+  let rawHtml = '';
+
+  // --- OpenAI GPT-4o (vision) ---
+  if (model === 'openai') {
+    const userContent: any[] = screenshotDataUrl
+      ? [
+          { type: 'image_url', image_url: { url: screenshotDataUrl } },
+          { type: 'text', text: reviewText },
+        ]
+      : [{ type: 'text', text: `${reviewText}\n\nCurrent HTML:\n${htmlSnippet}` }];
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      signal,
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userContent }],
+        max_tokens: 6000,
+        temperature: 0.4,
+        stream: !!onChunk,
+      }),
+    });
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) throw new Error(`OpenAI error: ${data.error.message}`);
+      rawHtml = data.choices?.[0]?.message?.content || '';
+    }
+  }
+
+  // --- Claude 3.5 Sonnet (vision) ---
+  else if (model === 'claude') {
+    const userContent: any[] = screenshotDataUrl
+      ? [
+          {
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: 'image/jpeg',
+              data: screenshotDataUrl.replace(/^data:image\/jpeg;base64,/, ''),
+            },
+          },
+          { type: 'text', text: reviewText },
+        ]
+      : [{ type: 'text', text: `${reviewText}\n\nCurrent HTML:\n${htmlSnippet}` }];
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userContent }],
+        max_tokens: 6000,
+        stream: !!onChunk,
+      }),
+    });
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.type === 'content_block_delta' ? (j.delta?.text || '') : '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) throw new Error(`Anthropic error: ${data.error.message}`);
+      rawHtml = data.content?.[0]?.text || '';
+    }
+  }
+
+  // --- OpenRouter (vision models available) ---
+  else if (model === 'openrouter') {
+    // Use a vision-capable model for review; fall back to text if screenshot unavailable
+    const reviewModel = screenshotDataUrl ? 'google/gemini-2.0-flash-exp:free' : selectedFreeModel;
+    const userContent: any[] = screenshotDataUrl
+      ? [
+          { type: 'image_url', image_url: { url: screenshotDataUrl } },
+          { type: 'text', text: reviewText },
+        ]
+      : [{ type: 'text', text: `${reviewText}\n\nCurrent HTML:\n${htmlSnippet}` }];
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      signal,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://visual-ai-app.vercel.app',
+        'X-Title': 'Visual AI',
+      },
+      body: JSON.stringify({
+        model: reviewModel,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userContent }],
+        max_tokens: 6000,
+        temperature: 0.4,
+        stream: !!onChunk,
+      }),
+    });
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) throw new Error(`OpenRouter error: ${data.error.message}`);
+      rawHtml = data.choices?.[0]?.message?.content || '';
+    }
+  }
+
+  // --- All other providers: text-only HTML review ---
+  else {
+    const result = await generateWithAI(
+      `${reviewText}\n\nCurrent HTML:\n${htmlSnippet}`,
+      model, apiKey, undefined, signal, onChunk
+    );
+    return result;
+  }
+
+  return cleanHtmlOutput(rawHtml);
 };
 
 /**
