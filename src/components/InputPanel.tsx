@@ -1000,6 +1000,35 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               </button>
             ))}
           </div>
+          {/* Quick Start category buttons — always visible for easy access */}
+          {!prompt.trim() && (
+            <div className="mt-2">
+              <p className="text-[9px] text-text-muted mb-1.5 uppercase tracking-wide">Quick Start</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { label: 'Charts & Dashboards', icon: '📊', prompt: 'Create a beautiful dark analytics dashboard with stat cards (Users 1.2M, Revenue $84K, Conversion 3.4%), a 30-day animated line chart, traffic sources doughnut chart, and a top pages table. Violet/cyan accents.' },
+                  { label: 'Diagrams & Maps', icon: '🗺️', prompt: 'Create a beautiful world map visualization showing top countries by GDP with color-coded choropleth shading, legend, and key stats for the top 5 economies.' },
+                  { label: 'Infographics', icon: '🎯', prompt: 'Create a stunning animated infographic about artificial intelligence — show AI types, key milestones timeline from 1950 to 2025, top AI companies, and real-world applications grid.' },
+                  { label: 'Creative Visuals', icon: '🎨', prompt: 'Create a visually stunning creative showcase page — flowing gradient hero section, animated particle effects, bold typography, layered card compositions, and neon glow accents.' },
+                  { label: 'Data Stories', icon: '📈', prompt: 'Create a data story about climate change — narrative text sections combined with animated charts showing global temperature rise, CO2 levels, sea level changes, and future projections.' },
+                  { label: 'Animations', icon: '⚡', prompt: 'Create a showcase of beautiful CSS animations — bouncing elements, spinning loaders, morphing shapes, gradient transitions, particle systems, and parallax scrolling effects. Dark theme.' },
+                ].map((cat) => (
+                  <button
+                    key={cat.label}
+                    type="button"
+                    onClick={() => setPrompt(cat.prompt)}
+                    disabled={isLoading}
+                    aria-label={cat.label}
+                    title={cat.label}
+                    className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-bg-tertiary border border-white/8 text-text-muted hover:border-accent-primary/40 hover:text-accent-primary hover:bg-accent-primary/10 transition-all disabled:opacity-50"
+                  >
+                    <span>{cat.icon}</span>
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {/* Recent prompts — only shown when textarea is empty */}
           {!prompt.trim() && history.length > 0 && (
             <div className="mt-2">
