@@ -13,6 +13,13 @@ export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }>
 
 // Separate API keys for different providers
 let kimiApiKey = '';
+let minimaxApiKey = '';
+
+export const setMinimaxApiKey = (key: string) => {
+  minimaxApiKey = key;
+};
+
+export const getMinimaxApiKey = () => minimaxApiKey;
 
 export const setKimiApiKey = (key: string) => {
   kimiApiKey = key;
@@ -78,7 +85,7 @@ export const getApiKey = () => apiKey;
  * OpenRouter provider is always considered configured (uses free models).
  */
 export const isApiKeyConfigured = (): boolean => {
-  return !!apiKey || !!kimiApiKey;
+  return !!apiKey || !!kimiApiKey || !!minimaxApiKey;
 };
 
 /**
@@ -92,6 +99,7 @@ export const getProviderStatus = (): Record<ModelProvider, boolean> => {
     gemini: !!apiKey,
     openrouter: true, // Uses free models
     kimi: !!kimiApiKey,
+    minimax: !!minimaxApiKey,
     local: false,
   };
 };
@@ -498,6 +506,31 @@ const generateWithAI = async (
     
     const data = await response.json();
     if (data.error) throw new Error(`Kimi error: ${data.error?.message || JSON.stringify(data.error)}`);
+    rawHtml = data.choices?.[0]?.message?.content || '';
+  } else if (model === 'minimax') {
+    // MiniMax M2.5 API
+    if (!minimaxApiKey) {
+      throw new Error('🔮 Please set your MiniMax API key in settings to use MiniMax M2.5');
+    }
+    response = await fetch('https://api.minimax.io/v1/text/chatcompletion_v2', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${minimaxApiKey}`
+      },
+      body: JSON.stringify({
+        model: 'MiniMax-M2.5',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: uiPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 10000
+      })
+    });
+
+    const data = await response.json();
+    if (data.base_resp?.status_code !== 0) throw new Error(`MiniMax error: ${data.base_resp?.status_msg || JSON.stringify(data.base_resp)}`);
     rawHtml = data.choices?.[0]?.message?.content || '';
   } else if (model === 'local') {
     // Local model - return a template message (not functional without local LLM setup)
