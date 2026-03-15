@@ -316,18 +316,8 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-// Write content directly to iframe document — works on all mobile browsers without sandbox conflicts
+// Use blob URL for iframe content — fixes mobile "Load failed" and allows CDN scripts to load
 function setIframeContent(iframe: HTMLIFrameElement, content: string) {
-  try {
-    const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (doc) {
-      doc.open();
-      doc.write(content);
-      doc.close();
-      return;
-    }
-  } catch (_) {}
-  // Fallback: blob URL
   const blob = new Blob([content], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const prev = iframe.src;
@@ -2619,6 +2609,7 @@ body {
           <iframe
             ref={iframeRef}
             title="Visual Output"
+            sandbox="allow-scripts allow-same-origin"
             className="w-full h-full border-0"
           />
         </div>
