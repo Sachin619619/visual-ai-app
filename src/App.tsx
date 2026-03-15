@@ -656,6 +656,15 @@ function AppContent() {
     showToast('success', 'Gallery cleared');
   }, [showToast]);
 
+  // Delete single gallery entry
+  const handleDeleteFromGallery = useCallback((id: string) => {
+    setVisualHistory(prev => {
+      const updated = prev.filter(e => e.id !== id);
+      localStorage.setItem('visual-ai-visual-history', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   // Apply edited code from code editor
   const handleApplyCode = useCallback((code: string) => {
     if (!code.trim()) {
@@ -1115,12 +1124,23 @@ function AppContent() {
                         </button>
                       </div>
                       <p className="text-sm text-text-muted mb-3 line-clamp-2">{fav.prompt || 'No prompt'}</p>
-                      <button
-                        onClick={() => handleLoadFavorite(fav)}
-                        className="w-full py-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-colors text-sm font-medium"
-                      >
-                        Load Design
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleLoadFavorite(fav)}
+                          className="flex-1 py-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-colors text-sm font-medium"
+                        >
+                          Load Design
+                        </button>
+                        {fav.prompt && (
+                          <button
+                            onClick={() => { setPrompt(fav.prompt); setShowFavorites(false); setSidebarOpen(true); showToast('success', 'Prompt loaded — edit and regenerate'); }}
+                            className="px-3 py-2 bg-bg-secondary hover:bg-white/5 border border-white/10 text-text-secondary hover:text-text-primary rounded-lg transition-colors text-sm"
+                            title="Load prompt for editing"
+                          >
+                            Use Prompt
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1256,9 +1276,18 @@ function AppContent() {
                           </span>
                         </div>
                       </div>
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="text-white font-medium">Load Design</span>
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                        <span className="text-white font-medium text-sm">Load Design</span>
                       </div>
+                      {/* Delete button */}
+                      <button
+                        onClick={e => { e.stopPropagation(); handleDeleteFromGallery(entry.id); }}
+                        className="absolute top-2 right-2 p-1 bg-black/60 rounded-lg text-white/60 hover:text-red-400 hover:bg-red-500/20 transition-all opacity-0 group-hover:opacity-100"
+                        title="Remove from gallery"
+                        aria-label="Remove from gallery"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -1292,7 +1321,17 @@ function AppContent() {
                           <span className="text-xs text-text-muted">{new Date(entry.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      <span className="text-xs text-text-muted group-hover:text-accent-primary transition-colors flex-shrink-0">Load →</span>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <span className="text-xs text-text-muted group-hover:text-accent-primary transition-colors">Load →</span>
+                        <button
+                          onClick={e => { e.stopPropagation(); handleDeleteFromGallery(entry.id); }}
+                          className="p-1 rounded-lg text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
+                          title="Remove"
+                          aria-label="Remove from gallery"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
