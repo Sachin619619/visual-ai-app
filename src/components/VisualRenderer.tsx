@@ -1842,6 +1842,25 @@ body {
         </div>
       </div>
 
+      {/* Generation progress bar — thin animated line under toolbar */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-none h-[3px] bg-bg-secondary/50 overflow-hidden relative"
+          >
+            <motion.div
+              className="absolute inset-y-0 left-0 w-1/2 rounded-full"
+              style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, #06b6d4, transparent)' }}
+              animate={{ x: ['-100%', '200%'] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Preview Area */}
       <div className="flex-1 relative min-h-0 overflow-hidden">
       {/* Code Preview Panel - Enhanced with Line Numbers */}
