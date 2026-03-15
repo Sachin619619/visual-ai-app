@@ -547,17 +547,18 @@ function AppContent() {
       return;
     }
 
-    // Extract CSS and JS from the HTML if present
+    // Extract ALL CSS and JS from the HTML
     let css = '';
     let js = '';
-    
-    // Simple extraction - look for style and script tags
-    const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-    const scriptMatch = html.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
-    
-    if (styleMatch) css = styleMatch[1];
-    if (scriptMatch) js = scriptMatch[1];
-    
+
+    // Collect all style tags
+    const styleMatches = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)];
+    css = styleMatches.map(m => m[1]).join('\n\n');
+
+    // Collect all non-CDN inline script tags (skip external src scripts)
+    const scriptMatches = [...html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi)];
+    js = scriptMatches.map(m => m[1]).join('\n\n');
+
     // Clean HTML - remove style and script tags (CodePen will handle them separately)
     let cleanHtml = html
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
@@ -565,7 +566,7 @@ function AppContent() {
       .replace(/<html[^>]*>|<head[^>]*>|<\/head>|<body[^>]*>|<\/body>|<!DOCTYPE[^>]*>/gi, '')
       .trim();
 
-    // Build CodePen data
+    // Build CodePen data - include all necessary CDNs
     const codepenData = {
       title: 'Visual AI Design',
       html: cleanHtml,
@@ -573,7 +574,12 @@ function AppContent() {
       js: js,
       editors: '110',
       layout: 'right',
-      head: '<script src="https://cdn.tailwindcss.com"></script>'
+      head: [
+        '<script src="https://cdn.tailwindcss.com"></script>',
+        '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>',
+        '<script src="https://d3js.org/d3.v7.min.js"></script>',
+        '<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">',
+      ].join('\n')
     };
 
     // Open CodePen in a new window with pre-filled data
