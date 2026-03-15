@@ -2,7 +2,7 @@ import { memo, useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image as ImageIcon, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb, ImagePlus, Trash2, Copy, Check } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
-import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey, setMinimaxApiKey } from '../lib/ai-providers';
+import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey, setMinimaxApiKey, setBraveSearchKey } from '../lib/ai-providers';
 import { QuickRefine, PromptTemplates } from './QuickRefine';
 
 interface InputPanelProps {
@@ -465,6 +465,9 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const [minimaxKeyInput, setMinimaxKeyInput] = useState('');
   const [hasMinimaxKey, setHasMinimaxKey] = useState(false);
   const [showMinimaxKey, setShowMinimaxKey] = useState(false);
+  const [braveKeyInput, setBraveKeyInput] = useState('');
+  const [hasBraveKey, setHasBraveKey] = useState(false);
+  const [showBraveKey, setShowBraveKey] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showTips, setShowTips] = useState(false);
@@ -529,6 +532,14 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
       setKimiApiKey(savedKimi);
       setKimiKeyInput(savedKimi);
       setHasKimiKey(true);
+    }
+
+    // Load saved Brave Search API key
+    const savedBrave = localStorage.getItem('visual-ai-brave-key');
+    if (savedBrave) {
+      setBraveSearchKey(savedBrave);
+      setBraveKeyInput(savedBrave);
+      setHasBraveKey(true);
     }
 
     // Load saved MiniMax API key
@@ -604,6 +615,23 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     setMinimaxApiKey('');
     setMinimaxKeyInput('');
     setHasMinimaxKey(false);
+  };
+
+  const handleSaveBraveKey = () => {
+    const key = braveKeyInput.trim();
+    if (key) {
+      try { localStorage.setItem('visual-ai-brave-key', key); } catch {}
+      setBraveSearchKey(key);
+      setHasBraveKey(true);
+      setShowSettings(false);
+    }
+  };
+
+  const handleClearBraveKey = () => {
+    try { localStorage.removeItem('visual-ai-brave-key'); } catch {}
+    setBraveSearchKey('');
+    setBraveKeyInput('');
+    setHasBraveKey(false);
   };
 
   const handleClearApiKey = () => {
@@ -1422,6 +1450,56 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               </div>
               <p className="text-[10px] sm:text-xs text-text-muted mt-1.5">
                 Get your key at <span className="text-accent-primary">minimax.io</span>
+              </p>
+            </div>
+
+            {/* Brave Search API Key */}
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-[10px] sm:text-xs font-medium text-text-secondary">🔍 Web Search API Key <span className="text-text-muted">(optional)</span></p>
+                {hasBraveKey && (
+                  <span className="text-[10px] sm:text-xs text-emerald-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                    Saved
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type={showBraveKey ? 'text' : 'password'}
+                    value={braveKeyInput}
+                    onChange={(e) => setBraveKeyInput(e.target.value)}
+                    placeholder="Brave Search API key..."
+                    className="input-field w-full pr-8 text-xs sm:text-sm py-2 sm:py-2.5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowBraveKey(!showBraveKey)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+                  >
+                    {showBraveKey ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={handleSaveBraveKey}
+                  className="btn-primary flex-1 text-[10px] sm:text-xs py-2 sm:py-2.5 min-h-[36px] sm:min-h-[40px]"
+                >
+                  Save
+                </button>
+                {hasBraveKey && (
+                  <button
+                    onClick={handleClearBraveKey}
+                    className="px-2 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[36px] sm:min-h-[40px]"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <p className="text-[10px] sm:text-xs text-text-muted mt-1.5">
+                Enables live web search for prompts like "latest news". Free at <span className="text-accent-primary">brave.com/search/api</span>
               </p>
             </div>
 

@@ -15,10 +15,11 @@ export default async function handler(req: Request): Promise<Response> {
     });
   }
 
-  const apiKey = process.env.BRAVE_SEARCH_API_KEY;
+  // Accept key from env var (admin-set) or from query param (user-provided)
+  const apiKey = process.env.BRAVE_SEARCH_API_KEY || url.searchParams.get('key');
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'Search not configured. Add BRAVE_SEARCH_API_KEY to Vercel environment variables.' }),
+      JSON.stringify({ error: 'No Brave Search API key. Add one in the app Settings → Web Search.' }),
       { status: 503, headers: { 'Content-Type': 'application/json' } }
     );
   }

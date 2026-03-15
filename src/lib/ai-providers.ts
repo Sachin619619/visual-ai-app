@@ -15,12 +15,16 @@ export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }>
 // Separate API keys for different providers
 let kimiApiKey = '';
 let minimaxApiKey = '';
+let braveSearchKey = '';
 
 export const setMinimaxApiKey = (key: string) => {
   minimaxApiKey = key;
 };
 
 export const getMinimaxApiKey = () => minimaxApiKey;
+
+export const setBraveSearchKey = (key: string) => { braveSearchKey = key; };
+export const getBraveSearchKey = () => braveSearchKey;
 
 export const setKimiApiKey = (key: string) => {
   kimiApiKey = key;

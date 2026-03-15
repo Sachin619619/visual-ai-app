@@ -1,4 +1,5 @@
 // Tool definitions and execution for AI tool calling
+import { getBraveSearchKey } from './ai-providers';
 
 export interface SearchResult {
   title: string;
@@ -60,10 +61,10 @@ export const CLAUDE_TOOLS = [
 ];
 
 /**
- * Returns true if the prompt likely needs real-time web data.
- * Used to decide whether to enable tool calling for a given request.
+ * Returns true if the prompt likely needs real-time web data AND a search key is configured.
  */
 export function needsSearch(prompt: string): boolean {
+  if (!getBraveSearchKey()) return false; // no key = skip tool calling
   return /\b(today|tonight|current(ly)?|latest|live|real[\s-]?time|right now|this (week|month|year)|recent(ly)?|news|score|price|weather|forecast|stock|crypto|bitcoin|trending|top \d|2025|2026|who (won|is winning)|just (happened|released)|update|breaking)\b/i.test(prompt);
 }
 
@@ -76,8 +77,10 @@ export async function executeTool(
 ): Promise<ToolResult> {
   if (call.name === 'web_search') {
     const query = call.arguments.query as string;
+    const userKey = getBraveSearchKey();
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, { signal });
+      const keyParam = userKey ? `&key=${encodeURIComponent(userKey)}` : '';
+      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}${keyParam}`, { signal });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: res.statusText }));
         return { id: call.id, name: call.name, content: `Search failed: ${(err as any).error || res.statusText}` };
