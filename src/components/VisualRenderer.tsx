@@ -316,13 +316,24 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-// Use blob URL for iframe content — fixes mobile "Load failed" and allows CDN scripts to load
+// Send HTML to the renderer.html page via postMessage — works reliably on all mobile browsers
+// renderer.html is served from the same origin so no blob URL / CSP issues
 function setIframeContent(iframe: HTMLIFrameElement, content: string) {
-  const blob = new Blob([content], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const prev = iframe.src;
-  iframe.src = url;
-  if (prev && prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+  const RENDERER = '/renderer.html';
+  if (!iframe.src || !iframe.src.endsWith('/renderer.html')) {
+    // First load: point iframe at renderer, then send content once it's ready
+    const onReady = (event: MessageEvent) => {
+      if (event.data?.type === 'RENDERER_READY') {
+        window.removeEventListener('message', onReady);
+        iframe.contentWindow?.postMessage({ type: 'SET_CONTENT', html: content }, '*');
+      }
+    };
+    window.addEventListener('message', onReady);
+    iframe.src = RENDERER;
+  } else {
+    // Already on renderer page — just send new content directly
+    iframe.contentWindow?.postMessage({ type: 'SET_CONTENT', html: content }, '*');
+  }
 }
 
 export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, onCancelGeneration, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats, onImproveUI, isImproving, improveStatus }: VisualRendererProps) {
@@ -2614,7 +2625,6 @@ body {
           <iframe
             ref={iframeRef}
             title="Visual Output"
-            sandbox="allow-scripts allow-same-origin"
             className="w-full h-full border-0"
           />
         </div>
