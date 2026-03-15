@@ -408,8 +408,8 @@ function AppContent() {
 
   const handleQuickGenerate = useCallback((prompt: string) => {
     setPrompt(prompt);
-    handleGenerate(prompt, 'openai', html);
-  }, [handleGenerate, html]);
+    handleGenerate(prompt, lastModel, html);
+  }, [handleGenerate, html, lastModel]);
 
   const handleToggleFavorite = useCallback((id: string) => {
     setHistory(prev => prev.map(item => 
@@ -426,8 +426,8 @@ function AppContent() {
   const handleRefinePrompt = useCallback((_: string, refinement: string) => {
     // Use the refinement as a new prompt with current HTML as context
     setPrompt(refinement);
-    handleGenerate(refinement, 'openai', html);
-  }, [handleGenerate, html]);
+    handleGenerate(refinement, lastModel, html);
+  }, [handleGenerate, html, lastModel]);
 
   // Share design via URL
   const handleShare = useCallback(() => {
