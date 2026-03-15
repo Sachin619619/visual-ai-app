@@ -337,6 +337,27 @@ Sparkline mini-chart (inline trend indicator):
 <canvas id="spark" width="100" height="36" style="display:inline-block"></canvas>
 <script>new Chart(document.getElementById('spark'),{type:'line',data:{labels:['','','','','','',''],datasets:[{data:[3,5,2,8,4,9,7],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.1)',fill:true,tension:0.4,pointRadius:0,borderWidth:2}]},options:{responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:800}}});</script>
 
+Stat card with integrated sparkline (BEST pattern for KPI dashboards):
+<div style="background:rgba(18,18,26,0.9);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#10b981,#06b6d4)"></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">ACTIVE USERS</div>
+      <div style="font-size:32px;font-weight:800;font-family:Outfit,sans-serif;background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent" data-count="12847" data-compact="true">0</div>
+      <div style="color:#10b981;font-size:12px;margin-top:4px">▲ 8.3% this week</div>
+    </div>
+    <div style="height:48px;width:90px"><canvas id="spark-users"></canvas></div>
+  </div>
+</div>
+<script>new Chart(document.getElementById('spark-users'),{type:'line',data:{labels:Array(8).fill(''),datasets:[{data:[820,950,890,1100,980,1240,1180,1285],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.15)',fill:true,tension:0.5,pointRadius:0,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:1000}}});</script>
+
+Big number callout (for impact statistics):
+<div style="text-align:center;padding:32px 24px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:20px">
+  <div style="font-size:clamp(56px,8vw,96px);font-weight:900;font-family:Outfit,sans-serif;background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1" data-count="4200000" data-compact="true">0</div>
+  <div style="font-size:16px;color:#94a3b8;margin-top:12px;letter-spacing:2px;text-transform:uppercase">Downloads worldwide</div>
+  <div style="width:80px;height:3px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:100px;margin:16px auto 0"></div>
+</div>
+
 Feature comparison table row:
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.05);border-radius:8px;overflow:hidden">
   <div style="background:#12121a;padding:12px 16px;color:#f8fafc;font-size:13px">Feature</div>
