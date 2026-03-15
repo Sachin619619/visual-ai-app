@@ -901,7 +901,7 @@ function AppContent() {
         <InputPanel
           onGenerate={handleGenerate}
           isLoading={isLoading}
-          history={history}
+          history={[...history].sort((a, b) => (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0))}
           onClose={() => setSidebarOpen(false)}
           prompt={prompt}
           onPromptChange={setPrompt}
@@ -1193,12 +1193,16 @@ function AppContent() {
                 </div>
               );
               return galleryViewMode === 'grid' ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4" role="list">
                   {filtered.map((entry) => (
                     <div
                       key={entry.id}
-                      className="group relative bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer"
+                      role="listitem"
+                      tabIndex={0}
+                      className="group relative bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-bg-secondary"
                       onClick={() => handleLoadFromGallery(entry)}
+                      onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && handleLoadFromGallery(entry)}
+                      aria-label={`Load design: ${entry.prompt || 'Generated design'}`}
                     >
                       <div className="aspect-video bg-bg-primary overflow-hidden">
                         {entry.thumbnail ? (
@@ -1233,12 +1237,16 @@ function AppContent() {
                   ))}
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-2" role="list">
                   {filtered.map((entry) => (
                     <div
                       key={entry.id}
-                      className="group flex items-center gap-3 bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer p-3"
+                      role="listitem"
+                      tabIndex={0}
+                      className="group flex items-center gap-3 bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-1 focus:ring-offset-bg-secondary"
                       onClick={() => handleLoadFromGallery(entry)}
+                      onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && handleLoadFromGallery(entry)}
+                      aria-label={`Load design: ${entry.prompt || 'Generated design'}`}
                     >
                       {entry.thumbnail && (
                         <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-bg-primary">

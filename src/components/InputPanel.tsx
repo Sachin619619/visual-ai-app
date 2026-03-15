@@ -1263,19 +1263,20 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                   </button>
                 )}
                 
-                {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history).slice(0, 10).map((item) => {
-                  // Filter by search term
-                  if (historySearch && !item.prompt.toLowerCase().includes(historySearch.toLowerCase())) {
-                    return null;
-                  }
-                  return (
-                  <div key={item.id} className="flex items-start gap-1.5 sm:gap-2">
+                {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history)
+                  .slice(0, 10)
+                  .filter(item => !historySearch || item.prompt.toLowerCase().includes(historySearch.toLowerCase()))
+                  .map((item) => (
+                  <div key={item.id} className="flex items-start gap-1.5 sm:gap-2 group/histitem">
                     <button
                       onClick={() => setPrompt(item.prompt)}
                       className="flex-1 text-left p-2 sm:p-2.5 rounded-lg bg-bg-tertiary hover:bg-white/5 transition-colors text-[10px] sm:text-xs"
                     >
                       <p className="text-text-primary line-clamp-2">{item.prompt}</p>
-                      <p className="text-text-muted mt-1 text-[9px] sm:text-[10px]">{AI_PROVIDERS[item.model].icon} {item.model}</p>
+                      <p className="text-text-muted mt-1 text-[9px] sm:text-[10px]">
+                        {AI_PROVIDERS[item.model]?.icon} {item.model}
+                        {item.isFavorite && <span className="ml-1 text-yellow-400">★ Pinned</span>}
+                      </p>
                     </button>
                     <button
                       onClick={(e) => {
@@ -1283,17 +1284,17 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                         onToggleFavorite?.(item.id);
                       }}
                       className={`p-1.5 sm:p-2 rounded-lg transition-colors min-w-[32px] sm:min-w-[36px] flex items-center justify-center ${
-                        item.isFavorite 
-                          ? 'text-yellow-400 hover:text-yellow-300' 
-                          : 'text-text-muted hover:text-yellow-400'
+                        item.isFavorite
+                          ? 'text-yellow-400 hover:text-yellow-300'
+                          : 'text-text-muted hover:text-yellow-400 opacity-0 group-hover/histitem:opacity-100'
                       }`}
-                      title={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      title={item.isFavorite ? "Unpin from top" : "Pin to top"}
+                      aria-label={item.isFavorite ? "Unpin from top" : "Pin to top"}
                     >
                       <Star className={`w-3.5 h-3.5 ${item.isFavorite ? 'fill-yellow-400' : ''}`} />
                     </button>
                   </div>
-                  );
-                })}
+                ))}
               </div>
             )}
           </motion.div>
