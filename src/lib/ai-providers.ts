@@ -120,7 +120,8 @@ export const generateUI = async (
   prompt: string,
   model: ModelProvider,
   contextHtml?: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  onChunk?: (partial: string) => void
 ): Promise<string> => {
   // Check the correct key for the selected provider
   if (model === 'kimi' && !kimiApiKey && !apiKey) {
@@ -141,7 +142,7 @@ export const generateUI = async (
       setTimeout(() => reject(new Error(`⏱️ Generation timed out after ${timeoutLabel}. Try a shorter prompt or faster model.`)), timeoutMs);
     });
     return await Promise.race([
-      generateWithAI(prompt, model, apiKey, contextHtml, signal),
+      generateWithAI(prompt, model, apiKey, contextHtml, signal, onChunk),
       timeoutPromise
     ]);
   } catch (error: any) {
@@ -621,13 +622,50 @@ for(let ci=0;ci<weeks;ci+=4){
 
 
 
+// Parse OpenAI-compatible SSE streaming response
+async function parseSSEStream(
+  response: Response,
+  signal: AbortSignal | undefined,
+  extractDelta: (json: any) => string,
+  onChunk: (accumulated: string) => void
+): Promise<string> {
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = '';
+  let buffer = '';
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (signal?.aborted) { reader.cancel(); break; }
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === 'data: [DONE]') continue;
+        if (!trimmed.startsWith('data: ')) continue;
+        try {
+          const json = JSON.parse(trimmed.slice(6));
+          const delta = extractDelta(json);
+          if (delta) { accumulated += delta; onChunk(accumulated); }
+        } catch {}
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return accumulated;
+}
+
 // Generate with AI
 const generateWithAI = async (
   prompt: string,
   model: ModelProvider,
   apiKey: string,
   contextHtml?: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  onChunk?: (partial: string) => void
 ): Promise<string> => {
   // Build context from previous HTML if provided
   const contextSection = contextHtml 
@@ -666,17 +704,21 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.4,
-        max_tokens: 6000
+        max_tokens: 6000,
+        stream: !!onChunk
       })
     });
-    
-    const data = await response.json();
-    if (data.error) {
-      const raw = data.error?.metadata?.raw || data.error?.metadata?.reasons?.join(', ') || '';
-      const msg = data.error?.message || JSON.stringify(data.error);
-      throw new Error(`OpenRouter error: ${msg}${raw ? ` — ${raw}` : ''}`);
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) {
+        const raw = data.error?.metadata?.raw || data.error?.metadata?.reasons?.join(', ') || '';
+        const msg = data.error?.message || JSON.stringify(data.error);
+        throw new Error(`OpenRouter error: ${msg}${raw ? ` — ${raw}` : ''}`);
+      }
+      rawHtml = data.choices?.[0]?.message?.content || '';
     }
-    rawHtml = data.choices?.[0]?.message?.content || '';
   } else if (model === 'openai') {
     response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -692,13 +734,17 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.4,
-        max_tokens: 6000
+        max_tokens: 6000,
+        stream: !!onChunk
       })
     });
-    
-    const data = await response.json();
-    if (data.error) throw new Error(`OpenAI error: ${data.error.message || JSON.stringify(data.error)}`);
-    rawHtml = data.choices?.[0]?.message?.content || '';
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) throw new Error(`OpenAI error: ${data.error.message || JSON.stringify(data.error)}`);
+      rawHtml = data.choices?.[0]?.message?.content || '';
+    }
   } else if (model === 'gemini') {
     response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
@@ -729,13 +775,17 @@ const generateWithAI = async (
         messages: [
           { role: 'user', content: uiPrompt }
         ],
-        max_tokens: 6000
+        max_tokens: 6000,
+        stream: !!onChunk
       })
     });
-    
-    const data = await response.json();
-    if (data.error) throw new Error(`Anthropic error: ${data.error?.message || JSON.stringify(data.error)}`);
-    rawHtml = data.content?.[0]?.text || '';
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.type === 'content_block_delta' ? (j.delta?.text || '') : '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) throw new Error(`Anthropic error: ${data.error?.message || JSON.stringify(data.error)}`);
+      rawHtml = data.content?.[0]?.text || '';
+    }
   } else if (model === 'kimi') {
     // Kimi API - uses same key field (auto-detect)
     if (!apiKey && !kimiApiKey) {
@@ -756,13 +806,17 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.3,
-        max_tokens: 6000
+        max_tokens: 6000,
+        stream: !!onChunk
       })
     });
-    
-    const data = await response.json();
-    if (data.error) throw new Error(`Kimi error: ${data.error?.message || JSON.stringify(data.error)}`);
-    rawHtml = data.choices?.[0]?.message?.content || '';
+    if (onChunk && response.body) {
+      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.error) throw new Error(`Kimi error: ${data.error?.message || JSON.stringify(data.error)}`);
+      rawHtml = data.choices?.[0]?.message?.content || '';
+    }
   } else if (model === 'minimax') {
     // MiniMax M2.5 API
     if (!minimaxApiKey) {
@@ -782,13 +836,18 @@ const generateWithAI = async (
           { role: 'user', content: uiPrompt }
         ],
         temperature: 0.3,
-        max_tokens: 6000
+        max_tokens: 6000,
+        stream: !!onChunk
       })
     });
-
-    const data = await response.json();
-    if (data.base_resp?.status_code !== 0) throw new Error(`MiniMax error: ${data.base_resp?.status_msg || JSON.stringify(data.base_resp)}`);
-    rawHtml = data.choices?.[0]?.message?.content || '';
+    if (onChunk && response.body) {
+      // MiniMax is a reasoning model — only forward content, not reasoning_content
+      rawHtml = await parseSSEStream(response, signal, (j) => j.choices?.[0]?.delta?.content || '', onChunk);
+    } else {
+      const data = await response.json();
+      if (data.base_resp?.status_code !== 0) throw new Error(`MiniMax error: ${data.base_resp?.status_msg || JSON.stringify(data.base_resp)}`);
+      rawHtml = data.choices?.[0]?.message?.content || '';
+    }
   } else if (model === 'local') {
     // Local model - return a template message (not functional without local LLM setup)
     throw new Error('Local model requires a local LLM server. Use OpenRouter for free AI generation.');

@@ -348,8 +348,19 @@ function AppContent() {
     };
     setHistory(prev => [historyItem, ...prev]);
     
+    // Streaming: throttle iframe updates to every 1.2s to avoid flickering
+    let lastStreamUpdate = 0;
+    const onChunk = (partial: string) => {
+      const now = Date.now();
+      if (now - lastStreamUpdate < 1200) return;
+      lastStreamUpdate = now;
+      // Strip leading markdown fence, show once we have meaningful HTML
+      const cleaned = partial.replace(/^```html\s*/i, '').replace(/^```\s*/i, '');
+      if (cleaned.length > 300 && cleaned.includes('<')) setHtml(cleaned);
+    };
+
     try {
-      const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal);
+      const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal, onChunk);
       // Add to undo history
       setHtmlHistory(prev => {
         // If we're not at the end of history, truncate future history
