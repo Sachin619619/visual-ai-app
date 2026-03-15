@@ -7,12 +7,14 @@ interface QuickRefineProps {
 }
 
 const refinements = [
-  { label: 'Modern', icon: Layout, prompt: 'make it more modern and sleek' },
-  { label: 'Colorful', icon: Palette, prompt: 'add more vibrant colors and gradients' },
-  { label: 'Minimal', icon: Type, prompt: 'simplify to minimal design with clean whitespace' },
-  { label: 'Dark Mode', icon: Zap, prompt: 'convert to dark mode with neon accents' },
-  { label: 'Grid', icon: Grid, prompt: 'organize into a structured grid layout' },
-  { label: 'Interactive', icon: MousePointer, prompt: 'add hover effects and interactivity' },
+  { label: 'Modern', icon: Layout, prompt: 'make it more modern and sleek with glassmorphism effects' },
+  { label: 'Colorful', icon: Palette, prompt: 'add more vibrant colors, gradient fills, and neon glow effects' },
+  { label: 'Minimal', icon: Type, prompt: 'simplify to minimal design with clean whitespace and subtle borders' },
+  { label: 'Dark Mode', icon: Zap, prompt: 'convert to premium dark mode with #0a0a0f background and violet/cyan neon accents' },
+  { label: 'Grid', icon: Grid, prompt: 'organize into a beautiful responsive CSS grid layout with card components' },
+  { label: 'Interactive', icon: MousePointer, prompt: 'add hover effects, click animations, and interactive micro-animations throughout' },
+  { label: 'Add Charts', icon: Sparkles, prompt: 'add 2-3 beautiful Chart.js charts (bar, line, doughnut) to visualize any data present' },
+  { label: 'Bigger Stats', icon: Wand2, prompt: 'make stat numbers much larger with gradient text, add animated count-up, and visual trend indicators' },
 ];
 
 export const QuickRefine: React.FC<QuickRefineProps> = ({ onRefine, isLoading }) => {
@@ -45,12 +47,14 @@ interface PromptTemplatesProps {
 }
 
 const templates = [
-  { label: 'Dashboard', prompt: 'Create a modern analytics dashboard with sidebar navigation, stats cards showing key metrics with charts, recent activity feed, and a data table with sorting options. Use a clean dark theme with accent colors.' },
-  { label: 'Landing', prompt: 'Design a high-converting SaaS landing page with hero section, feature grid, pricing cards, testimonial carousel, and call-to-action buttons. Modern gradient design.' },
-  { label: 'Card Grid', prompt: 'Build a responsive card grid layout with product cards featuring image, title, price, and add-to-cart button. Clean e-commerce style with hover effects.' },
-  { label: 'Form', prompt: 'Create a multi-step registration form with input validation, progress indicator, and social login options. Modern and user-friendly design.' },
-  { label: 'Chat UI', prompt: 'Design a chat interface with message bubbles, user avatars, typing indicator, input field with emoji picker, and online status indicators.' },
-  { label: 'Profile', prompt: 'Create a user profile page with cover photo, avatar, bio section, stats, activity timeline, and settings tabs. Social media style.' },
+  { label: 'Dashboard', prompt: 'Create a dark premium analytics dashboard — stat cards with gradient numbers showing Users 1.2M, Revenue $84K, Conversion 3.4%, a 30-day line chart for daily active users, traffic sources doughnut chart, and a top pages data table. Use #0a0a0f background, violet/cyan accents.' },
+  { label: 'Landing', prompt: 'Design a high-converting SaaS landing page with animated hero section with gradient headline, feature grid with 6 icon cards and hover effects, 3-tier pricing table, testimonials, and sticky CTA button. Dark premium theme.' },
+  { label: 'Card Grid', prompt: 'Build a beautiful stat card dashboard — 4 KPI cards with large gradient numbers, sparkline mini-charts, trend indicators (↑↓), and animated counter effects. Dark glassmorphism style.' },
+  { label: 'Form', prompt: 'Create a stunning multi-step form with progress indicator showing 3 steps, animated field transitions, success state, and modern input styling. Dark theme with violet accents.' },
+  { label: 'Comparison', prompt: 'Design a beautiful comparison table for 3 products/plans with feature rows, checkmarks/X marks, price highlighting, and a "Most Popular" badge. Dark premium card design with hover effects.' },
+  { label: 'Profile', prompt: 'Create a stunning user profile card with gradient avatar, bio, key stats (followers, posts, likes) as large numbers, recent activity feed, and follow button. Social media dark theme.' },
+  { label: 'Charts', prompt: 'Create a data visualization showcase with 5 different Chart.js chart types: bar chart, line chart with area fill, doughnut, radar, and horizontal bar — all with gradient fills and dark theme.' },
+  { label: 'Timeline', prompt: 'Build a stunning vertical timeline with 6 milestone entries, date badges, connecting gradient line, icon per step, and scroll-triggered fade-in animations. Dark premium style.' },
 ];
 
 export const PromptTemplates: React.FC<PromptTemplatesProps> = ({ onSelect, isLoading }) => {
