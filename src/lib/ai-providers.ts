@@ -142,8 +142,8 @@ export const generateUI = async (
   // OpenRouter is always available (free models)
   try {
     // MiniMax is a reasoning model and needs more time
-    const timeoutMs = model === 'minimax' ? 180000 : 90000;
-    const timeoutLabel = model === 'minimax' ? '180 seconds' : '90 seconds';
+    const timeoutMs = model === 'minimax' ? 300000 : 90000;
+    const timeoutLabel = model === 'minimax' ? '300 seconds' : '90 seconds';
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error(`⏱️ Generation timed out after ${timeoutLabel}. Try a shorter prompt or faster model.`)), timeoutMs);
     });
