@@ -222,6 +222,9 @@ const SYSTEM_PROMPT = `You are a world-class data visualization expert and UI de
 - SCIENTIFIC/TECHNICAL → Diagram-style with labeled SVG components, connecting lines, color-coded legend
 - WORLD/GEO DATA → Visual regional breakdown with colored blocks and comparative bar/pie charts
 - CODE/TECHNICAL → Syntax-highlighted code blocks + architecture diagrams, animated flow arrows
+- HIERARCHICAL DATA → D3 sunburst or treemap for nested categories, org charts, file systems, budgets
+- ACTIVITY/PATTERNS → D3 heatmap calendar for day-by-day or time-series activity data
+- NETWORK/RELATIONSHIPS → D3 force-directed graph for connections, dependencies, social graphs
 
 📊 CHART.JS EXCELLENCE (Chart.js v4 is always available as window.Chart):
 Always use Chart.js for ALL data visualizations. Here are complete examples:
@@ -352,6 +355,45 @@ svg.selectAll('rect').data(root.leaves()).join('rect').attr('x',d=>d.x0).attr('y
 svg.selectAll('text').data(root.leaves()).join('text').attr('x',d=>(d.x0+d.x1)/2).attr('y',d=>(d.y0+d.y1)/2).attr('text-anchor','middle').attr('fill','white').attr('font-size','14px').text(d=>d.data.name);
 </script>
 
+Sunburst chart (for hierarchical data like file systems, org charts, category breakdowns):
+<div id="sunburst" style="width:100%;height:400px;display:flex;justify-content:center"></div>
+<script>
+(function(){
+const W=380,R=W/2;
+const data={name:'root',children:[{name:'Alpha',value:30,children:[{name:'A1',value:12},{name:'A2',value:18}]},{name:'Beta',value:40,children:[{name:'B1',value:20},{name:'B2',value:10},{name:'B3',value:10}]},{name:'Gamma',value:30,children:[{name:'G1',value:15},{name:'G2',value:15}]}]};
+const color=d3.scaleOrdinal(['#8b5cf6','#06b6d4','#10b981','#f59e0b','#ec4899','#f97316']);
+const svg=d3.select('#sunburst').append('svg').attr('width',W).attr('height',W).append('g').attr('transform','translate('+R+','+R+')');
+const partition=d3.partition().size([2*Math.PI,R]);
+const root=d3.hierarchy(data).sum(d=>d.value||0);
+partition(root);
+const arc=d3.arc().startAngle(d=>d.x0).endAngle(d=>d.x1).innerRadius(d=>d.y0*0.5+20).outerRadius(d=>d.y1*0.5+15);
+svg.selectAll('path').data(root.descendants().filter(d=>d.depth)).join('path').attr('d',arc).attr('fill',(d)=>color(d.ancestors().reverse()[1]?.data.name||d.data.name)).attr('stroke','#0a0a0f').attr('stroke-width',2).attr('opacity',0.88).style('cursor','pointer').on('mouseover',function(e,d){d3.select(this).attr('opacity',1).attr('stroke','#fff');}).on('mouseout',function(e,d){d3.select(this).attr('opacity',0.88).attr('stroke','#0a0a0f');});
+svg.selectAll('text').data(root.descendants().filter(d=>d.depth&&(d.y1-d.y0)*0.5>14)).join('text').attr('transform',d=>{const a=(d.x0+d.x1)/2-Math.PI/2,r=(d.y0+d.y1)/4+20;return 'rotate('+a*180/Math.PI+') translate('+r+',0) rotate('+(a>Math.PI/2&&a<3*Math.PI/2?180:0)+')'}).attr('text-anchor','middle').attr('fill','#f8fafc').attr('font-size','11px').attr('font-weight','600').text(d=>d.data.name);
+})();
+</script>
+
+Heatmap calendar (great for activity, usage, or any day-of-week × week data):
+<div id="heatmap" style="width:100%;overflow-x:auto"></div>
+<script>
+(function(){
+const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const weeks=12;
+const data=Array.from({length:7},()=>Array.from({length:weeks},()=>Math.floor(Math.random()*10)));
+const cellSize=28,gap=4,W=weeks*(cellSize+gap)+48,H=7*(cellSize+gap)+30;
+const svg=d3.select('#heatmap').append('svg').attr('width',W).attr('height',H);
+const color=d3.scaleSequential([0,9],d3.interpolate('#1a1a2e','#8b5cf6'));
+data.forEach((row,ri)=>{
+  svg.append('text').attr('x',38).attr('y',ri*(cellSize+gap)+cellSize*0.65+24).attr('text-anchor','end').attr('fill','#94a3b8').attr('font-size','11px').text(days[ri]);
+  row.forEach((val,ci)=>{
+    svg.append('rect').attr('x',44+ci*(cellSize+gap)).attr('y',ri*(cellSize+gap)+18).attr('width',cellSize).attr('height',cellSize).attr('rx',4).attr('fill',color(val)).attr('opacity',0.9).append('title').text(days[ri]+', Week '+(ci+1)+': '+val+' events');
+  });
+});
+for(let ci=0;ci<weeks;ci+=4){
+  svg.append('text').attr('x',44+ci*(cellSize+gap)+cellSize/2).attr('y',12).attr('text-anchor','middle').attr('fill','#64748b').attr('font-size','10px').text('Wk '+(ci+1));
+}
+})();
+</script>
+
 🌊 ANIMATED FLOW DIAGRAM (step-by-step process):
 <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center">
   <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);border-radius:12px;padding:16px 20px;text-align:center;animation:fadeInUp 0.5s ease both">
@@ -409,7 +451,7 @@ svg.selectAll('text').data(root.leaves()).join('text').attr('x',d=>(d.x0+d.x1)/2
 5. Output NOTHING except the complete HTML document
 6. Make it portfolio-worthy — imagine it featured on a design awards site
 7. Use emoji icons in headings and cards for visual richness
-8. Add a subtle grid or dot pattern background for depth
+8. Add a subtle grid or dot pattern background for depth — use: background-image: radial-gradient(circle, rgba(139,92,246,0.15) 1px, transparent 1px); background-size: 32px 32px; on body or a fixed ::before pseudo-element
 9. Include hover states on ALL cards and interactive elements
 10. Counter-animate ALL numeric statistics on page load`;
 
