@@ -437,6 +437,48 @@ for(let ci=0;ci<weeks;ci+=4){
 - [data-tooltip="your tip text"] on any element → shows floating tooltip on hover
 - [data-aos] or .animate-on-scroll → scroll-triggered fade-in via IntersectionObserver
 
+🌟 HERO BANNER (use at the top of every visual for maximum impact):
+<div style="background:linear-gradient(135deg,#0a0a0f 0%,#13102a 50%,#0a0a1f 100%);border-radius:20px;padding:40px 32px;text-align:center;position:relative;overflow:hidden;margin-bottom:28px">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(139,92,246,0.12) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+  <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(139,92,246,0.25),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(6,182,212,0.2),transparent 70%);pointer-events:none"></div>
+  <div style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:100px;padding:6px 14px;font-size:12px;color:#8b5cf6;font-weight:600;margin-bottom:16px;letter-spacing:0.5px">⚡ VISUAL REPORT</div>
+    <h1 style="font-family:Outfit,sans-serif;font-size:clamp(28px,5vw,52px);font-weight:800;background:linear-gradient(135deg,#f8fafc 0%,#c4b5fd 50%,#67e8f9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;line-height:1.1">Title Goes Here</h1>
+    <p style="color:#94a3b8;font-size:clamp(13px,2vw,16px);max-width:560px;margin:0 auto;line-height:1.6">Subtitle or brief description that provides context for the visual content below.</p>
+  </div>
+</div>
+
+📅 GANTT / SCHEDULE CHART (pure HTML/CSS, no Chart.js needed):
+<div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;min-width:500px">
+    <thead>
+      <tr style="background:rgba(139,92,246,0.1)">
+        <th style="padding:10px 14px;text-align:left;color:#94a3b8;font-size:12px;font-weight:600;width:140px">Task</th>
+        <th style="padding:10px 6px;text-align:center;color:#94a3b8;font-size:11px;width:40px">Jan</th>
+        <th style="padding:10px 6px;text-align:center;color:#94a3b8;font-size:11px;width:40px">Feb</th>
+        <th style="padding:10px 6px;text-align:center;color:#94a3b8;font-size:11px;width:40px">Mar</th>
+        <th style="padding:10px 6px;text-align:center;color:#94a3b8;font-size:11px;width:40px">Apr</th>
+        <th style="padding:10px 6px;text-align:center;color:#94a3b8;font-size:11px;width:40px">May</th>
+        <th style="padding:10px 6px;text-align:center;color:#94a3b8;font-size:11px;width:40px">Jun</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+        <td style="padding:8px 14px;font-size:13px;color:#f8fafc">Phase 1</td>
+        <td colspan="2" style="padding:4px 4px"><div style="height:20px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:6px;width:100%"></div></td>
+        <td colspan="4"></td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+        <td style="padding:8px 14px;font-size:13px;color:#f8fafc">Phase 2</td>
+        <td></td>
+        <td colspan="3" style="padding:4px 4px"><div style="height:20px;background:linear-gradient(90deg,#10b981,#06b6d4);border-radius:6px;width:100%"></div></td>
+        <td colspan="2"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 🔧 TECHNICAL REQUIREMENTS:
 - Output ONLY raw HTML — no markdown, no explanations, no code blocks, no backticks
 - Start with <!DOCTYPE html>
