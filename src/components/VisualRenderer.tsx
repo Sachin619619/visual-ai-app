@@ -316,6 +316,15 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
+// Use Blob URL instead of srcdoc for better mobile browser compatibility
+function setIframeContent(iframe: HTMLIFrameElement, content: string) {
+  const blob = new Blob([content], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const prev = iframe.src;
+  iframe.src = url;
+  if (prev && prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+}
+
 export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, onCancelGeneration, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats, onImproveUI, isImproving, improveStatus }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -865,7 +874,7 @@ body {
       if (content && iframeRef.current) {
         try {
           const sandboxedContent = createSandboxContent(content, previewTheme);
-          iframeRef.current.srcdoc = sandboxedContent;
+          setIframeContent(iframeRef.current, sandboxedContent);
         } catch (err) {
           console.error('Failed to load file:', err);
         }
@@ -1018,7 +1027,7 @@ body {
         }
         const content = createSandboxContent(html, previewTheme);
         lastSandboxRef.current = { html, theme: previewTheme, content };
-        iframeRef.current.srcdoc = content;
+        setIframeContent(iframeRef.current, content);
         setError(null);
       } catch (err) {
         setError('Failed to render content');
@@ -2504,7 +2513,7 @@ body {
                         onClick={() => {
                           const content = createSandboxContent(template.html, previewTheme);
                           if (iframeRef.current) {
-                            iframeRef.current.srcdoc = content;
+                            setIframeContent(iframeRef.current, content);
                           }
                         }}
                         className="w-full p-2.5 sm:p-3 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all text-left cursor-pointer min-h-[60px] flex flex-col justify-between"
