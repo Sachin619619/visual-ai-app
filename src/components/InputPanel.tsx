@@ -1208,6 +1208,13 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
           </div>
         </div>
 
+        {/* Short prompt quality hint */}
+        {prompt.trim().length > 0 && prompt.trim().length < 20 && !isLoading && (
+          <p className="text-[10px] text-amber-400/80 flex items-center gap-1 -mt-1 mb-1">
+            <span>💡</span>
+            <span>Longer prompts produce richer visuals — try adding details or a format.</span>
+          </p>
+        )}
         <button
           type="submit"
           disabled={!prompt.trim() || isLoading}
