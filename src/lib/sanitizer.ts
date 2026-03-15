@@ -793,6 +793,72 @@ const getThemeStyles = (theme: PreviewTheme) => {
       line-height: 30px;
       text-align: center;
     }
+
+    /* Section divider with gradient */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
+    }
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    /* Gradient underline for section headers */
+    .section-title {
+      display: inline-block;
+      padding-bottom: 8px;
+      border-bottom: 2px solid transparent;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4) bottom / 100% 2px no-repeat,
+                  linear-gradient(135deg, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text, padding-box;
+      background-clip: text, padding-box;
+      -webkit-text-fill-color: transparent;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+    }
+
+    /* Callout / highlight box */
+    .callout {
+      background: rgba(139,92,246,0.08);
+      border-left: 3px solid #8b5cf6;
+      border-radius: 0 12px 12px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .callout-success { border-color: #10b981; background: rgba(16,185,129,0.08); }
+    .callout-warning { border-color: #f59e0b; background: rgba(245,158,11,0.08); }
+    .callout-danger  { border-color: #ef4444; background: rgba(239,68,68,0.08); }
+
+    /* Badge / pill */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(139,92,246,0.15);
+      color: #c4b5fd;
+      border: 1px solid rgba(139,92,246,0.25);
+    }
+    .badge-success { background: rgba(16,185,129,0.15); color: #6ee7b7; border-color: rgba(16,185,129,0.25); }
+    .badge-warning { background: rgba(245,158,11,0.15); color: #fcd34d; border-color: rgba(245,158,11,0.25); }
+    .badge-danger  { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.25); }
+    .badge-new { background: linear-gradient(135deg,rgba(139,92,246,0.3),rgba(6,182,212,0.3)); color: #f8fafc; border-color: rgba(139,92,246,0.4); }
 `;
 };
 

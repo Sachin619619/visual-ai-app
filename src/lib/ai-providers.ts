@@ -510,6 +510,10 @@ for(let ci=0;ci<weeks;ci+=4){
 - .auto-grid, .grid-2, .grid-3, .grid-4 children → auto-stagger fade-in animation on load
 - [data-tooltip="your tip text"] on any element → shows floating tooltip on hover
 - [data-aos] or .animate-on-scroll → scroll-triggered fade-in via IntersectionObserver
+- .section-divider with inner .section-label → gradient-fading horizontal rule with centered label
+- .callout / .callout-success / .callout-warning → left-border accent highlight box
+- .badge / .badge-new / .badge-success → pill badges with color variants
+- .section-title → gradient text heading with gradient underline
 
 🌟 HERO BANNER (use at the top of every visual for maximum impact):
 <div style="background:linear-gradient(135deg,#0a0a0f 0%,#13102a 50%,#0a0a1f 100%);border-radius:20px;padding:40px 32px;text-align:center;position:relative;overflow:hidden;margin-bottom:28px">
