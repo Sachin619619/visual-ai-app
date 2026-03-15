@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal, ZoomIn, ZoomOut } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal, ZoomIn, ZoomOut, ExternalLink } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
@@ -65,6 +65,26 @@ const QUICK_PROMPTS = [
   // Fun / Creative
   { key: 'pizza', prompt: 'Create a fun and beautiful pizza anatomy infographic — show ingredient layers as an exploded diagram, most popular topping rankings as a bar chart, pizza consumption by country, and fun facts in colorful cards', label: '🍕 Pizza Infographic' },
   { key: 'music', prompt: 'Create a music genres visual map — show genres as interconnected bubbles with size = popularity, timeline of music evolution, top streaming stats by genre in a bar chart, all in a neon dark theme', label: '🎵 Music Genres' },
+  // Science & Nature
+  { key: 'dna-infographic', prompt: 'Create a stunning animated infographic about DNA and genetics — show the double helix structure with labeled components, how DNA replication works step-by-step, key stats about the human genome, and CRISPR gene editing in a diagram', label: '🧬 DNA & Genetics' },
+  { key: 'periodic-table-viz', prompt: 'Create a beautiful interactive visualization of the periodic table — show elements by category with color coding, key element properties as tooltips on hover, most abundant elements bar chart, and timeline of element discoveries', label: '⚗️ Periodic Table' },
+  { key: 'black-hole', prompt: 'Create a visually stunning space infographic about black holes — show types (stellar, supermassive), Hawking radiation diagram, event horizon anatomy, famous black holes like Sagittarius A* with size comparison to our solar system, gravitational lensing effect', label: '🌑 Black Holes' },
+  { key: 'human-body-systems', prompt: 'Create a beautiful infographic about human body systems — show 10 major systems (skeletal, muscular, nervous, circulatory, etc.) as icon cards with key facts, body system interaction diagram, most common diseases per system', label: '🫀 Human Body Systems' },
+  // Technology & AI
+  { key: 'machine-learning', prompt: 'Create a stunning visual explainer of machine learning — show supervised vs unsupervised vs reinforcement learning with diagrams, neural network layers visualization, training process flow, real-world applications in icon cards', label: '🤖 Machine Learning' },
+  { key: 'cybersecurity', prompt: 'Create a cybersecurity threat landscape infographic — show attack types (phishing, ransomware, DDoS) with icons and descriptions, security framework layers diagram, global cybercrime cost bar chart by year, top industries targeted', label: '🔒 Cybersecurity' },
+  { key: 'cloud-computing', prompt: 'Create a beautiful cloud computing explainer — show IaaS vs PaaS vs SaaS layers as a visual stack diagram, cloud market share pie chart (AWS, Azure, GCP), latency vs cost trade-offs, key benefits in animated stat cards', label: '☁️ Cloud Computing' },
+  { key: 'ev-cars', prompt: 'Create a beautiful infographic comparing electric vs gas vehicles — show total cost of ownership line chart over 10 years, CO2 emissions comparison, charging time vs refuel time, top EV models by range in a horizontal bar chart, global EV adoption by country', label: '⚡ EV vs Gas Cars' },
+  // Business & Economics
+  { key: 'startup-stages', prompt: 'Create a startup funding journey infographic — show stages from idea to IPO (Pre-seed, Seed, Series A/B/C, IPO) as a visual timeline with typical funding amounts, equity dilution chart, success statistics at each stage, and key metrics investors look for', label: '🚀 Startup Journey' },
+  { key: 'global-economy', prompt: 'Create a global economy dashboard — show GDP by country as a treemap, GDP growth line chart (last 20 years), top 10 economies bar chart, inflation vs unemployment scatter chart, trade balance comparison between major economies', label: '💹 Global Economy' },
+  { key: 'supply-chain', prompt: 'Create a supply chain visualization — show the journey from raw materials to consumer with animated flow arrows, bottleneck indicators, key risks at each stage, disruption impact data from COVID-19, cost breakdown pie chart', label: '📦 Supply Chain' },
+  // Health & Wellness
+  { key: 'sleep-science', prompt: 'Create a sleep science infographic — show sleep cycle stages (REM, N1-N3) as an animated wave chart, optimal sleep duration by age bar chart, effects of sleep deprivation on health icon cards, tips for better sleep in numbered steps with icons', label: '😴 Sleep Science' },
+  { key: 'nutrition-guide', prompt: 'Create a nutrition visual guide — show macronutrient breakdown (protein, carbs, fats) pie charts for different diets, vitamins & minerals reference table, daily calorie needs by activity level bar chart, food groups pyramid with serving sizes', label: '🥦 Nutrition Guide' },
+  // Geography & Society
+  { key: 'country-comparison', prompt: 'Create a country comparison dashboard for USA vs China vs EU — show GDP, population, military spending, renewable energy %, happiness index, CO2 emissions as a beautiful radar/spider chart and side-by-side stat cards with color-coded indicators', label: '🗺️ Country Comparison' },
+  { key: 'languages-world', prompt: 'Create a world languages infographic — show top 10 languages by native speakers in a horizontal bar chart, language family tree diagram, most translated books chart, languages at risk of extinction timeline, and fun linguistics facts in icon cards', label: '🌐 World Languages' },
 ];
 
 // Viewport size configurations
@@ -671,6 +691,19 @@ body {
     URL.revokeObjectURL(url);
   };
 
+  // Open in a new browser tab for full-screen clean preview
+  const handleOpenInNewTab = useCallback(() => {
+    if (!html) return;
+    const content = createSandboxContent(html, previewTheme);
+    const blob = new Blob([content], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const newTab = window.open(url, '_blank');
+    // Revoke URL after the tab has had time to load
+    if (newTab) {
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
+  }, [html, previewTheme]);
+
   // Export as PDF
   const handleExportPDF = async () => {
     if (!iframeRef.current) return;
@@ -997,6 +1030,16 @@ body {
                 <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
             )}
+            {/* Open in New Tab */}
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleOpenInNewTab}
+              className="hidden sm:flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-accent-secondary transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95"
+              title="Open in New Tab (full-screen preview)"
+            >
+              <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
+            </motion.button>
             {onExport && (
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
@@ -1475,6 +1518,13 @@ body {
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-text-primary transition-colors"
                   >
                     <Keyboard className="w-4 h-4" /> Keyboard Shortcuts
+                  </button>
+                  {/* Open in New Tab - mobile */}
+                  <button
+                    onClick={() => { handleOpenInNewTab(); setShowMoreMenu(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-accent-secondary transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" /> Open in New Tab
                   </button>
                   {/* Viewport selector for mobile - in more menu */}
                   <button
