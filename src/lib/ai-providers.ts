@@ -279,6 +279,18 @@ BUBBLE CHART (for showing 3 variables: x, y, size):
 new Chart(document.getElementById('bubble'), {type:'bubble', data:{datasets:[{label:'Series A',data:[{x:10,y:70,r:15},{x:20,y:85,r:22},{x:35,y:60,r:10},{x:50,y:90,r:30}],backgroundColor:'rgba(139,92,246,0.6)',borderColor:'#8b5cf6'},{label:'Series B',data:[{x:15,y:40,r:12},{x:30,y:55,r:20},{x:45,y:75,r:8},{x:60,y:50,r:18}],backgroundColor:'rgba(6,182,212,0.6)',borderColor:'#06b6d4'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}}}}});
 </script>
 
+STACKED BAR chart (for showing composition/breakdown):
+<canvas id="stacked" style="max-height:320px"></canvas>
+<script>
+new Chart(document.getElementById('stacked'), {type:'bar', data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'Product A',data:[45,58,42,62],backgroundColor:'rgba(139,92,246,0.8)',borderRadius:4},{label:'Product B',data:[30,38,55,41],backgroundColor:'rgba(6,182,212,0.8)',borderRadius:4},{label:'Product C',data:[25,18,30,35],backgroundColor:'rgba(16,185,129,0.8)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{stacked:true,ticks:{color:'#94a3b8'},grid:{display:false}},y:{stacked:true,ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}}}}});
+</script>
+
+SCATTER PLOT chart (for correlation data):
+<canvas id="scatter" style="max-height:320px"></canvas>
+<script>
+new Chart(document.getElementById('scatter'), {type:'scatter', data:{datasets:[{label:'Dataset A',data:[{x:10,y:75},{x:20,y:82},{x:30,y:68},{x:40,y:91},{x:50,y:85}],backgroundColor:'rgba(139,92,246,0.6)',borderColor:'#8b5cf6',pointRadius:8},{label:'Dataset B',data:[{x:15,y:45},{x:25,y:52},{x:35,y:60},{x:45,y:58},{x:55,y:70}],backgroundColor:'rgba(6,182,212,0.6)',borderColor:'#06b6d4',pointRadius:8}]},options:{responsive:true,plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}}}}});
+</script>
+
 HORIZONTAL BAR chart (for rankings/leaderboards):
 <canvas id="hbar" style="max-height:320px"></canvas>
 <script>
@@ -503,7 +515,11 @@ for(let ci=0;ci<weeks;ci+=4){
 7. Use emoji icons in headings and cards for visual richness
 8. Add a subtle grid or dot pattern background for depth — use: background-image: radial-gradient(circle, rgba(139,92,246,0.15) 1px, transparent 1px); background-size: 32px 32px; on body or a fixed ::before pseudo-element
 9. Include hover states on ALL cards and interactive elements
-10. Counter-animate ALL numeric statistics on page load`;
+10. Counter-animate ALL numeric statistics on page load
+11. Start with the HERO BANNER pattern — every visual should have a striking header
+12. AIM FOR DENSITY — pack in 8-15 visual elements per page: charts, stat cards, timelines, comparisons, flow diagrams. A sparse output is a FAILURE.
+13. Use clamp() for font-size to ensure responsive text: font-size: clamp(12px, 2vw, 18px)
+14. Every section should have a section header with an icon and gradient underline`;
 
 
 // Generate with AI
