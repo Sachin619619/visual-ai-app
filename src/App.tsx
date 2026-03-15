@@ -617,6 +617,58 @@ function AppContent() {
     showToast('success', 'Opening CodePen... 🚀');
   }, [html, showToast]);
 
+  // Export design to JSFiddle
+  const handleExportJSFiddle = useCallback(() => {
+    if (!html) {
+      showToast('error', 'Nothing to export');
+      return;
+    }
+
+    // Extract CSS and JS
+    const styleMatches = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)];
+    const css = styleMatches.map(m => m[1]).join('\n\n');
+    const scriptMatches = [...html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi)];
+    const js = scriptMatches.map(m => m[1]).join('\n\n');
+    const cleanHtml = html
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<html[^>]*>|<head[^>]*>|<\/head>|<body[^>]*>|<\/body>|<!DOCTYPE[^>]*>/gi, '')
+      .trim();
+
+    const resources = [
+      'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
+      'https://d3js.org/d3.v7.min.js',
+    ].join(',');
+
+    const form = document.createElement('form');
+    form.action = 'https://jsfiddle.net/api/post/library/pure/';
+    form.method = 'POST';
+    form.target = '_blank';
+
+    const fields: Record<string, string> = {
+      html: cleanHtml,
+      css: css,
+      js: js,
+      resources,
+      title: 'Visual AI Design',
+      wrap: 'b',
+      panel_css: '0',
+    };
+
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    showToast('success', 'Opening JSFiddle... 🎻');
+  }, [html, showToast]);
+
   // Capture thumbnail of current design
   const captureThumbnail = useCallback(async (htmlCode: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -1016,6 +1068,7 @@ function AppContent() {
           onExportPNG={handleExportPNG}
           onExportPDF={handleExportPDF}
           onExportCodePen={handleExportCodePen}
+          onExportJSFiddle={handleExportJSFiddle}
           onSaveFavorite={handleSaveFavorite}
           onShowFavorites={() => setShowFavorites(true)}
           onShowGallery={() => setShowGallery(true)}

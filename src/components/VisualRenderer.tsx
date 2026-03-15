@@ -26,6 +26,7 @@ interface VisualRendererProps {
   onExportPNG?: () => void;
   onExportPDF?: () => void;
   onExportCodePen?: () => void;
+  onExportJSFiddle?: () => void;
   onSaveFavorite?: () => void;
   onShowFavorites?: () => void;
   onShowGallery?: () => void;
@@ -276,7 +277,7 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, lastPrompt, onShare, onExport, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -1640,6 +1641,22 @@ body {
                       >
                         <FileText className="w-4 h-4" /> Export as PDF
                       </button>
+                      {onExportCodePen && (
+                        <button
+                          onClick={() => { onExportCodePen(); setShowMoreMenu(false); }}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-accent-primary transition-colors"
+                        >
+                          <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold text-orange-400">CP</span> Open in CodePen
+                        </button>
+                      )}
+                      {onExportJSFiddle && (
+                        <button
+                          onClick={() => { onExportJSFiddle(); setShowMoreMenu(false); }}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-blue-400 transition-colors"
+                        >
+                          <span className="w-4 h-4 flex items-center justify-center text-[10px] font-bold text-blue-400">JF</span> Open in JSFiddle
+                        </button>
+                      )}
                     </>
                   )}
                   {/* Remix - mobile */}
