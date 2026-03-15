@@ -4,8 +4,44 @@ const VisualRenderer = lazy(() => import('./components/VisualRenderer').then(m =
 const ChatWidget = lazy(() => import('./components/ChatWidget').then(m => ({ default: m.ChatWidget })));
 import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
-import { generateUI, generateTitle } from './lib/ai-providers';
+import { generateUI, generateTitle, isApiKeyConfigured } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
+
+// Demo visual shown when no API key is configured — lets users instantly see what the app does
+const DEMO_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 50%,rgba(139,92,246,.15),transparent 40%),radial-gradient(circle at 80% 30%,rgba(6,182,212,.12),transparent 40%)}
+.card{position:relative;z-index:1;text-align:center;padding:3rem 2rem;max-width:600px}
+.badge{display:inline-block;padding:.3rem 1rem;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:999px;color:#a78bfa;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem;animation:fadeUp .6s ease both}
+h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:800;background:linear-gradient(135deg,#fff 0%,#8b5cf6 50%,#06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:1rem;animation:fadeUp .6s .1s ease both;opacity:0}
+.sub{color:#64748b;font-size:1rem;margin-bottom:2.5rem;animation:fadeUp .6s .2s ease both;opacity:0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;animation:fadeUp .6s .3s ease both;opacity:0}
+.item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:1rem;padding:1.25rem .75rem;transition:transform .2s,border-color .2s}
+.item:hover{transform:translateY(-4px);border-color:rgba(139,92,246,.4)}
+.item .icon{font-size:1.75rem;margin-bottom:.5rem}
+.item .label{color:#94a3b8;font-size:.8rem}
+.cta{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border-radius:999px;color:#fff;font-weight:600;font-size:.9rem;animation:fadeUp .6s .4s ease both;opacity:0;cursor:pointer}
+.dot{width:8px;height:8px;background:#06b6d4;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+</style></head><body>
+<div class="bg"></div>
+<div class="card">
+  <div class="badge">✦ Demo Preview</div>
+  <h1>Transform Any Idea into a Visual</h1>
+  <p class="sub">Type anything — a topic, a question, even just "hi" — and watch it become a stunning visual.</p>
+  <div class="grid">
+    <div class="item"><div class="icon">📊</div><div class="label">Charts & Dashboards</div></div>
+    <div class="item"><div class="icon">🗺️</div><div class="label">Diagrams & Maps</div></div>
+    <div class="item"><div class="icon">✨</div><div class="label">Infographics</div></div>
+    <div class="item"><div class="icon">🎨</div><div class="label">Creative Visuals</div></div>
+    <div class="item"><div class="icon">📈</div><div class="label">Data Stories</div></div>
+    <div class="item"><div class="icon">⚡</div><div class="label">Animations</div></div>
+  </div>
+  <div class="cta"><div class="dot"></div> Add your free API key to start →</div>
+</div>
+</body></html>`;
 import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal, Search, LayoutGrid, List } from 'lucide-react';
 
 // Favorite design type
@@ -131,6 +167,8 @@ function AppContent() {
         const session = JSON.parse(savedSession);
         if (session.html) {
           setHtml(session.html);
+        } else if (!isApiKeyConfigured()) {
+          setHtml(DEMO_HTML);
         }
         if (session.lastModel) {
           setLastModel(session.lastModel);
@@ -144,8 +182,10 @@ function AppContent() {
       } catch (e) {
         console.error('Failed to restore session', e);
       }
+    } else if (!isApiKeyConfigured()) {
+      // No session + no API key → show demo so users see the app's value immediately
+      setHtml(DEMO_HTML);
     }
-    
   }, []);
 
   // Auto-save session to localStorage

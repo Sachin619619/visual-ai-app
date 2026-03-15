@@ -658,6 +658,37 @@ async function parseSSEStream(
   return accumulated;
 }
 
+// Intelligently expand short or vague prompts into rich visual requests
+function enrichPrompt(prompt: string): string {
+  const trimmed = prompt.trim();
+  const words = trimmed.split(/\s+/).filter(Boolean);
+
+  // Only enrich if prompt is very short (1-4 words) or purely conversational
+  if (words.length > 4) return trimmed;
+
+  const lower = trimmed.toLowerCase();
+
+  // Greetings
+  if (/^(hi+|hey+|hello+|howdy|yo+|sup|what'?s up|hiya)[\s!?.]*$/i.test(lower)) {
+    return `Create a stunning animated greeting visual. Large bold "Hello!" text with a vibrant gradient, floating geometric shapes, particle effects, and a warm welcoming atmosphere. Make it feel alive and joyful.`;
+  }
+  // Single emotion / mood
+  if (/^(happy|sad|excited|bored|tired|angry|love|chill|vibes?|mood)[\s!?.]*$/i.test(lower)) {
+    return `Create a beautiful visual that captures the feeling of "${trimmed}". Use colors, shapes, typography, and animations to express this emotion artistically. Make it something someone would want as their wallpaper.`;
+  }
+  // Questions about self / existential
+  if (/^(why|what|who am i|help|idk|hmm+|ugh|ok+|okay)[\s!?.]*$/i.test(lower)) {
+    return `Create a fun, creative, thought-provoking visual infographic about the concept of "${trimmed}". Make it artistic, witty, and visually stunning.`;
+  }
+  // Any other short prompt — wrap it creatively
+  return `Create a breathtaking visual experience inspired by: "${trimmed}".
+Be creative and imaginative — transform this into something visually stunning:
+- If it's a word or concept, make a beautiful artistic infographic about it
+- If it's a name or place, create a showcase visual
+- If it's abstract, interpret it with colors, shapes, and animations
+Make it something the user would be amazed by and want to share.`;
+}
+
 // Generate with AI
 const generateWithAI = async (
   prompt: string,
@@ -668,11 +699,11 @@ const generateWithAI = async (
   onChunk?: (partial: string) => void
 ): Promise<string> => {
   // Build context from previous HTML if provided
-  const contextSection = contextHtml 
+  const contextSection = contextHtml
     ? `\n\nREFERENCE DESIGN (use as inspiration but create something NEW and DIFFERENT):\n${contextHtml.substring(0, 1500)}\n\nCreate a variation with different colors, layout, or styling while keeping the same type of component.`
     : '';
   
-  const uiPrompt = `${prompt}${contextSection}
+  const uiPrompt = `${enrichPrompt(prompt)}${contextSection}
 
 🎯 VISUAL OUTPUT REQUIREMENTS:
 - Transform this into a stunning visual experience — NOT text
