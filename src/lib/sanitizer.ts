@@ -860,10 +860,34 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
     });
   }
 
+  // 4. Intersection Observer for scroll-triggered animations
+  function initScrollAnimations() {
+    if (!window.IntersectionObserver) return;
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('[data-aos], .animate-on-scroll').forEach(function(el) {
+      var htmlEl = el;
+      // Only apply if not already animated
+      if (getComputedStyle(htmlEl).opacity !== '0') return;
+      htmlEl.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      obs.observe(htmlEl);
+    });
+  }
+
   function init() {
     initCharts();
     animateCounters();
     animateProgressBars();
+    initScrollAnimations();
   }
 
   if (document.readyState === 'loading') {
