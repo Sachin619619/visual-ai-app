@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "mkdir -p public && cp node_modules/chart.js/dist/chart.umd.min.js public/chart.umd.min.js",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "deploy": "vercel --prod",
