@@ -339,8 +339,8 @@ new Chart(document.getElementById('hbar'), {type:'bar', data:{labels:['#1 USA','
 - Entry animations: ALL elements slide/fade in with staggered delays (100ms, 200ms, 300ms...)
 - CSS @keyframes: fadeInUp, slideInLeft, slideInRight, scaleIn, countUp, pulse, float, shimmer
 - Hover effects: scale(1.03-1.05) + glow box-shadow transitions, color transitions
-- Progress bars and rings MUST animate on load (from 0 to final value)
-- Counter animations for ALL statistics (count up from 0 using JS)
+- Progress bars and rings MUST animate on load (from 0 to final value using CSS transitions only, not JS)
+- Statistics MUST show their FINAL values immediately — NO count-up JS animations from 0
 - Chart.js ALWAYS include animation options: options: { animation: { duration: 1200, easing: 'easeOutQuart' }, responsive: true, maintainAspectRatio: false, ...}
 - Wrap ALL charts in a div with explicit height: <div style="height:280px;position:relative"><canvas id="..."></canvas></div>
 
@@ -537,8 +537,7 @@ for(let ci=0;ci<weeks;ci+=4){
 </div>
 
 💡 BUILT-IN AUTO-BEHAVIOURS (always available, no extra JS needed):
-- [data-count="1234000" data-compact="true" data-prefix="$"] → auto-animates counter with K/M/B compact format (e.g. $1.2M)
-- [data-count="1234" data-prefix="$" data-suffix="K" data-decimals="1"] → auto-animates counter from 0
+- DO NOT use data-count attributes — always hardcode final values directly in HTML text
 - [data-target="78%"] on a progress bar inner div → auto-animates width from 0 to target
 - [data-target="60%" data-axis="height"] on a bar → animates height for vertical bar charts
 - [data-chart-type="bar" data-labels='[...]' data-chart-data='[...]'] → auto-creates Chart.js chart
@@ -603,7 +602,7 @@ for(let ci=0;ci<weeks;ci+=4){
 - Google Fonts (Inter, Outfit, JetBrains Mono) are pre-loaded
 - Make FULLY responsive — use CSS grid auto-fit, clamp(), and media queries
 - Add smooth hover micro-interactions on ALL interactive elements
-- Animate counters with JS: numbers counting up from 0 to final value over 1.5s
+- Show all numeric statistics as their FINAL values directly in the HTML — do NOT use JS counter animations that start from 0
 - Add particle effects, grid backgrounds, or ambient gradients for visual depth
 
 🚨 ABSOLUTE RULES:
@@ -616,14 +615,14 @@ for(let ci=0;ci<weeks;ci+=4){
 7. Use emoji icons in headings and cards for visual richness
 8. Add a subtle grid or dot pattern background for depth — use: background-image: radial-gradient(circle, rgba(139,92,246,0.15) 1px, transparent 1px); background-size: 32px 32px; on body or a fixed ::before pseudo-element
 9. Include hover states on ALL cards and interactive elements
-10. Counter-animate ALL numeric statistics on page load
+10. Show ALL numeric statistics as their FINAL values — NEVER use count-up JS animations from 0
 11. Start with the HERO BANNER pattern — every visual should have a striking header
 12. AIM FOR DENSITY — pack in 8-15 visual elements per page: charts, stat cards, timelines, comparisons, flow diagrams. A sparse output is a FAILURE.
 13. Use clamp() for font-size to ensure responsive text: font-size: clamp(12px, 2vw, 18px)
 14. Every section should have a section header with an icon and gradient underline
 15. WRAP all chart canvases in <div style="position:relative;height:Xpx"> for proper sizing — never use canvas without a height-constrained wrapper
 16. Include at least ONE data table or comparison grid in addition to charts
-17. ALL numbers/statistics MUST use data-count for animated counting from zero
+17. NEVER use data-count or JS counter animations — always hardcode the final numeric value directly in the HTML
 18. Do NOT use Tailwind CSS class names — use only inline styles or CSS in <style> block`;
 
 const REVIEW_PROMPT = `You are doing a critical visual review of an HTML UI you just generated.
