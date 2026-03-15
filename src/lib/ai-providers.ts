@@ -238,7 +238,7 @@ const ctx = document.getElementById('barChart').getContext('2d');
 const grad = ctx.createLinearGradient(0,0,0,300);
 grad.addColorStop(0,'rgba(139,92,246,0.9)');
 grad.addColorStop(1,'rgba(139,92,246,0.1)');
-new Chart(ctx, {type:'bar', data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue',data:[42,58,73,61,89],backgroundColor:grad,borderColor:'#8b5cf6',borderWidth:2,borderRadius:8}]},options:{responsive:true,plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}}}}});
+new Chart(ctx, {type:'bar', data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue',data:[42,58,73,61,89],backgroundColor:grad,borderColor:'#8b5cf6',borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:1200,easing:'easeOutQuart'},plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}}}}});
 </script>
 
 LINE CHART with area fill:
@@ -305,7 +305,8 @@ new Chart(document.getElementById('hbar'), {type:'bar', data:{labels:['#1 USA','
 - Hover effects: scale(1.03-1.05) + glow box-shadow transitions, color transitions
 - Progress bars and rings MUST animate on load (from 0 to final value)
 - Counter animations for ALL statistics (count up from 0 using JS)
-- Chart.js animations: use animation duration 1200ms with easing 'easeOutQuart'
+- Chart.js ALWAYS include animation options: options: { animation: { duration: 1200, easing: 'easeOutQuart' }, responsive: true, maintainAspectRatio: false, ...}
+- Wrap ALL charts in a div with explicit height: <div style="height:280px;position:relative"><canvas id="..."></canvas></div>
 
 🃏 PREMIUM COMPONENT STYLES:
 Stat card with trend:
