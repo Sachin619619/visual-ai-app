@@ -558,6 +558,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
       if (key.startsWith('sk-kimi-')) {
         localStorage.setItem('visual-ai-kimi-key', key);
         setKimiApiKey(key);
+        setKimiKeyInput(key);
+        setHasKimiKey(true);
       } else {
         localStorage.setItem('visual-ai-api-key', key);
         setApiKey(key);
