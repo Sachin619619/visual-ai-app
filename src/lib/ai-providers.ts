@@ -111,7 +111,14 @@ export const generateUI = async (
     throw new Error('🔑 Please set your API key in settings to generate UI. Get your free API key from https://openrouter.ai/keys');
   }
   try {
-    return await generateWithAI(prompt, model, apiKey, contextHtml);
+    // Add 90-second timeout to prevent hanging requests
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('⏱️ Generation timed out after 90 seconds. Try a shorter prompt or faster model.')), 90000);
+    });
+    return await Promise.race([
+      generateWithAI(prompt, model, apiKey, contextHtml),
+      timeoutPromise
+    ]);
   } catch (error: any) {
     console.error('AI generation failed:', error);
     const msg = error?.message || String(error);
