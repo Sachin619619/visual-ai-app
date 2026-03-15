@@ -82,6 +82,7 @@ function AppContent() {
   const [galleryViewMode, setGalleryViewMode] = useState<'grid' | 'list'>('grid');
   const [generationProgress, setGenerationProgress] = useState(0);
   const generationProgressTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const generationAbortController = useRef<AbortController | null>(null);
   const { showToast } = useToast();
   const cleanupRan = useRef(false);
   const promptSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -301,8 +302,25 @@ function AppContent() {
   }, []);
 
   // All useCallbacks must be defined BEFORE any conditional returns
+  const handleCancelGeneration = useCallback(() => {
+    if (generationAbortController.current) {
+      generationAbortController.current.abort();
+      generationAbortController.current = null;
+    }
+    if (generationProgressTimer.current) clearInterval(generationProgressTimer.current);
+    setGenerationProgress(0);
+    setIsLoading(false);
+    showToast('info', 'Generation cancelled');
+  }, [showToast]);
+
   const handleGenerate = useCallback(async (prompt: string, model: ModelProvider, contextHtml?: string, images?: { url: string; name: string }[]) => {
     const startTime = Date.now();
+    // Cancel any in-progress generation
+    if (generationAbortController.current) {
+      generationAbortController.current.abort();
+    }
+    generationAbortController.current = new AbortController();
+    const { signal } = generationAbortController.current;
     setIsLoading(true);
     setLastModel(model);
     // Start simulated progress bar (fast to 70%, then slows — resets on done)
@@ -331,7 +349,7 @@ function AppContent() {
     setHistory(prev => [historyItem, ...prev]);
     
     try {
-      const generatedHtml = await generateUI(fullPrompt, model, contextHtml);
+      const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal);
       // Add to undo history
       setHtmlHistory(prev => {
         // If we're not at the end of history, truncate future history
@@ -364,6 +382,13 @@ function AppContent() {
       localStorage.removeItem('visual-ai-draft');
       showToast('success', `UI generated in ${(generationTime / 1000).toFixed(1)}s! ✨`);
     } catch (error: any) {
+      // Silently ignore abort errors — user cancelled intentionally
+      if (error?.name === 'AbortError' || error?.message?.includes('aborted')) {
+        if (generationProgressTimer.current) clearInterval(generationProgressTimer.current);
+        setGenerationProgress(0);
+        setIsLoading(false);
+        return;
+      }
       console.error('Error generating UI:', error);
       const msg: string = error?.message || '';
       let errorMessage = 'Failed to generate UI. Please try again.';
@@ -1063,6 +1088,7 @@ function AppContent() {
           onQuickGenerate={handleQuickGenerate}
           onRefinePrompt={handleRefinePrompt}
           onRegenerate={handleRegenerate}
+          onCancelGeneration={handleCancelGeneration}
           lastPrompt={history[0]?.prompt}
           onShare={handleShare}
           onExport={handleExport}

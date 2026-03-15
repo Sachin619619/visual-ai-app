@@ -18,6 +18,7 @@ interface VisualRendererProps {
   onQuickGenerate?: (prompt: string) => void;
   onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
   onRegenerate?: () => void;
+  onCancelGeneration?: () => void;
   lastPrompt?: string;
   onShare?: () => void;
   onExport?: () => void;
@@ -275,7 +276,7 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, onCancelGeneration, lastPrompt, onShare, onExport, onExportCodePen, onExportJSFiddle, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -2233,6 +2234,19 @@ body {
                   transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
                 />
               </div>
+
+              {/* Cancel button */}
+              {onCancelGeneration && (
+                <motion.button
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 3 }}
+                  onClick={onCancelGeneration}
+                  className="mt-2 px-4 py-2 text-xs text-text-muted hover:text-red-400 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-lg transition-all"
+                >
+                  Cancel generation
+                </motion.button>
+              )}
             </div>
           </motion.div>
         )}

@@ -114,7 +114,8 @@ export const getProviderStatus = (): Record<ModelProvider, boolean> => {
 export const generateUI = async (
   prompt: string,
   model: ModelProvider,
-  contextHtml?: string
+  contextHtml?: string,
+  signal?: AbortSignal
 ): Promise<string> => {
   // Check the correct key for the selected provider
   if (model === 'kimi' && !kimiApiKey && !apiKey) {
@@ -133,7 +134,7 @@ export const generateUI = async (
       setTimeout(() => reject(new Error('⏱️ Generation timed out after 90 seconds. Try a shorter prompt or faster model.')), 90000);
     });
     return await Promise.race([
-      generateWithAI(prompt, model, apiKey, contextHtml),
+      generateWithAI(prompt, model, apiKey, contextHtml, signal),
       timeoutPromise
     ]);
   } catch (error: any) {
@@ -567,7 +568,8 @@ const generateWithAI = async (
   prompt: string,
   model: ModelProvider,
   apiKey: string,
-  contextHtml?: string
+  contextHtml?: string,
+  signal?: AbortSignal
 ): Promise<string> => {
   // Build context from previous HTML if provided
   const contextSection = contextHtml 
@@ -598,6 +600,7 @@ const generateWithAI = async (
         'HTTP-Referer': 'https://visual-ai-app.vercel.app',
         'X-Title': 'Visual AI'
       },
+      signal,
       body: JSON.stringify({
         model: selectedFreeModel,
         messages: [
