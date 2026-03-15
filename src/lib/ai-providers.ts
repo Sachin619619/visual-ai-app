@@ -60,6 +60,11 @@ export const FREE_MODELS: FreeModel[] = [
   { id: 'Perplexity/llama-3.1-sonar-small-128k-online:free', name: 'Llama 3.1 Online', icon: '🌐' },
   { id: '01-ai/yi-1.5-34b-chat:free', name: 'Yi 1.5 34B', icon: '☀️' },
   { id: 'cohere/command-a-03-2025:free', name: 'Command A', icon: '💬' },
+  { id: 'meta-llama/llama-4-scout:free', name: 'Llama 4 Scout', icon: '🔭' },
+  { id: 'qwen/qwen3-14b:free', name: 'Qwen 3 14B', icon: '🧩' },
+  { id: 'mistralai/mistral-nemo:free', name: 'Mistral Nemo', icon: '🌊' },
+  { id: 'google/gemini-flash-1.5:free', name: 'Gemini Flash 1.5', icon: '⚡' },
+  { id: 'deepseek/deepseek-r1-0528:free', name: 'DeepSeek R1 0528', icon: '🔬' },
 ];
 
 // Global model selection for OpenRouter free models
