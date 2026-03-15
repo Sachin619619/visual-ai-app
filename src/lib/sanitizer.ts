@@ -70,7 +70,9 @@ const getThemeStyles = (theme: PreviewTheme) => {
     return `
     body {
       font-family: 'IBM Plex Sans', system-ui, sans-serif;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      background: #f8fafc;
+      background-image: radial-gradient(circle, rgba(124,58,237,0.10) 1px, transparent 1px);
+      background-size: 28px 28px;
       color: #1e293b;
       min-height: 100vh;
       padding: 24px;
@@ -323,7 +325,9 @@ const getThemeStyles = (theme: PreviewTheme) => {
     }
     body {
       font-family: 'IBM Plex Sans', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0a0a0f 0%, #12121a 100%);
+      background: #0a0a0f;
+      background-image: radial-gradient(circle, rgba(139,92,246,0.12) 1px, transparent 1px);
+      background-size: 28px 28px;
       color: #f8fafc;
       min-height: 100vh;
       padding: 24px;
@@ -950,6 +954,21 @@ export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark')
     // Inject Google Fonts if absent
     if (!doc.includes('fonts.googleapis.com')) {
       doc = doc.replace(/<head([^>]*)>/i, `<head$1>\n  <link href="${FONTS_CDN}" rel="stylesheet">`);
+    }
+
+    // Inject light-mode override stylesheet when theme is 'light'
+    // This softens dark backgrounds without breaking the AI's design intent
+    if (theme === 'light') {
+      const lightOverride = `<style id="visual-ai-light-override">
+  body { background:#f4f4f8 !important; background-image:radial-gradient(circle,rgba(124,58,237,0.08) 1px,transparent 1px) !important; background-size:28px 28px !important; color:#1e293b !important; }
+  [style*="background:#0a0a0f"],[style*="background: #0a0a0f"],[style*="background:#12121a"],[style*="background: #12121a"],[style*="background:#1a1a2e"],[style*="background: #1a1a2e"] { background:#ffffff !important; }
+  [style*="background:rgba(18,18,26"],[style*="background: rgba(18,18,26"],[style*="background:rgba(10,10,15"],[style*="background: rgba(10,10,15"] { background:rgba(255,255,255,0.95) !important; }
+  [style*="color:#f8fafc"],[style*="color: #f8fafc"],[style*="color:#94a3b8"],[style*="color: #94a3b8"] { color:#334155 !important; }
+  [style*="border:1px solid rgba(255,255,255"],[style*="border: 1px solid rgba(255,255,255"] { border-color:rgba(0,0,0,0.1) !important; }
+</style>`;
+      if (/<head[^>]*>/i.test(doc)) {
+        doc = doc.replace(/<\/head>/i, `${lightOverride}\n</head>`);
+      }
     }
 
     // Append data-chart auto-init before </body>
