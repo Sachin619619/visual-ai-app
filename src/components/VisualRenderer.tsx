@@ -316,8 +316,18 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-// Use Blob URL instead of srcdoc for better mobile browser compatibility
+// Write content directly to iframe document — works on all mobile browsers without sandbox conflicts
 function setIframeContent(iframe: HTMLIFrameElement, content: string) {
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (doc) {
+      doc.open();
+      doc.write(content);
+      doc.close();
+      return;
+    }
+  } catch (_) {}
+  // Fallback: blob URL
   const blob = new Blob([content], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const prev = iframe.src;
@@ -2609,7 +2619,6 @@ body {
           <iframe
             ref={iframeRef}
             title="Visual Output"
-            sandbox="allow-scripts"
             className="w-full h-full border-0"
           />
         </div>
