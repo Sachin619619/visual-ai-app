@@ -798,6 +798,7 @@ const FONTS_CDN = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@4
 const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
 <script>
 (function() {
+  // 1. Auto-init data-chart-type elements
   function initCharts() {
     var containers = document.querySelectorAll('[data-chart-type]');
     containers.forEach(function(container) {
@@ -826,10 +827,49 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
       }
     });
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCharts);
-  } else {
+
+  // 2. Counter animation for data-count elements
+  function animateCounters() {
+    var counters = document.querySelectorAll('[data-count]');
+    counters.forEach(function(el) {
+      var target = parseFloat(el.getAttribute('data-count') || '0');
+      var prefix = el.getAttribute('data-prefix') || '';
+      var suffix = el.getAttribute('data-suffix') || '';
+      var decimals = parseInt(el.getAttribute('data-decimals') || '0');
+      var duration = parseInt(el.getAttribute('data-duration') || '1500');
+      var start = Date.now();
+      var frame = function() {
+        var progress = Math.min((Date.now() - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var value = target * eased;
+        el.textContent = prefix + value.toFixed(decimals) + suffix;
+        if (progress < 1) requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    });
+  }
+
+  // 3. Animate progress bars with data-target attribute
+  function animateProgressBars() {
+    var bars = document.querySelectorAll('[data-target]');
+    bars.forEach(function(bar) {
+      var target = bar.getAttribute('data-target') || '0%';
+      setTimeout(function() {
+        bar.style.width = target;
+      }, 100);
+    });
+  }
+
+  function init() {
     initCharts();
+    animateCounters();
+    animateProgressBars();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
 </script>`;
