@@ -671,9 +671,13 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    
+
     Array.from(files).forEach(file => {
       if (file.type.startsWith('image/')) {
+        // Warn on files over 4MB
+        if (file.size > 4 * 1024 * 1024) {
+          console.warn(`Image ${file.name} is ${(file.size / 1024 / 1024).toFixed(1)}MB — may cause issues`);
+        }
         const reader = new FileReader();
         reader.onload = (event) => {
           const url = event.target?.result as string;
@@ -979,23 +983,39 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
             
             {/* Uploaded Images Preview */}
             {uploadedImages.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {uploadedImages.map((img) => (
-                  <div key={img.id} className="relative group">
-                    <img 
-                      src={img.url} 
-                      alt={img.name}
-                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-white/10"
-                    />
+              <div className="mb-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] text-text-muted">{uploadedImages.length} image{uploadedImages.length > 1 ? 's' : ''} attached</span>
+                  {uploadedImages.length > 1 && (
                     <button
                       type="button"
-                      onClick={() => removeImage(img.id)}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => setUploadedImages([])}
+                      className="text-[10px] text-red-400 hover:text-red-300 transition-colors"
                     >
-                      <Trash2 className="w-3 h-3 text-white" />
+                      Clear all
                     </button>
-                  </div>
-                ))}
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {uploadedImages.map((img) => (
+                    <div key={img.id} className="relative group">
+                      <img
+                        src={img.url}
+                        alt={img.name}
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-white/10"
+                        title={img.name}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(img.id)}
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label={`Remove ${img.name}`}
+                      >
+                        <Trash2 className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             
@@ -1011,7 +1031,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
             
             {uploadedImages.length > 0 && (
               <p className="text-[10px] text-text-muted mt-1">
-                {uploadedImages.length} image{uploadedImages.length > 1 ? 's' : ''} attached • Will be included in prompt
+                Will be included in generation prompt
               </p>
             )}
           </div>
