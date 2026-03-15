@@ -1181,6 +1181,13 @@ export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark')
       }
     }
 
+    // Escape </script> inside <script> blocks to prevent premature script tag closing
+    // (AI-generated JS often has </script> inside string literals which breaks mobile browsers)
+    doc = doc.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (_match, attrs, content) => {
+      const safeContent = content.replace(/<\/script>/gi, '<\\/script>');
+      return `<script${attrs}>${safeContent}</script>`;
+    });
+
     // Append data-chart auto-init before </body>
     if (/<\/body>/i.test(doc)) {
       doc = doc.replace(/<\/body>/i, `${DATA_CHART_INIT_SCRIPT(theme)}\n</body>`);
@@ -1196,7 +1203,11 @@ export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark')
   // Script tags are preserved so inline JS still runs.
   const safeBody = trimmed
     .replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*')/gi, '')  // strip onclick="..." etc.
-    .replace(/href\s*=\s*["']\s*javascript\s*:[^"']*["']/gi, 'href="#"');
+    .replace(/href\s*=\s*["']\s*javascript\s*:[^"']*["']/gi, 'href="#"')
+    .replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (_match, attrs, content) => {
+      const safeContent = content.replace(/<\/script>/gi, '<\\/script>');
+      return `<script${attrs}>${safeContent}</script>`;
+    });
 
   return `<!DOCTYPE html>
 <html lang="en">
