@@ -4,7 +4,7 @@ import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2
 import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
-import { AI_PROVIDERS } from '../lib/ai-providers';
+import { AI_PROVIDERS, getApiKey } from '../lib/ai-providers';
 import html2canvas from 'html2canvas';
 
 interface VisualRendererProps {
@@ -837,14 +837,19 @@ body {
     localStorage.setItem('visual-ai-templates', JSON.stringify(filtered));
   };
 
+  // Cache the last sandbox content to avoid re-rendering when nothing changed
+  const lastSandboxRef = useRef<{ html: string; theme: PreviewTheme; content: string } | null>(null);
+
   useEffect(() => {
     if (html && iframeRef.current) {
       try {
-        console.log('🎨 HTML received by VisualRenderer:', html.substring(0, 500));
+        // Skip re-render if content hasn't changed
+        if (lastSandboxRef.current?.html === html && lastSandboxRef.current?.theme === previewTheme) {
+          return;
+        }
         const content = createSandboxContent(html, previewTheme);
-        console.log('🎨 Generated iframe content (first 500 chars):', content.substring(0, 500));
-        const iframe = iframeRef.current;
-        iframe.srcdoc = content;
+        lastSandboxRef.current = { html, theme: previewTheme, content };
+        iframeRef.current.srcdoc = content;
         setError(null);
       } catch (err) {
         setError('Failed to render content');
@@ -2021,6 +2026,32 @@ body {
             className="absolute inset-0 overflow-auto py-4 sm:py-8 px-3 sm:px-4 flex flex-col items-center justify-start"
           >
           <div className="text-center max-w-3xl w-full mx-auto">
+            {/* API Key Setup Guide - shows if no API key configured */}
+            {!getApiKey() && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-5 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-left max-w-md mx-auto"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-amber-400 text-xl flex-shrink-0">🔑</span>
+                  <div>
+                    <p className="text-amber-300 font-semibold text-sm mb-1">No API Key Configured</p>
+                    <p className="text-amber-200/70 text-xs mb-2">Add your API key in the sidebar settings to start generating visuals. It's free to get started!</p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <a
+                        href="https://openrouter.ai/keys"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg transition-colors border border-amber-500/30"
+                      >
+                        Get Free Key (OpenRouter) →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
             {/* Hero section */}
             <motion.div
               className="mb-4 sm:mb-6"

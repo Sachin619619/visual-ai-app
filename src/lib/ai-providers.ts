@@ -265,13 +265,41 @@ Animated progress bar:
   <div style="height:100%;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:100px;width:0;transition:width 1.5s ease-out" data-target="75%"></div>
 </div>
 
+📐 D3.JS FOR CUSTOM VISUALIZATIONS (d3 is available as window.d3):
+Use D3 for unique, custom visualizations that Chart.js can't do. Examples:
+
+Force-directed graph:
+<div id="force-graph" style="width:100%;height:400px"></div>
+<script>
+const data = {nodes:[{id:'A'},{id:'B'},{id:'C'}],links:[{source:'A',target:'B'},{source:'B',target:'C'}]};
+const svg = d3.select('#force-graph').append('svg').attr('width','100%').attr('height',400);
+const sim = d3.forceSimulation(data.nodes).force('link',d3.forceLink(data.links).id(d=>d.id)).force('charge',d3.forceManyBody().strength(-100)).force('center',d3.forceCenter(400,200));
+const link = svg.append('g').selectAll('line').data(data.links).join('line').attr('stroke','rgba(139,92,246,0.5)').attr('stroke-width',2);
+const node = svg.append('g').selectAll('circle').data(data.nodes).join('circle').attr('r',20).attr('fill','#8b5cf6').attr('stroke','#06b6d4').attr('stroke-width',2).call(d3.drag().on('start',e=>{if(!e.active)sim.alphaTarget(0.3).restart();e.subject.fx=e.subject.x;e.subject.fy=e.subject.y}).on('drag',e=>{e.subject.fx=e.x;e.subject.fy=e.y}).on('end',e=>{if(!e.active)sim.alphaTarget(0);e.subject.fx=null;e.subject.fy=null}));
+sim.on('tick',()=>{link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);node.attr('cx',d=>d.x).attr('cy',d=>d.y)});
+</script>
+
+Treemap:
+<div id="treemap" style="width:100%;height:350px"></div>
+<script>
+const tdata = {name:'root',children:[{name:'A',value:40},{name:'B',value:25},{name:'C',value:35}]};
+const w=600,h=350;
+const svg=d3.select('#treemap').append('svg').attr('viewBox','0 0 '+w+' '+h).attr('width','100%').attr('height',h);
+const root=d3.hierarchy(tdata).sum(d=>d.value);
+d3.treemap().size([w,h]).padding(3)(root);
+const colors=['#8b5cf6','#06b6d4','#10b981','#f59e0b'];
+svg.selectAll('rect').data(root.leaves()).join('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0).attr('fill',(d,i)=>colors[i%colors.length]).attr('rx',8).attr('opacity',0.85);
+svg.selectAll('text').data(root.leaves()).join('text').attr('x',d=>(d.x0+d.x1)/2).attr('y',d=>(d.y0+d.y1)/2).attr('text-anchor','middle').attr('fill','white').attr('font-size','14px').text(d=>d.data.name);
+</script>
+
 🔧 TECHNICAL REQUIREMENTS:
 - Output ONLY raw HTML — no markdown, no explanations, no code blocks, no backticks
 - Start with <!DOCTYPE html>
 - All CSS in <style> tags in <head> — use extensive CSS variables for theming
 - All JavaScript in <script> tags before </body>
 - Chart.js is pre-loaded as window.Chart — use it for ALL data visualizations
-- D3.js is pre-loaded at https://d3js.org/d3.v7.min.js — use for complex custom visualizations
+- D3.js v7 is pre-loaded as window.d3 — use for custom graphs, force layouts, treemaps, etc.
+- Lottie animations are pre-loaded — use for animated icons
 - Google Fonts (Inter, Outfit, JetBrains Mono) are pre-loaded
 - Make FULLY responsive — use CSS grid auto-fit, clamp(), and media queries
 - Add smooth hover micro-interactions on ALL interactive elements
