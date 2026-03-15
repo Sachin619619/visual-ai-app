@@ -122,7 +122,9 @@ const QuickStartButton = memo(({ item, index, onClick, disabled }: {
       transition={{ delay: index * 0.04 }}
       onClick={() => onClick(item.prompt)}
       disabled={disabled}
-      className="p-2.5 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[56px] sm:min-h-[64px] flex flex-col justify-center gap-0.5 text-left"
+      aria-label={`Generate: ${item.label}`}
+      title={item.prompt.slice(0, 80) + (item.prompt.length > 80 ? '...' : '')}
+      className="w-full p-2.5 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[56px] sm:min-h-[64px] flex flex-col justify-center gap-0.5 text-left"
     >
       <p className="text-accent-primary text-[11px] sm:text-xs font-semibold group-hover:text-accent-secondary transition-colors leading-tight">{item.label}</p>
       {shortDesc && <p className="text-text-muted text-[9px] sm:text-[10px] leading-tight line-clamp-1 opacity-70">{shortDesc}</p>}
@@ -164,15 +166,20 @@ const QuickStartGrid = memo(({ items, onClick, disabled }: {
   const visible = showAll ? items : items.slice(0, 12);
   return (
     <div>
-      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+      <div
+        className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto"
+        role="list"
+        aria-label="Quick start prompts"
+      >
         {visible.map((item, index) => (
-          <QuickStartButton
-            key={item.key}
-            item={item}
-            index={index}
-            onClick={onClick}
-            disabled={disabled}
-          />
+          <div key={item.key} role="listitem">
+            <QuickStartButton
+              item={item}
+              index={index}
+              onClick={onClick}
+              disabled={disabled}
+            />
+          </div>
         ))}
       </div>
       {items.length > 12 && (
