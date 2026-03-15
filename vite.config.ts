@@ -14,7 +14,6 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'motion': ['framer-motion'],
           'charts': ['chart.js', 'react-chartjs-2'],
-          'pdf': ['jspdf', 'html2canvas'],
           'icons': ['lucide-react'],
         }
       }

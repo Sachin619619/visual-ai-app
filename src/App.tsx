@@ -7,7 +7,6 @@ import { ModelProvider, PromptHistory, StyleFrame } from './types';
 import { generateUI, generateTitle } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
 import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal, Search, LayoutGrid, List } from 'lucide-react';
-import html2canvas from 'html2canvas';
 
 // Favorite design type
 interface FavoriteDesign {
@@ -492,13 +491,14 @@ function AppContent() {
       container.style.padding = '32px';
       document.body.appendChild(container);
       
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(container, {
         backgroundColor: theme === 'light' ? '#ffffff' : '#0f0f0f',
         scale: 2,
         logging: false,
         useCORS: true,
       });
-      
+
       const link = document.createElement('a');
       link.download = `visual-ai-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -519,8 +519,6 @@ function AppContent() {
     }
     
     try {
-      const { default: jsPDF } = await import('jspdf');
-      
       const container = document.createElement('div');
       container.innerHTML = html;
       container.style.position = 'absolute';
@@ -530,15 +528,17 @@ function AppContent() {
       container.style.background = theme === 'light' ? '#ffffff' : '#0f0f0f';
       container.style.padding = '32px';
       document.body.appendChild(container);
-      
+
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(container, {
         backgroundColor: theme === 'light' ? '#ffffff' : '#0f0f0f',
         scale: 2,
         logging: false,
         useCORS: true,
       });
-      
+
       const imgData = canvas.toDataURL('image/png');
+      const { default: jsPDF } = await import('jspdf');
       const pdf = new jsPDF({
         orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
         unit: 'px',
@@ -683,12 +683,12 @@ function AppContent() {
       container.style.padding = '16px';
       document.body.appendChild(container);
       
-      html2canvas(container, {
+      import('html2canvas').then(({ default: html2canvas }) => html2canvas(container, {
         backgroundColor: '#0f0f0f',
         scale: 0.5,
         logging: false,
         useCORS: true,
-      }).then((canvas) => {
+      })).then((canvas) => {
         const thumbnail = canvas.toDataURL('image/png');
         document.body.removeChild(container);
         resolve(thumbnail);

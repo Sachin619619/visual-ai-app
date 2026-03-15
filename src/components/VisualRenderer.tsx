@@ -1,11 +1,9 @@
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal, ZoomIn, ZoomOut, ExternalLink } from 'lucide-react';
-import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
 import { AI_PROVIDERS, isApiKeyConfigured } from '../lib/ai-providers';
-import html2canvas from 'html2canvas';
 
 interface VisualRendererProps {
   html: string;
@@ -514,7 +512,8 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
       container.appendChild(bodyContent);
       document.body.appendChild(container);
       
-      // Use html2canvas on the content
+      // Use html2canvas on the content (dynamic import to reduce initial bundle)
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(container, {
         backgroundColor: '#0f0f23',
         scale: exportQuality,
@@ -736,16 +735,18 @@ body {
       container.appendChild(bodyContent);
       document.body.appendChild(container);
       
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(container, {
         backgroundColor: previewTheme === 'dark' ? '#0f0f23' : '#ffffff',
         scale: 2,
         logging: false,
         useCORS: true,
       });
-      
+
       document.body.removeChild(container);
-      
-      // Create PDF with jsPDF
+
+      // Create PDF with jsPDF (dynamic import)
+      const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF({
         orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
         unit: 'px',
@@ -885,16 +886,17 @@ body {
       container.appendChild(bodyContent);
       document.body.appendChild(container);
       
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(container, {
         backgroundColor: previewTheme === 'dark' ? '#0f0f23' : '#ffffff',
         scale: 2,
         logging: false,
         useCORS: true,
       });
-      
+
       document.body.removeChild(container);
-      
-      canvas.toBlob(async (blob) => {
+
+      canvas.toBlob(async (blob: Blob | null) => {
         if (blob) {
           await navigator.clipboard.write([
             new ClipboardItem({ 'image/png': blob })
