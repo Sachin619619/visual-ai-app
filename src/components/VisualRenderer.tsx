@@ -240,6 +240,17 @@ const LOADING_MESSAGES = [
   'Rendering neon glows...',
   'Assembling the data story...',
   'Tuning hover interactions...',
+  'Crafting interactive charts...',
+  'Adding smooth transitions...',
+  'Styling with CSS mastery...',
+  'Building animated visualizations...',
+  'Designing comparison layouts...',
+  'Creating radar charts...',
+  'Generating data tables...',
+  'Adding sparkle effects...',
+  'Optimizing for wow moments...',
+  'Bringing your vision to life...',
+  'Fine-tuning color palettes...',
 ];
 
 const LoadingMessage = memo(() => {

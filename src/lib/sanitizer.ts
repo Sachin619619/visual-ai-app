@@ -859,6 +859,64 @@ const getThemeStyles = (theme: PreviewTheme) => {
     .badge-warning { background: rgba(245,158,11,0.15); color: #fcd34d; border-color: rgba(245,158,11,0.25); }
     .badge-danger  { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.25); }
     .badge-new { background: linear-gradient(135deg,rgba(139,92,246,0.3),rgba(6,182,212,0.3)); color: #f8fafc; border-color: rgba(139,92,246,0.4); }
+
+    /* NEW: Extended gradient patterns */
+    .gradient-sunset { background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6); }
+    .gradient-ocean { background: linear-gradient(135deg, #06b6d4, #0ea5e9, #3b82f6); }
+    .gradient-forest { background: linear-gradient(135deg, #10b981, #14b8a6, #06b6d4); }
+    .gradient-aurora { background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981); }
+    .gradient-fire { background: linear-gradient(135deg, #ef4444, #f97316, #eab308); }
+    .gradient-candy { background: linear-gradient(135deg, #ec4899, #8b5cf6, #06b6d4); }
+    .gradient-midnight { background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95); }
+    .gradient-pastel { background: linear-gradient(135deg, #fbcfe8, #c4b5fd, #bae6fd); }
+
+    /* NEW: Extended glow effects */
+    .glow-orange { box-shadow: 0 0 20px rgba(249, 115, 22, 0.25); }
+    .glow-pink { box-shadow: 0 0 20px rgba(236, 72, 153, 0.25); }
+    .glow-yellow { box-shadow: 0 0 20px rgba(234, 179, 8, 0.25); }
+    .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.25); }
+    .glow-white { box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); }
+    .glow-xl { box-shadow: 0 0 40px rgba(139, 92, 246, 0.35); }
+    .glow-double { box-shadow: 0 0 20px rgba(139, 92, 246, 0.2), 0 0 40px rgba(6, 182, 212, 0.2); }
+
+    /* NEW: Extended text glow */
+    .text-glow-orange { text-shadow: 0 0 12px rgba(249, 115, 22, 0.8); }
+    .text-glow-pink { text-shadow: 0 0 12px rgba(236, 72, 153, 0.8); }
+    .text-glow-yellow { text-shadow: 0 0 12px rgba(234, 179, 8, 0.8); }
+    .text-glow-white { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+
+    /* NEW: Glassmorphism variants */
+    .glass-light { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .glass-dark { backdrop-filter: blur(20px); background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-accent { backdrop-filter: blur(20px); background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.25); }
+    .glass-cyan { backdrop-filter: blur(20px); background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.25); }
+
+    /* NEW: Animated gradient backgrounds */
+    .gradient-animate { background-size: 200% 200%; animation: gradient-shift 4s ease infinite; }
+    @keyframes gradient-shift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+    /* NEW: Pulsing dot indicator */
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #8b5cf6; animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+    /* NEW: Animated border */
+    .border-animate { position: relative; }
+    .border-animate::after { content: ''; position: absolute; inset: -2px; border-radius: inherit; background: linear-gradient(90deg, #8b5cf6, #06b6d4, #10b981, #8b5cf6); background-size: 300% 100%; animation: border-flow 3s linear infinite; z-index: -1; }
+    @keyframes border-flow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+
+    /* NEW: Shine effect on hover */
+    .shine-hover { position: relative; overflow: hidden; }
+    .shine-hover::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.5s; }
+    .shine-hover:hover::before { left: 100%; }
+
+    /* NEW: Icon container styles */
+    .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.15); }
+    .icon-box-sm { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.1); }
+    .icon-box-lg { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.2); }
+
+    /* NEW: Number counter animation */
+    .counter-animate { animation: counter-pop 0.3s ease-out; }
+    @keyframes counter-pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 `;
 };
 

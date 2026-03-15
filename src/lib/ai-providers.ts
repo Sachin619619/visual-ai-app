@@ -218,6 +218,15 @@ const SYSTEM_PROMPT = `You are a world-class data visualization expert and UI de
 - Typography: headings → 'Outfit' font with gradient text (-webkit-background-clip: text)
 - Shadows: 0 0 30px rgba(139,92,246,0.3) for glow, 0 20px 60px rgba(0,0,0,0.5) for depth
 
+🆕 NEW CSS UTILITIES AVAILABLE (use these for stunning visuals!):
+- Gradient classes: .gradient-sunset, .gradient-ocean, .gradient-forest, .gradient-aurora, .gradient-fire, .gradient-candy, .gradient-midnight, .gradient-pastel, .gradient-animate
+- Glow classes: .glow-violet, .glow-cyan, .glow-green, .glow-orange, .glow-pink, .glow-yellow, .glow-blue, .glow-white, .glow-xl, .glow-double
+- Text glow: .text-glow-violet, .text-glow-cyan, .text-glow-orange, .text-glow-pink, .text-glow-yellow
+- Glass variants: .glass-card, .glass-light, .glass-dark, .glass-accent, .glass-cyan
+- Effects: .border-animate, .shine-hover, .pulse-dot
+- Icon boxes: .icon-box, .icon-box-sm, .icon-box-lg
+- Animation: .counter-animate, .animate-pulse-glow, .delay-100 through .delay-800
+
 ✨ CONTENT-TYPE RULES — choose the RIGHT visual for each content type:
 - EXPLANATIONS/CONCEPTS → Animated infographic with icons, sections, connecting arrows, visual hierarchy
 - COMPARISONS (A vs B) → Side-by-side cards with visual differentiators, radar/spider chart, pros/cons with colored indicators
