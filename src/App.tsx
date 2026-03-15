@@ -591,7 +591,7 @@ function AppContent() {
       layout: 'right',
       head: [
         '<script src="https://cdn.tailwindcss.com"></script>',
-        '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>',
+        '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>',
         '<script src="https://d3js.org/d3.v7.min.js"></script>',
         '<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">',
       ].join('\n')

@@ -68,6 +68,8 @@ export const sanitizeHtml = (html: string): string => {
 const getThemeStyles = (theme: PreviewTheme) => {
   if (theme === 'light') {
     return `
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'IBM Plex Sans', system-ui, sans-serif;
       background: #f8fafc;
@@ -323,6 +325,7 @@ const getThemeStyles = (theme: PreviewTheme) => {
       padding: 0;
       box-sizing: border-box;
     }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'IBM Plex Sans', system-ui, sans-serif;
       background: #0a0a0f;
