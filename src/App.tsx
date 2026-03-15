@@ -388,16 +388,9 @@ function AppContent() {
     };
     setHistory(prev => [historyItem, ...prev]);
     
-    // Streaming: throttle iframe updates to every 1.2s to avoid flickering
-    let lastStreamUpdate = 0;
-    const onChunk = (partial: string) => {
-      const now = Date.now();
-      if (now - lastStreamUpdate < 1200) return;
-      lastStreamUpdate = now;
-      // Strip leading markdown fence, show once we have meaningful HTML
-      const cleaned = partial.replace(/^```html\s*/i, '').replace(/^```\s*/i, '');
-      if (cleaned.length > 300 && cleaned.includes('<')) setHtml(cleaned);
-    };
+    // Stream silently — accumulates tokens in background to avoid timeout,
+    // but never shows partial HTML (partial HTML renders as raw JS text in the iframe)
+    const onChunk = (_partial: string) => {};
 
     try {
       const generatedHtml = await generateUI(fullPrompt, model, contextHtml, signal, onChunk);
