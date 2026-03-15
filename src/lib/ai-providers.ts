@@ -225,6 +225,8 @@ const SYSTEM_PROMPT = `You are a world-class data visualization expert and UI de
 - HIERARCHICAL DATA → D3 sunburst or treemap for nested categories, org charts, file systems, budgets
 - ACTIVITY/PATTERNS → D3 heatmap calendar for day-by-day or time-series activity data
 - NETWORK/RELATIONSHIPS → D3 force-directed graph for connections, dependencies, social graphs
+- RANKINGS/TOP-N → Numbered leaderboard with animated progress bars and score badges
+- ARCHITECTURE/SYSTEMS → SVG arrow flow diagram connecting boxes with dashed connector lines
 
 📊 CHART.JS EXCELLENCE (Chart.js v4 is always available as window.Chart):
 Always use Chart.js for ALL data visualizations. Here are complete examples:
@@ -339,6 +341,41 @@ Feature comparison table row:
   <div style="background:#12121a;padding:12px 16px;text-align:center"><span style="color:#10b981;font-size:16px">✓</span></div>
   <div style="background:#12121a;padding:12px 16px;text-align:center"><span style="color:#ef4444;font-size:16px">✗</span></div>
 </div>
+
+Ranked leaderboard list (top-N with scores/bars):
+<div style="display:flex;flex-direction:column;gap:10px">
+  <div style="display:flex;align-items:center;gap:12px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px 16px">
+    <span style="font-size:20px;font-weight:900;color:#8b5cf6;min-width:32px;text-align:center">#1</span>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:600;color:#f8fafc">Item Name</div>
+      <div style="margin-top:4px;height:6px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden">
+        <div style="width:0;height:100%;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:100px;transition:width 1.2s ease-out" data-target="92%"></div>
+      </div>
+    </div>
+    <span style="font-size:16px;font-weight:700;color:#8b5cf6">92</span>
+  </div>
+</div>
+
+Architecture / system diagram (SVG arrows connecting boxes):
+<svg viewBox="0 0 600 200" width="100%" style="overflow:visible">
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#8b5cf6"/></marker></defs>
+  <!-- Box 1 -->
+  <rect x="20" y="70" width="120" height="60" rx="12" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="80" y="97" text-anchor="middle" fill="#c4b5fd" font-size="13" font-weight="600">Client</text>
+  <text x="80" y="116" text-anchor="middle" fill="#94a3b8" font-size="11">Browser/App</text>
+  <!-- Arrow 1→2 -->
+  <line x1="140" y1="100" x2="200" y2="100" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,3"/>
+  <!-- Box 2 -->
+  <rect x="200" y="70" width="120" height="60" rx="12" fill="rgba(6,182,212,0.15)" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="260" y="97" text-anchor="middle" fill="#67e8f9" font-size="13" font-weight="600">API Gateway</text>
+  <text x="260" y="116" text-anchor="middle" fill="#94a3b8" font-size="11">REST / GraphQL</text>
+  <!-- Arrow 2→3 -->
+  <line x1="320" y1="100" x2="380" y2="100" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,3"/>
+  <!-- Box 3 -->
+  <rect x="380" y="70" width="120" height="60" rx="12" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+  <text x="440" y="97" text-anchor="middle" fill="#6ee7b7" font-size="13" font-weight="600">Database</text>
+  <text x="440" y="116" text-anchor="middle" fill="#94a3b8" font-size="11">PostgreSQL</text>
+</svg>
 
 📐 D3.JS FOR CUSTOM VISUALIZATIONS (d3 is available as window.d3):
 Use D3 for unique, custom visualizations that Chart.js can't do. Examples:
