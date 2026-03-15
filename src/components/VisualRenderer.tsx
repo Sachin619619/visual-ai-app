@@ -19,6 +19,8 @@ interface VisualRendererProps {
   onStyleFrameChange?: (frame: StyleFrame) => void;
   onQuickGenerate?: (prompt: string) => void;
   onRefinePrompt?: (originalPrompt: string, refinement: string) => void;
+  onRegenerate?: () => void;
+  lastPrompt?: string;
   onShare?: () => void;
   onExport?: () => void;
   onExportPNG?: () => void;
@@ -264,7 +266,7 @@ const LoadingMessage = memo(() => {
 });
 LoadingMessage.displayName = 'LoadingMessage';
 
-export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onShare, onExport, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
+export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, onClear, onUndo, onRedo, onApplyCode, model, styleFrame = 'card', onStyleFrameChange, onQuickGenerate, onRefinePrompt, onRegenerate, lastPrompt, onShare, onExport, onSaveFavorite, onShowFavorites, onShowGallery, visualHistoryCount, theme = 'dark', onToggleTheme, generationStats }: VisualRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -1285,6 +1287,19 @@ body {
                 {animationsPaused ? <Play className="w-3.5 h-3.5 sm:w-5 sm:h-5" /> : <Pause className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
               </motion.button>
             )}
+            {/* Regenerate Button - re-run the last prompt */}
+            {html && onRegenerate && lastPrompt && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={onRegenerate}
+                disabled={isLoading}
+                className="hidden sm:flex p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-bg-secondary/90 backdrop-blur-md text-text-secondary hover:text-green-400 transition-all min-h-[36px] min-w-[36px] sm:min-h-[44px] sm:min-w-[44px] items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50"
+                title={`Regenerate (re-run last prompt)`}
+              >
+                <RefreshCw className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+              </motion.button>
+            )}
             {/* Undo Button */}
             {onUndo && (
               <motion.button
@@ -1526,6 +1541,16 @@ body {
                   >
                     <ExternalLink className="w-4 h-4" /> Open in New Tab
                   </button>
+                  {/* Regenerate - mobile */}
+                  {html && onRegenerate && lastPrompt && (
+                    <button
+                      onClick={() => { onRegenerate(); setShowMoreMenu(false); }}
+                      disabled={isLoading}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:bg-white/5 hover:text-green-400 transition-colors disabled:opacity-50"
+                    >
+                      <RefreshCw className="w-4 h-4" /> Regenerate
+                    </button>
+                  )}
                   {/* Viewport selector for mobile - in more menu */}
                   <button
                     onClick={() => { setShowViewportSelector(!showViewportSelector); setShowMoreMenu(false); }}

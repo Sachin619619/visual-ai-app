@@ -429,6 +429,14 @@ function AppContent() {
     handleGenerate(refinement, lastModel, html);
   }, [handleGenerate, html, lastModel]);
 
+  // Regenerate — re-run the last prompt from history
+  const handleRegenerate = useCallback(() => {
+    const lastPromptText = history[0]?.prompt;
+    if (!lastPromptText || isLoading) return;
+    handleGenerate(lastPromptText, lastModel);
+    showToast('success', 'Regenerating with last prompt... 🔄');
+  }, [history, isLoading, lastModel, handleGenerate, showToast]);
+
   // Share design via URL
   const handleShare = useCallback(() => {
     if (!html) {
@@ -996,6 +1004,8 @@ function AppContent() {
           onStyleFrameChange={setStyleFrame}
           onQuickGenerate={handleQuickGenerate}
           onRefinePrompt={handleRefinePrompt}
+          onRegenerate={handleRegenerate}
+          lastPrompt={history[0]?.prompt}
           onShare={handleShare}
           onExport={handleExport}
           onExportPNG={handleExportPNG}
