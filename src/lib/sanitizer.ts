@@ -789,11 +789,11 @@ const getThemeStyles = (theme: PreviewTheme) => {
 `;
 };
 
-// Standard CDN scripts to always inject
-const CHART_JS_CDN = 'https://cdn.jsdelivr.net/npm/chart.js';
+// Standard CDN scripts to always inject (pinned versions for stability)
+const CHART_JS_CDN = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
 const D3_CDN = 'https://d3js.org/d3.v7.min.js';
 const LOTTIE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
-const FONTS_CDN = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
+const FONTS_CDN = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap';
 
 const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
 <script>
