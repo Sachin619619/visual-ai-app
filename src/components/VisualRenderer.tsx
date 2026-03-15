@@ -826,14 +826,27 @@ body {
   const handleRemix = async () => {
     if (!html || isRemixing) return;
     setIsRemixing(true);
-    
+
     try {
-      // Use the iframe content as context for creating a variation
-      const remixPrompt = `Create a visually different variation of this UI design. Change the colors to a different palette, modify the layout slightly, and add your own creative touches. Keep the same type of component but make it feel fresh and unique. Make it dark-themed with modern styling using Tailwind CSS.`;
-      
-      // Call the parent generation function with context
+      // Extract key data/content from the current HTML (first 800 chars of body text)
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      const textContent = (tempDiv.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 400);
+
+      // Randomly pick a remix style to avoid repetition
+      const remixStyles = [
+        'neon cyberpunk with bright magenta, electric blue, and hot pink accents on deep black background',
+        'ocean theme with deep teal, coral, and aquamarine gradients on navy background',
+        'sunset warm theme with amber, orange, crimson on deep brown/maroon background',
+        'forest theme with emerald green, lime, and gold on very dark green background',
+        'monochrome minimal with only white/grey tones on near-black background, maximizing typography',
+        'aurora borealis theme with purple, green, pink swirling gradients',
+      ];
+      const style = remixStyles[Math.floor(Math.random() * remixStyles.length)];
+
+      const remixPrompt = `Create a visually DIFFERENT remix of a dashboard/visualization about this topic: "${textContent}". Use a completely different color scheme: ${style}. Keep the same type of data and content, but change the layout, color palette, and visual style entirely. Make it stunning and portfolio-worthy.`;
+
       if (onQuickGenerate) {
-        // We need to pass the current HTML as context - this will be handled by parent
         onQuickGenerate(remixPrompt);
       }
     } catch (error) {
@@ -1451,6 +1464,9 @@ body {
                       { label: 'Comparison', icon: '⚖️', prompt: 'Convert this into a visual side-by-side comparison with categories, ratings, and pros/cons cards.' },
                       { label: 'Mind Map', icon: '🧠', prompt: 'Convert this into a visual mind map / concept diagram with a central node and radiating connections.' },
                       { label: 'Data Story', icon: '📈', prompt: 'Convert this into a data story with charts, big numbers, trend indicators, and narrative sections.' },
+                      { label: 'Leaderboard', icon: '🏆', prompt: 'Convert this into a ranked leaderboard / top-N list with animated score bars, rank badges, and trend indicators.' },
+                      { label: 'Flow Diagram', icon: '⚙️', prompt: 'Convert this into a system architecture or process flow diagram with SVG arrows, connected boxes, and labeled stages.' },
+                      { label: 'Report', icon: '📋', prompt: 'Convert this into a professional report-style layout with a cover header, section dividers, key findings in callout boxes, and summary stats.' },
                     ].map((item) => (
                       <button
                         key={item.label}
