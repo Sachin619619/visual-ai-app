@@ -9,6 +9,8 @@ const QUICK_ACTIONS = [
   { id: 'timeline', label: 'Timeline', icon: Calendar, prompt: 'Build a vertical timeline for project roadmap' },
   { id: 'cards', label: 'Cards', icon: LayoutGrid, prompt: 'Design stat cards with KPIs and trends' },
   { id: 'analyze', label: 'Analyze', icon: Zap, prompt: 'Analyze this data and suggest the best visualization' },
+  { id: 'radar', label: 'Radar', icon: BarChart3, prompt: 'Create a radar chart comparing products on multiple dimensions' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid, prompt: 'Build a premium analytics dashboard with charts and stats' },
 ];
 
 export const ChatWidget = memo(function ChatWidget() {

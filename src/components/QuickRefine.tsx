@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wand2, Sparkles, Palette, Zap, Layout, Type, Grid, MousePointer, TrendingUp, AlignLeft, Star, Smartphone, BarChart3, Map, Table2, Layers, ChevronDown } from 'lucide-react';
+import { Wand2, Sparkles, Palette, Zap, Layout, Type, Grid, MousePointer, TrendingUp, AlignLeft, Star, Smartphone, BarChart3, Map, Table2, Layers, ChevronDown, PieChart } from 'lucide-react';
 
 interface QuickRefineProps {
   onRefine: (refinement: string) => void;
@@ -23,6 +23,13 @@ const refinements = [
   { label: 'Denser', icon: Layers, prompt: 'pack in more visual elements: add 3-4 more stat cards, an extra chart, and fill any blank areas with relevant data or icons' },
   { label: 'Map View', icon: Map, prompt: 'add a geographic map or world/country breakdown using color-coded blocks and regional stat cards' },
   { label: 'Bar Chart', icon: BarChart3, prompt: 'add a horizontal bar chart ranking/leaderboard showing top items by value with animated bars and rank numbers' },
+  // NEW refinements
+  { label: 'Glass Effect', icon: Zap, prompt: 'add glassmorphism: backdrop-filter blur, translucent backgrounds rgba(255,255,255,0.08), subtle white borders' },
+  { label: 'Gradient BG', icon: Palette, prompt: 'add a beautiful animated gradient background with smooth color transitions between violet, cyan, and pink' },
+  { label: 'Radar Chart', icon: BarChart3, prompt: 'add a radar/spider chart comparing multiple dimensions and categories' },
+  { label: 'Polar Area', icon: PieChart, prompt: 'add a polar area chart for comparing categories with varying sizes' },
+  { label: 'Bubble Chart', icon: Layers, prompt: 'add a bubble chart showing 3 variables: x, y positions and bubble size' },
+  { label: 'Stacked Bar', icon: BarChart3, prompt: 'add stacked bar charts showing composition breakdown across categories' },
 ];
 
 export const QuickRefine: React.FC<QuickRefineProps> = ({ onRefine, isLoading }) => {
@@ -81,6 +88,15 @@ const templates = [
   { label: '💪 Fitness', category: 'Data', prompt: 'Create a fitness app dashboard — circular progress rings for calories/protein/water goals, 7-day workout streak calendar grid, heart rate line chart over 24h, sleep quality bar chart, and personal best records in stat cards. Sporty dark theme with green/orange accents.' },
   { label: '🏆 Leaderboard', category: 'Data', prompt: 'Create a ranked leaderboard page for a gaming/coding competition — top 10 list with animated score bars, rank number badges (#1 gold, #2 silver, #3 bronze), avatar initials, score with compact formatting, and trend arrows. Dark theme with gold accent.' },
   { label: '⚙️ System Diagram', category: 'Technical', prompt: 'Create a system architecture diagram for a modern web app — SVG flow diagram with client, CDN, API gateway, microservices, database, and cache boxes connected by dashed arrows, color-coded by layer, with latency/throughput stats in side cards.' },
+  // NEW templates
+  { label: '🌤️ Weather', category: 'Data', prompt: 'Create a beautiful weather dashboard — current temperature with animated weather icon, 7-day forecast cards, humidity/wind/UV index gauges, hourly temperature line chart, and weather alerts section. Use beautiful gradient blues and purples.' },
+  { label: '🛒 E-commerce', category: 'UI', prompt: 'Design a product listing page with grid of product cards — each card has image, title, price, rating stars, and "Add to Cart" button. Include a shopping cart icon with item count badge in the header.' },
+  { label: '📧 Email', category: 'UI', prompt: 'Create a modern email dashboard — inbox list with unread indicators, email preview panel, compose button, search bar, and folder sidebar. Dark premium theme with accent colors.' },
+  { label: '🎮 Gaming', category: 'Data', prompt: 'Build a gaming stats dashboard — player level/XP progress bar, achievements unlocked grid, match history with win/loss indicators, leaderboard ranking, and recent gameplay statistics. Dark theme with neon accents.' },
+  { label: '🏥 Health', category: 'Data', prompt: 'Create a health metrics dashboard — heart rate chart, blood pressure indicators, step count progress ring, sleep analysis, calorie intake vs burn, and medication reminders. Clean medical theme with greens and blues.' },
+  { label: '📚 Education', category: 'Visual', prompt: 'Build an online course dashboard — course progress cards, video player with controls, quiz scores, certificate badges, and recommended next lessons. Modern dark theme with accent highlights.' },
+  { label: '🍔 Food', category: 'Visual', prompt: 'Create a restaurant menu page — category tabs, food item cards with images, prices, dietary badges (vegan, gluten-free), and "Add to Order" buttons. Beautiful food photography and warm color accents.' },
+  { label: '✈️ Travel', category: 'Visual', prompt: 'Design a travel destination page — hero image with overlay text, itinerary timeline, budget breakdown pie chart, packing list checklist, and photo gallery grid. Inspiring wanderlust theme.' },
 ];
 
 export const PromptTemplates: React.FC<PromptTemplatesProps> = ({ onSelect, isLoading }) => {
