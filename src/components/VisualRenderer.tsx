@@ -87,6 +87,15 @@ const QUICK_PROMPTS = [
   // Geography & Society
   { key: 'country-comparison', prompt: 'Create a country comparison dashboard for USA vs China vs EU — show GDP, population, military spending, renewable energy %, happiness index, CO2 emissions as a beautiful radar/spider chart and side-by-side stat cards with color-coded indicators', label: '🗺️ Country Comparison' },
   { key: 'languages-world', prompt: 'Create a world languages infographic — show top 10 languages by native speakers in a horizontal bar chart, language family tree diagram, most translated books chart, languages at risk of extinction timeline, and fun linguistics facts in icon cards', label: '🌐 World Languages' },
+  // NEW prompts
+  { key: 'gaming-stats', prompt: 'Create a gaming stats dashboard — player level XP progress bar, achievements grid with icons, match history with win/loss record, leaderboard ranking, and recent playtime stats. Dark theme with neon purple/cyan accents.', label: '🎮 Gaming Dashboard' },
+  { key: 'food-delivery', prompt: 'Create a food delivery app homepage — restaurant cards with images, ratings, delivery time, and cuisine tags. Search bar at top, category filters, and promotional banner. Clean mobile-friendly design.', label: '🍔 Food Delivery' },
+  { key: 'music-player', prompt: 'Create a sleek music player interface — album art, play/pause/skip controls, progress bar, volume slider, playlist queue, and currently playing info. Dark theme with gradient accents.', label: '🎧 Music Player' },
+  { key: 'email-client', prompt: 'Create a modern email dashboard — inbox list with sender, subject, preview, and timestamp. Unread indicators, star/favorite toggle, and email preview panel. Professional dark theme.', label: '📧 Email Dashboard' },
+  { key: 'health-metrics', prompt: 'Create a health metrics dashboard — heart rate chart over time, blood pressure indicators, step count with daily goal progress ring, calories burned, and sleep quality score. Clean medical-style design.', label: '🏥 Health Dashboard' },
+  { key: 'real-estate', prompt: 'Create a property listing page — property cards with images, price, location, beds/baths/sqft, and agent contact button. Map view toggle, filters sidebar, and sort options. Modern card-based design.', label: '🏠 Real Estate' },
+  { key: 'job-board', prompt: 'Create a job board dashboard — job cards with company logo, position title, salary range, location, and tags (remote, full-time, etc.). Search bar, filter by category, and application deadline indicators.', label: '💼 Job Board' },
+  { key: 'ecommerce-admin', prompt: 'Create an e-commerce admin dashboard — orders table with status badges, revenue chart, top products list, customer stats, and inventory alerts. Professional dark admin theme.', label: '📊 E-commerce Admin' },
 ];
 
 // Viewport size configurations
