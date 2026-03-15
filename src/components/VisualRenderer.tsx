@@ -2372,20 +2372,21 @@ body {
               transition={{ delay: 0.3 }}
             >
               {[
-                'Explain quantum computing',
-                'Show world GDP by country',
-                'iPhone vs Android',
-                'History of the internet',
-                'How vaccines work',
+                { label: '🌍 World GDP', prompt: 'Create a stunning world GDP dashboard with bar chart showing top 10 economies, growth trends line chart, and regional breakdown pie chart' },
+                { label: '📱 iPhone vs Android', prompt: 'Create a beautiful side-by-side comparison of iPhone vs Android — radar chart, feature table, pricing tiers, market share pie' },
+                { label: '🤖 AI History', prompt: 'Create a stunning animated timeline of AI milestones from 1950 to 2025 with icons, year markers, and key events' },
+                { label: '☕ Coffee Facts', prompt: 'Create a beautiful infographic about coffee — origin to cup journey, caffeine content comparison chart, top producer countries' },
+                { label: '💹 Crypto Dash', prompt: 'Create a dark cryptocurrency dashboard with BTC, ETH, SOL price sparklines, portfolio pie chart, and fear & greed gauge' },
+                { label: '🧬 DNA Explainer', prompt: 'Create a stunning animated infographic about DNA and genetics — double helix diagram, replication steps, genome stats' },
               ].map((ex, i) => (
                 <button
-                  key={ex}
-                  onClick={() => onQuickGenerate && onQuickGenerate(`Create a stunning visual infographic: ${ex}`)}
+                  key={ex.label}
+                  onClick={() => onQuickGenerate && onQuickGenerate(ex.prompt)}
                   disabled={isLoading}
                   className="px-3 py-1.5 text-xs rounded-full bg-bg-secondary/80 border border-white/8 text-text-secondary hover:border-accent-primary/50 hover:text-accent-primary hover:bg-accent-primary/10 transition-all disabled:opacity-50"
                   style={{ transitionDelay: `${i * 30}ms` }}
                 >
-                  {ex}
+                  {ex.label}
                 </button>
               ))}
             </motion.div>
