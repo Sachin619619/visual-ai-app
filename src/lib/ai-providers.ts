@@ -247,6 +247,24 @@ MIXED BAR + LINE chart:
 new Chart(document.getElementById('mixed'), {type:'bar', data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{type:'bar',label:'Revenue',data:[120,145,132,178,156,210],backgroundColor:'rgba(139,92,246,0.7)',borderRadius:6},{type:'line',label:'Profit',data:[20,35,28,52,40,68],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.1)',fill:true,tension:0.4,yAxisID:'y1'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{ticks:{color:'#94a3b8'},grid:{display:false}},y:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y1:{type:'linear',position:'right',ticks:{color:'#10b981'}}}}});
 </script>
 
+POLAR AREA chart (for comparing categories visually):
+<canvas id="polar" style="max-height:300px"></canvas>
+<script>
+new Chart(document.getElementById('polar'), {type:'polarArea', data:{labels:['Innovation','Design','Performance','Reliability','Support'],datasets:[{data:[85,92,78,88,71],backgroundColor:['rgba(139,92,246,0.7)','rgba(6,182,212,0.7)','rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(236,72,153,0.7)'],borderColor:['#8b5cf6','#06b6d4','#10b981','#f59e0b','#ec4899'],borderWidth:2}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:'#f8fafc',padding:12}}},scales:{r:{ticks:{color:'#94a3b8',backdropColor:'transparent'},grid:{color:'rgba(255,255,255,0.08)'}}}}});
+</script>
+
+BUBBLE CHART (for showing 3 variables: x, y, size):
+<canvas id="bubble"></canvas>
+<script>
+new Chart(document.getElementById('bubble'), {type:'bubble', data:{datasets:[{label:'Series A',data:[{x:10,y:70,r:15},{x:20,y:85,r:22},{x:35,y:60,r:10},{x:50,y:90,r:30}],backgroundColor:'rgba(139,92,246,0.6)',borderColor:'#8b5cf6'},{label:'Series B',data:[{x:15,y:40,r:12},{x:30,y:55,r:20},{x:45,y:75,r:8},{x:60,y:50,r:18}],backgroundColor:'rgba(6,182,212,0.6)',borderColor:'#06b6d4'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#f8fafc'}}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}}}}});
+</script>
+
+HORIZONTAL BAR chart (for rankings/leaderboards):
+<canvas id="hbar" style="max-height:320px"></canvas>
+<script>
+new Chart(document.getElementById('hbar'), {type:'bar', data:{labels:['#1 USA','#2 China','#3 India','#4 Brazil','#5 UK'],datasets:[{label:'Population (M)',data:[331,1412,1380,215,67],backgroundColor:['rgba(139,92,246,0.8)','rgba(6,182,212,0.8)','rgba(16,185,129,0.8)','rgba(245,158,11,0.8)','rgba(236,72,153,0.8)'],borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#f8fafc'}}}}});
+</script>
+
 🎭 ANIMATION REQUIREMENTS:
 - Entry animations: ALL elements slide/fade in with staggered delays (100ms, 200ms, 300ms...)
 - CSS @keyframes: fadeInUp, slideInLeft, slideInRight, scaleIn, countUp, pulse, float, shimmer
@@ -270,6 +288,24 @@ Glassmorphism card:
 Animated progress bar:
 <div style="background:rgba(255,255,255,0.06);border-radius:100px;height:8px;overflow:hidden">
   <div style="height:100%;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:100px;width:0;transition:width 1.5s ease-out" data-target="75%"></div>
+</div>
+
+SVG Donut ring with centered label:
+<svg width="160" height="160" viewBox="0 0 160 160" style="transform:rotate(-90deg)">
+  <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="16"/>
+  <circle cx="80" cy="80" r="60" fill="none" stroke="url(#ring-grad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="376" stroke-dashoffset="94" style="transition:stroke-dashoffset 1.5s ease-out"/>
+  <defs><linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+</svg>
+
+Sparkline mini-chart (inline trend indicator):
+<canvas id="spark" width="100" height="36" style="display:inline-block"></canvas>
+<script>new Chart(document.getElementById('spark'),{type:'line',data:{labels:['','','','','','',''],datasets:[{data:[3,5,2,8,4,9,7],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.1)',fill:true,tension:0.4,pointRadius:0,borderWidth:2}]},options:{responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:800}}});</script>
+
+Feature comparison table row:
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.05);border-radius:8px;overflow:hidden">
+  <div style="background:#12121a;padding:12px 16px;color:#f8fafc;font-size:13px">Feature</div>
+  <div style="background:#12121a;padding:12px 16px;text-align:center"><span style="color:#10b981;font-size:16px">✓</span></div>
+  <div style="background:#12121a;padding:12px 16px;text-align:center"><span style="color:#ef4444;font-size:16px">✗</span></div>
 </div>
 
 📐 D3.JS FOR CUSTOM VISUALIZATIONS (d3 is available as window.d3):
