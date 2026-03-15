@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal } from 'lucide-react';
+import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal, ZoomIn, ZoomOut } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
@@ -232,6 +232,11 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   const [isEditingCode, setIsEditingCode] = useState(false);
   const [editedCode, setEditedCode] = useState('');
   const [showRevisualizeMenu, setShowRevisualizeMenu] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(100);
+
+  const handleZoomIn = useCallback(() => setZoomLevel(prev => Math.min(prev + 10, 200)), []);
+  const handleZoomOut = useCallback(() => setZoomLevel(prev => Math.max(prev - 10, 25)), []);
+  const handleZoomReset = useCallback(() => setZoomLevel(100), []);
 
   // Load saved viewport from localStorage on mount
   useEffect(() => {
@@ -2183,14 +2188,42 @@ body {
       </AnimatePresence>
 
       {/* Iframe Renderer */}
-      <div 
-        className="w-full h-full flex items-center justify-center overflow-auto p-4"
+      <div
+        className="w-full h-full flex items-center justify-center overflow-auto p-4 relative"
         style={{
           background: viewportSize !== 'desktop' ? 'repeating-linear-gradient(45deg, #1a1a24 25%, transparent 25%, transparent 75%, #1a1a24 75%, #1a1a24), repeating-linear-gradient(45deg, #1a1a24 25%, #0a0a0f 25%, #0a0a0f 75%, #1a1a24 75%, #1a1a24)' : undefined,
           backgroundPosition: '0 0, 10px 10px',
           backgroundSize: '20px 20px'
         }}
       >
+        {/* Zoom Controls - bottom left */}
+        {html && !isLoading && (
+          <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1 bg-bg-secondary/90 backdrop-blur-md rounded-xl border border-white/10 p-1 shadow-lg">
+            <button
+              onClick={handleZoomOut}
+              className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all"
+              title="Zoom out"
+              disabled={zoomLevel <= 25}
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleZoomReset}
+              className="px-2 py-1 text-xs font-mono text-text-secondary hover:text-accent-primary transition-colors min-w-[42px] text-center"
+              title="Reset zoom"
+            >
+              {zoomLevel}%
+            </button>
+            <button
+              onClick={handleZoomIn}
+              className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all"
+              title="Zoom in"
+              disabled={zoomLevel >= 200}
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </div>
+        )}
         <div
           className="transition-all duration-300 ease-out shadow-2xl"
           style={{
@@ -2199,7 +2232,9 @@ body {
             maxWidth: '100%',
             maxHeight: '100%',
             borderRadius: viewportSize !== 'desktop' ? '12px' : '0',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            transform: zoomLevel !== 100 ? `scale(${zoomLevel / 100})` : undefined,
+            transformOrigin: 'top center'
           }}
         >
           <iframe

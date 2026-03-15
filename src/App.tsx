@@ -4,9 +4,9 @@ import { VisualRenderer } from './components/VisualRenderer';
 import { ChatWidget } from './components/ChatWidget';
 import { ToastProvider, useToast } from './components/Toast';
 import { ModelProvider, PromptHistory, StyleFrame } from './types';
-import { generateUI } from './lib/ai-providers';
+import { generateUI, generateTitle } from './lib/ai-providers';
 import { AI_PROVIDERS } from './lib/ai-providers';
-import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal } from 'lucide-react';
+import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal, Search } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 // Favorite design type
@@ -70,8 +70,12 @@ function AppContent() {
   const [showFavorites, setShowFavorites] = useState(false);
   const [visualHistory, setVisualHistory] = useState<VisualHistoryEntry[]>([]);
   const [showGallery, setShowGallery] = useState(false);
+  const [gallerySearch, setGallerySearch] = useState('');
+  const [historySearch, setHistorySearch] = useState('');
+  const [_currentTitle, setCurrentTitle] = useState('');
   const { showToast } = useToast();
   const cleanupRan = useRef(false);
+  const promptSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const SITE_PASSWORD = 'visual2026';
 
@@ -242,13 +246,19 @@ function AppContent() {
     }
   }, [visualHistory]);
 
-  // Auto-save draft prompt to localStorage whenever it changes
+  // Auto-save draft prompt to localStorage with debounce (500ms)
   useEffect(() => {
-    if (prompt) {
-      localStorage.setItem('visual-ai-draft', prompt);
-    } else {
-      localStorage.removeItem('visual-ai-draft');
-    }
+    if (promptSaveTimer.current) clearTimeout(promptSaveTimer.current);
+    promptSaveTimer.current = setTimeout(() => {
+      if (prompt) {
+        localStorage.setItem('visual-ai-draft', prompt);
+      } else {
+        localStorage.removeItem('visual-ai-draft');
+      }
+    }, 500);
+    return () => {
+      if (promptSaveTimer.current) clearTimeout(promptSaveTimer.current);
+    };
   }, [prompt]);
 
   // Undo function
@@ -317,11 +327,16 @@ function AppContent() {
       setTimeout(() => {
         addToVisualHistory(generatedHtml, prompt, model);
       }, 100);
-      
+
+      // Auto-generate title in background
+      generateTitle(fullPrompt).then(title => {
+        setCurrentTitle(title);
+      }).catch(() => {});
+
       // Track generation stats
       const generationTime = Date.now() - startTime;
       setGenerationStats({ time: generationTime, model: AI_PROVIDERS[model]?.name || model });
-      
+
       // Clear draft prompt after successful generation
       localStorage.removeItem('visual-ai-draft');
       showToast('success', `UI generated in ${(generationTime / 1000).toFixed(1)}s! ✨`);
@@ -688,6 +703,31 @@ function AppContent() {
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarOpen]);
 
+  // Swipe gesture to close sidebar on mobile
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    let startX = 0;
+    let startY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
+    const handleTouchEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = Math.abs(e.changedTouches[0].clientY - startY);
+      // Swipe left more than 60px, and not a vertical scroll
+      if (dx < -60 && dy < 60) {
+        setSidebarOpen(false);
+      }
+    };
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [sidebarOpen]);
+
   // Close sidebar on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -954,13 +994,14 @@ function AppContent() {
           aria-labelledby="favorites-title"
         >
           <div
-            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-md w-full max-h-[80vh] flex flex-col"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4 flex-shrink-0">
               <h2 id="favorites-title" className="text-xl font-semibold gradient-text flex items-center gap-2">
                 <Star className="w-5 h-5 text-yellow-400" aria-hidden="true" />
                 Saved Favorites
+                {favorites.length > 0 && <span className="text-sm font-normal text-text-muted">({favorites.length})</span>}
               </h2>
               <button
                 onClick={() => setShowFavorites(false)}
@@ -970,68 +1011,100 @@ function AppContent() {
                 <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
+            {/* Search bar */}
+            {favorites.length > 0 && (
+              <div className="relative mb-4 flex-shrink-0">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search favorites..."
+                  value={historySearch}
+                  onChange={e => setHistorySearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-bg-tertiary border border-white/10 rounded-xl text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-primary/50 transition-colors"
+                />
+              </div>
+            )}
+            <div className="overflow-y-auto flex-1">
             {favorites.length === 0 ? (
               <div className="text-center py-8 text-text-muted">
                 <FolderOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>No favorites saved yet</p>
                 <p className="text-sm mt-1">Press ⌘+D to save your current design</p>
               </div>
-            ) : (
-              <div className="space-y-3">
-                {favorites.map((fav) => (
-                  <div key={fav.id} className="p-4 bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/30 transition-colors">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium flex items-center gap-2">
-                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        {fav.name}
-                      </h3>
-                      <button 
-                        onClick={() => handleDeleteFavorite(fav.id)}
-                        className="text-text-muted hover:text-red-400 transition-colors text-sm"
+            ) : (() => {
+              const filtered = historySearch
+                ? favorites.filter(f =>
+                    f.name.toLowerCase().includes(historySearch.toLowerCase()) ||
+                    f.prompt.toLowerCase().includes(historySearch.toLowerCase())
+                  )
+                : favorites;
+              if (filtered.length === 0) return (
+                <div className="text-center py-6 text-text-muted">
+                  <Search className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                  <p>No favorites match "{historySearch}"</p>
+                </div>
+              );
+              return (
+                <div className="space-y-3">
+                  {filtered.map((fav) => (
+                    <div key={fav.id} className="p-4 bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/30 transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium flex items-center gap-2">
+                          <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                          {fav.name}
+                        </h3>
+                        <button
+                          onClick={() => handleDeleteFavorite(fav.id)}
+                          className="text-text-muted hover:text-red-400 transition-colors text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                      <p className="text-sm text-text-muted mb-3 line-clamp-2">{fav.prompt || 'No prompt'}</p>
+                      <button
+                        onClick={() => handleLoadFavorite(fav)}
+                        className="w-full py-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-colors text-sm font-medium"
                       >
-                        Delete
+                        Load Design
                       </button>
                     </div>
-                    <p className="text-sm text-text-muted mb-3 line-clamp-2">{fav.prompt || 'No prompt'}</p>
-                    <button 
-                      onClick={() => handleLoadFavorite(fav)}
-                      className="w-full py-2 bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary rounded-lg transition-colors text-sm font-medium"
-                    >
-                      Load Design
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              );
+            })()}
+            </div>
           </div>
         </div>
       )}
 
       {/* Visual History Gallery Modal */}
       {showGallery && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowGallery(false)}
         >
-          <div 
-            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+          <div
+            className="bg-bg-secondary border border-white/10 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] flex flex-col"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4 flex-shrink-0">
               <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
                 <GalleryHorizontal className="w-5 h-5 text-accent-primary" />
                 Design Gallery
+                {visualHistory.length > 0 && (
+                  <span className="text-sm font-normal text-text-muted">({visualHistory.length})</span>
+                )}
               </h2>
               <div className="flex items-center gap-2">
                 {visualHistory.length > 0 && (
-                  <button 
+                  <button
                     onClick={handleClearVisualHistory}
                     className="text-sm text-text-muted hover:text-red-400 transition-colors"
                   >
                     Clear All
                   </button>
                 )}
-                <button 
+                <button
                   onClick={() => setShowGallery(false)}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                 >
@@ -1039,53 +1112,82 @@ function AppContent() {
                 </button>
               </div>
             </div>
+            {/* Search bar */}
+            {visualHistory.length > 0 && (
+              <div className="relative mb-4 flex-shrink-0">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search designs..."
+                  value={gallerySearch}
+                  onChange={e => setGallerySearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-bg-tertiary border border-white/10 rounded-xl text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-primary/50 transition-colors"
+                />
+              </div>
+            )}
+            <div className="overflow-y-auto flex-1 -mr-2 pr-2">
             {visualHistory.length === 0 ? (
               <div className="text-center py-8 text-text-muted">
                 <GalleryHorizontal className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>No designs in gallery yet</p>
                 <p className="text-sm mt-1">Your generated designs will appear here</p>
               </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {visualHistory.map((entry) => (
-                  <div 
-                    key={entry.id} 
-                    className="group relative bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer"
-                    onClick={() => handleLoadFromGallery(entry)}
-                  >
-                    <div className="aspect-video bg-bg-primary overflow-hidden">
-                      {entry.thumbnail ? (
-                        <img 
-                          src={entry.thumbnail} 
-                          alt={entry.prompt || 'Generated design'}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-text-muted">
-                          <GalleryHorizontal className="w-8 h-8 opacity-30" />
+            ) : (() => {
+              const filtered = gallerySearch
+                ? visualHistory.filter(e =>
+                    e.prompt.toLowerCase().includes(gallerySearch.toLowerCase()) ||
+                    (AI_PROVIDERS[e.model]?.name || e.model).toLowerCase().includes(gallerySearch.toLowerCase())
+                  )
+                : visualHistory;
+              if (filtered.length === 0) return (
+                <div className="text-center py-8 text-text-muted">
+                  <Search className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                  <p>No designs match "{gallerySearch}"</p>
+                </div>
+              );
+              return (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {filtered.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="group relative bg-bg-tertiary rounded-xl border border-white/5 hover:border-accent-primary/50 transition-all overflow-hidden cursor-pointer"
+                      onClick={() => handleLoadFromGallery(entry)}
+                    >
+                      <div className="aspect-video bg-bg-primary overflow-hidden">
+                        {entry.thumbnail ? (
+                          <img
+                            src={entry.thumbnail}
+                            alt={entry.prompt || 'Generated design'}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-text-muted">
+                            <GalleryHorizontal className="w-8 h-8 opacity-30" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <p className="text-xs text-text-muted line-clamp-2 mb-2">
+                          {entry.prompt || 'No prompt'}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-accent-primary">
+                            {AI_PROVIDERS[entry.model]?.name || entry.model}
+                          </span>
+                          <span className="text-xs text-text-muted">
+                            {new Date(entry.createdAt).toLocaleDateString()}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-xs text-text-muted line-clamp-2 mb-2">
-                        {entry.prompt || 'No prompt'}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-accent-primary">
-                          {AI_PROVIDERS[entry.model]?.name || entry.model}
-                        </span>
-                        <span className="text-xs text-text-muted">
-                          {new Date(entry.createdAt).toLocaleDateString()}
-                        </span>
+                      </div>
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="text-white font-medium">Load Design</span>
                       </div>
                     </div>
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="text-white font-medium">Load Design</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              );
+            })()}
+            </div>
           </div>
         </div>
       )}

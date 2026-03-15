@@ -791,6 +791,8 @@ const getThemeStyles = (theme: PreviewTheme) => {
 
 // Standard CDN scripts to always inject
 const CHART_JS_CDN = 'https://cdn.jsdelivr.net/npm/chart.js';
+const D3_CDN = 'https://d3js.org/d3.v7.min.js';
+const LOTTIE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
 const FONTS_CDN = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
 
 const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
@@ -849,7 +851,9 @@ export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark')
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="${FONTS_CDN}" rel="stylesheet">
-  <script src="${CHART_JS_CDN}"><\/script>`;
+  <script src="${CHART_JS_CDN}"><\/script>
+  <script src="${D3_CDN}"><\/script>
+  <script src="${LOTTIE_CDN}"><\/script>`;
 
   // ── CASE 1: Full HTML document ────────────────────────────────────────────
   // Use the AI's HTML directly — preserves ALL JavaScript, styles, libraries.
@@ -867,6 +871,16 @@ export const createSandboxContent = (html: string, theme: PreviewTheme = 'dark')
         // No <head> — insert one after <html ...>
         doc = doc.replace(/<html([^>]*)>/i, `<html$1>\n<head>\n  <meta charset="UTF-8">\n  <script src="${CHART_JS_CDN}"><\/script>\n</head>`);
       }
+    }
+
+    // Inject D3.js CDN if absent
+    if (!doc.includes('d3js.org') && !doc.includes('d3.v')) {
+      doc = doc.replace(/<head([^>]*)>/i, `<head$1>\n  <script src="${D3_CDN}"><\/script>`);
+    }
+
+    // Inject Lottie CDN if absent
+    if (!doc.includes('lottie')) {
+      doc = doc.replace(/<head([^>]*)>/i, `<head$1>\n  <script src="${LOTTIE_CDN}"><\/script>`);
     }
 
     // Inject Google Fonts if absent
