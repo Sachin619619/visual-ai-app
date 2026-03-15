@@ -874,11 +874,31 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
   // 3. Animate progress bars with data-target attribute
   function animateProgressBars() {
     var bars = document.querySelectorAll('[data-target]');
-    bars.forEach(function(bar) {
+    bars.forEach(function(bar, i) {
       var target = bar.getAttribute('data-target') || '0%';
-      setTimeout(function() {
-        bar.style.width = target;
-      }, 100);
+      var delay = 150 + i * 60;
+      // Handle SVG stroke-dashoffset rings
+      if (bar.tagName === 'circle' || bar.tagName === 'CIRCLE') {
+        var circumference = parseFloat(bar.getAttribute('stroke-dasharray') || '283');
+        var pct = parseFloat(target.replace('%', '')) / 100;
+        var offset = circumference * (1 - pct);
+        setTimeout(function() {
+          bar.style.strokeDashoffset = String(offset);
+          bar.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(.25,.46,.45,.94)';
+        }, delay);
+      } else if (bar.getAttribute('data-axis') === 'height') {
+        // Vertical bar
+        bar.style.height = '0';
+        setTimeout(function() {
+          bar.style.height = target;
+        }, delay);
+      } else {
+        // Horizontal progress bar (default)
+        bar.style.width = '0';
+        setTimeout(function() {
+          bar.style.width = target;
+        }, delay);
+      }
     });
   }
 
