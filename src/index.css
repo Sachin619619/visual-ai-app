@@ -1214,6 +1214,54 @@ button,
   }
 }
 
+/* ====== TYPOGRAPHY ENHANCEMENTS ====== */
+
+/* Heading utility class for consistent typography */
+.font-heading {
+  font-family: 'Outfit', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Tabular numbers for stat displays and timers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Large stat number display */
+.stat-number {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.03em;
+}
+
+/* Caption / label text */
+.text-caption {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Code text styling */
+.text-code {
+  font-family: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+/* Balanced text wrapping for headings (modern browsers) */
+h1, h2, h3, .font-heading {
+  text-wrap: balance;
+}
+
+/* ====== END TYPOGRAPHY ====== */
+
 /* Enhanced touch feedback for all interactive elements */
 @media (hover: none) and (pointer: coarse) {
   /* Better tap highlight */

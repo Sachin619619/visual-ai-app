@@ -205,23 +205,34 @@ const LOADING_MESSAGES = [
 
 const LoadingMessage = memo(() => {
   const [index, setIndex] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const startRef = useRef(Date.now());
   useEffect(() => {
-    const t = setInterval(() => setIndex(i => (i + 1) % LOADING_MESSAGES.length), 2200);
-    return () => clearInterval(t);
+    startRef.current = Date.now();
+    const msg = setInterval(() => setIndex(i => (i + 1) % LOADING_MESSAGES.length), 2200);
+    const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
+    return () => { clearInterval(msg); clearInterval(timer); };
   }, []);
+  // Estimated: most generations complete in 10-30s
+  const estimate = elapsed < 10 ? `~${20 - elapsed}s remaining` : elapsed < 30 ? 'almost there...' : 'taking longer than usual...';
   return (
-    <AnimatePresence mode="wait">
-      <motion.p
-        key={index}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.35 }}
-        className="text-sm sm:text-base text-text-muted"
-      >
-        {LOADING_MESSAGES[index]}
-      </motion.p>
-    </AnimatePresence>
+    <div className="flex flex-col items-center gap-1">
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={index}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.35 }}
+          className="text-sm sm:text-base text-text-muted"
+        >
+          {LOADING_MESSAGES[index]}
+        </motion.p>
+      </AnimatePresence>
+      <p className="text-[10px] sm:text-xs text-text-muted/50 tabular-nums">
+        {elapsed}s elapsed · {estimate}
+      </p>
+    </div>
   );
 });
 LoadingMessage.displayName = 'LoadingMessage';
