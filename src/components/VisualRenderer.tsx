@@ -722,10 +722,17 @@ body {
       'visual-ai-history',
       'visual-ai-draft',
       'visual-ai-api-key',
+      'visual-ai-kimi-key',
+      'visual-ai-minimax-key',
       'visual-ai-free-model',
+      'visual-ai-model',
       'visual-ai-dark-mode',
+      'visual-ai-theme',
       'visual-ai-auto-enhance',
       'visual-ai-templates',
+      'visual-ai-favorites',
+      'visual-ai-visual-history',
+      'visual-ai-viewport',
       'site_auth_visual'
     ];
     

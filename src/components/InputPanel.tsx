@@ -458,6 +458,9 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [kimiKeyInput, setKimiKeyInput] = useState('');
+  const [hasKimiKey, setHasKimiKey] = useState(false);
+  const [showKimiKey, setShowKimiKey] = useState(false);
   const [minimaxKeyInput, setMinimaxKeyInput] = useState('');
   const [hasMinimaxKey, setHasMinimaxKey] = useState(false);
   const [showMinimaxKey, setShowMinimaxKey] = useState(false);
@@ -523,6 +526,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     const savedKimi = localStorage.getItem('visual-ai-kimi-key');
     if (savedKimi) {
       setKimiApiKey(savedKimi);
+      setKimiKeyInput(savedKimi);
+      setHasKimiKey(true);
     }
 
     // Load saved MiniMax API key
@@ -564,6 +569,23 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     }
   };
 
+  const handleSaveKimiKey = () => {
+    const key = kimiKeyInput.trim();
+    if (key) {
+      try { localStorage.setItem('visual-ai-kimi-key', key); } catch {}
+      setKimiApiKey(key);
+      setHasKimiKey(true);
+      setShowSettings(false);
+    }
+  };
+
+  const handleClearKimiKey = () => {
+    try { localStorage.removeItem('visual-ai-kimi-key'); } catch {}
+    setKimiApiKey('');
+    setKimiKeyInput('');
+    setHasKimiKey(false);
+  };
+
   const handleSaveMinimaxKey = () => {
     const key = minimaxKeyInput.trim();
     if (key) {
@@ -590,6 +612,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     setMinimaxApiKey('');
     setHasApiKey(false);
     setApiKeyInput('');
+    setKimiKeyInput('');
+    setHasKimiKey(false);
     setMinimaxKeyInput('');
     setHasMinimaxKey(false);
   };
@@ -1038,10 +1062,17 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 Free models available
               </span>
             ) : model === 'kimi' ? (
-              <span className="flex items-center gap-1 text-amber-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                Requires Kimi API key
-              </span>
+              hasKimiKey ? (
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Kimi key saved
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-amber-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                  Requires Kimi API key
+                </span>
+              )
             ) : model === 'minimax' ? (
               hasMinimaxKey ? (
                 <span className="flex items-center gap-1 text-emerald-400">
@@ -1236,6 +1267,56 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
             <p className="text-[10px] sm:text-xs text-text-muted mt-2">
               OpenAI, Anthropic, Gemini
             </p>
+
+            {/* Kimi API Key */}
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-[10px] sm:text-xs font-medium text-text-secondary">🌙 Kimi K2.5 API Key</p>
+                {hasKimiKey && (
+                  <span className="text-[10px] sm:text-xs text-emerald-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                    Saved
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type={showKimiKey ? 'text' : 'password'}
+                    value={kimiKeyInput}
+                    onChange={(e) => setKimiKeyInput(e.target.value)}
+                    placeholder="sk-kimi-..."
+                    className="input-field w-full pr-8 text-xs sm:text-sm py-2 sm:py-2.5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowKimiKey(!showKimiKey)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+                  >
+                    {showKimiKey ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={handleSaveKimiKey}
+                  className="btn-primary flex-1 text-[10px] sm:text-xs py-2 sm:py-2.5 min-h-[36px] sm:min-h-[40px]"
+                >
+                  Save
+                </button>
+                {hasKimiKey && (
+                  <button
+                    onClick={handleClearKimiKey}
+                    className="px-2 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[36px] sm:min-h-[40px]"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <p className="text-[10px] sm:text-xs text-text-muted mt-1.5">
+                Get your key at <span className="text-accent-primary">moonshot.cn</span>
+              </p>
+            </div>
 
             {/* MiniMax API Key */}
             <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5">
