@@ -116,9 +116,17 @@ export const generateUI = async (
   model: ModelProvider,
   contextHtml?: string
 ): Promise<string> => {
-  if (!apiKey) {
+  // Check the correct key for the selected provider
+  if (model === 'kimi' && !kimiApiKey && !apiKey) {
+    throw new Error('🌙 Please set your Kimi API key in settings to use Kimi K2.5. Get your key at moonshot.cn');
+  }
+  if (model === 'minimax' && !minimaxApiKey) {
+    throw new Error('🔮 Please set your MiniMax API key in settings to use MiniMax M2.5. Get your key at minimax.io');
+  }
+  if (model !== 'kimi' && model !== 'minimax' && model !== 'openrouter' && !apiKey) {
     throw new Error('🔑 Please set your API key in settings to generate UI. Get your free API key from https://openrouter.ai/keys');
   }
+  // OpenRouter is always available (free models)
   try {
     // Add 90-second timeout to prevent hanging requests
     const timeoutPromise = new Promise<never>((_, reject) => {

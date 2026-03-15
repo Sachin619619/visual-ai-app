@@ -4,7 +4,7 @@ import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2
 import { jsPDF } from 'jspdf';
 import { createSandboxContent } from '../lib/sanitizer';
 import { ModelProvider, PreviewTheme, StyleFrame, GenerationStats, ViewportSize } from '../types';
-import { AI_PROVIDERS, getApiKey } from '../lib/ai-providers';
+import { AI_PROVIDERS, isApiKeyConfigured } from '../lib/ai-providers';
 import html2canvas from 'html2canvas';
 
 interface VisualRendererProps {
@@ -2091,7 +2091,7 @@ body {
           >
           <div className="text-center max-w-3xl w-full mx-auto">
             {/* API Key Setup Guide - shows if no API key configured */}
-            {!getApiKey() && (
+            {!isApiKeyConfigured() && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
