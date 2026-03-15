@@ -887,11 +887,55 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
     });
   }
 
+  // 5. Staggered entry animation for grid/card children
+  function initStaggerAnimations() {
+    var grids = document.querySelectorAll('.auto-grid, .auto-grid-sm, .grid-2, .grid-3, .grid-4, [data-stagger]');
+    grids.forEach(function(grid) {
+      var children = Array.from(grid.children);
+      children.forEach(function(child, i) {
+        var el = child;
+        if (!el.style.opacity || el.style.opacity === '') {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(16px)';
+          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          setTimeout(function() {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+          }, 120 + i * 80);
+        }
+      });
+    });
+  }
+
+  // 6. Tooltip system for [data-tooltip] elements
+  function initTooltips() {
+    var tip = document.createElement('div');
+    tip.id = 'va-tooltip';
+    tip.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;padding:6px 10px;background:rgba(15,15,25,0.95);color:#f8fafc;font-size:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);white-space:nowrap;opacity:0;transition:opacity 0.15s ease;backdrop-filter:blur(8px);';
+    document.body.appendChild(tip);
+    document.querySelectorAll('[data-tooltip]').forEach(function(el) {
+      el.addEventListener('mouseenter', function(e) {
+        tip.textContent = el.getAttribute('data-tooltip') || '';
+        tip.style.opacity = '1';
+      });
+      el.addEventListener('mousemove', function(e) {
+        var ev = e;
+        tip.style.left = (ev.clientX + 12) + 'px';
+        tip.style.top = (ev.clientY - 28) + 'px';
+      });
+      el.addEventListener('mouseleave', function() {
+        tip.style.opacity = '0';
+      });
+    });
+  }
+
   function init() {
     initCharts();
     animateCounters();
     animateProgressBars();
     initScrollAnimations();
+    initStaggerAnimations();
+    initTooltips();
   }
 
   if (document.readyState === 'loading') {

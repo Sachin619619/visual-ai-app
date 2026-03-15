@@ -429,6 +429,14 @@ for(let ci=0;ci<weeks;ci+=4){
   </div>
 </div>
 
+💡 BUILT-IN AUTO-BEHAVIOURS (always available, no extra JS needed):
+- [data-count="1234" data-prefix="$" data-suffix="K" data-decimals="1"] → auto-animates counter from 0
+- [data-target="78%"] on a progress bar inner div → auto-animates width from 0 to target
+- [data-chart-type="bar" data-labels='[...]' data-chart-data='[...]'] → auto-creates Chart.js chart
+- .auto-grid, .grid-2, .grid-3, .grid-4 children → auto-stagger fade-in animation on load
+- [data-tooltip="your tip text"] on any element → shows floating tooltip on hover
+- [data-aos] or .animate-on-scroll → scroll-triggered fade-in via IntersectionObserver
+
 🔧 TECHNICAL REQUIREMENTS:
 - Output ONLY raw HTML — no markdown, no explanations, no code blocks, no backticks
 - Start with <!DOCTYPE html>
