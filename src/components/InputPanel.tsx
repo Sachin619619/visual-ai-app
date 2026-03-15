@@ -438,7 +438,14 @@ TemplateButton.displayName = 'TemplateButton';
 
 export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoading, history, onClose, prompt: externalPrompt, onPromptChange, onToggleFavorite, onClearHistory, styleFrame, onStyleFrameChange, theme = 'dark', onToggleTheme, onShare, onExport, onExportPNG, onExportPDF, onExportCodePen, onSaveFavorite, generationStats, contextHtml }: InputPanelProps) {
   const [internalPrompt, setInternalPrompt] = useState('');
-  const [model, setModel] = useState<ModelProvider>('openai');
+  const [model, setModel] = useState<ModelProvider>(() => {
+    try {
+      const saved = localStorage.getItem('visual-ai-model') as ModelProvider | null;
+      const validModels: ModelProvider[] = ['openai', 'claude', 'gemini', 'openrouter', 'kimi', 'local'];
+      if (saved && validModels.includes(saved)) return saved;
+    } catch {}
+    return 'openrouter'; // Default to free OpenRouter model
+  });
   const [freeModel, setFreeModelState] = useState(() => {
     const saved = localStorage.getItem('visual-ai-free-model');
     // Validate saved model is still in the current FREE_MODELS list
@@ -976,7 +983,11 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
           <div className="relative">
             <select
               value={model}
-              onChange={(e) => setModel(e.target.value as ModelProvider)}
+              onChange={(e) => {
+                const m = e.target.value as ModelProvider;
+                setModel(m);
+                try { localStorage.setItem('visual-ai-model', m); } catch {}
+              }}
               className="select-field w-full text-xs sm:text-sm"
               disabled={isLoading}
             >

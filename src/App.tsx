@@ -56,7 +56,14 @@ function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [siteAuth, setSiteAuth] = useState<boolean | null>(null);
   const [prompt, setPrompt] = useState('');
-  const [lastModel, setLastModel] = useState<ModelProvider>('openai');
+  const [lastModel, setLastModel] = useState<ModelProvider>(() => {
+    try {
+      const saved = localStorage.getItem('visual-ai-model') as ModelProvider | null;
+      const valid: ModelProvider[] = ['openai', 'claude', 'gemini', 'openrouter', 'kimi', 'local'];
+      if (saved && valid.includes(saved)) return saved;
+    } catch {}
+    return 'openrouter';
+  });
   const [styleFrame, setStyleFrame] = useState<StyleFrame>('card');
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
