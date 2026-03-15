@@ -331,6 +331,8 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
     { id: 'amber', name: 'Amber', primary: '#f59e0b', secondary: '#ef4444' },
     { id: 'blue', name: 'Blue', primary: '#3b82f6', secondary: '#8b5cf6' },
     { id: 'pink', name: 'Pink', primary: '#ec4899', secondary: '#a855f7' },
+    { id: 'teal', name: 'Teal', primary: '#14b8a6', secondary: '#3b82f6' },
+    { id: 'orange', name: 'Orange', primary: '#f97316', secondary: '#eab308' },
   ];
 
   // Apply color scheme to generated HTML
@@ -352,17 +354,29 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
       iframeDoc.head.appendChild(styleEl);
     }
 
+    // Build a CSS override that broadly replaces violet (#8b5cf6) and cyan (#06b6d4)
+    // with the selected scheme colors using targeted CSS variable overrides
     styleEl.textContent = `
       :root {
-        --accent-primary: ${scheme.primary};
-        --accent-secondary: ${scheme.secondary};
+        --accent-primary: ${scheme.primary} !important;
+        --accent-secondary: ${scheme.secondary} !important;
+        --color-primary: ${scheme.primary} !important;
       }
-      .bg-gradient-to-r { background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary}) !important; }
-      .text-accent-primary { color: ${scheme.primary} !important; }
-      .bg-accent-primary { background-color: ${scheme.primary} !important; }
-      .border-accent-primary { border-color: ${scheme.primary} !important; }
-      button, .btn { background-color: ${scheme.primary} !important; }
-      [style*="background: linear-gradient"] { background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary}) !important; }
+      /* Tailwind-style accent overrides */
+      .text-accent-primary, .text-violet-400, .text-purple-400, .text-purple-500 { color: ${scheme.primary} !important; }
+      .bg-accent-primary, .bg-violet-500, .bg-purple-500, .bg-purple-600 { background-color: ${scheme.primary} !important; }
+      .border-accent-primary, .border-violet-500, .border-purple-500 { border-color: ${scheme.primary} !important; }
+      /* Gradient overrides */
+      .bg-gradient-to-r, .gradient-bg { background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary}) !important; }
+      .btn, button[style*="#8b5cf6"], button[style*="8b5cf6"] { background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary}) !important; }
+      /* CSS variable-based colors in inline styles */
+      [style*="color: #8b5cf6"], [style*="color:#8b5cf6"] { color: ${scheme.primary} !important; }
+      [style*="background-color: #8b5cf6"], [style*="background-color:#8b5cf6"] { background-color: ${scheme.primary} !important; }
+      [style*="background: #8b5cf6"], [style*="background:#8b5cf6"] { background: ${scheme.primary} !important; }
+      [style*="border-color: #8b5cf6"], [style*="border-color:#8b5cf6"] { border-color: ${scheme.primary} !important; }
+      [style*="stroke: #8b5cf6"], [style*="stroke:#8b5cf6"] { stroke: ${scheme.primary} !important; }
+      [style*="fill: #8b5cf6"], [style*="fill:#8b5cf6"] { fill: ${scheme.primary} !important; }
+      [style*="box-shadow"][style*="#8b5cf6"] { box-shadow: 0 0 20px ${scheme.primary}55 !important; }
     `;
     setColorScheme(schemeId);
     setShowColorSchemes(false);
