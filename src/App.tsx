@@ -59,7 +59,7 @@ function AppContent() {
   const [lastModel, setLastModel] = useState<ModelProvider>(() => {
     try {
       const saved = localStorage.getItem('visual-ai-model') as ModelProvider | null;
-      const valid: ModelProvider[] = ['openai', 'claude', 'gemini', 'openrouter', 'kimi', 'local'];
+      const valid: ModelProvider[] = ['openai', 'claude', 'gemini', 'openrouter', 'kimi', 'minimax', 'local'];
       if (saved && valid.includes(saved)) return saved;
     } catch {}
     return 'openrouter';
@@ -803,7 +803,7 @@ function AppContent() {
       // Cmd/Ctrl + Enter to generate (when prompt has value)
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && prompt.trim() && !isLoading) {
         e.preventDefault();
-        handleGenerate(prompt, 'openai');
+        handleGenerate(prompt, lastModel);
       }
       // Cmd/Ctrl + Z for undo
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === 'z') {
@@ -844,7 +844,7 @@ function AppContent() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prompt, isLoading, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite, showShortcuts, showFavorites, showGallery, sidebarOpen]);
+  }, [prompt, isLoading, lastModel, historyIndex, htmlHistory, handleUndo, handleRedo, handleClear, handleGenerate, handleShare, handleExport, handleToggleTheme, handleSaveFavorite, showShortcuts, showFavorites, showGallery, sidebarOpen]);
 
   if (siteAuth === null || siteAuth === false) {
     return (
