@@ -1484,8 +1484,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 )}
                 
                 {(showFavoritesOnly ? history.filter(h => h.isFavorite) : history)
-                  .slice(0, 10)
                   .filter(item => !historySearch || item.prompt.toLowerCase().includes(historySearch.toLowerCase()))
+                  .slice(0, historySearch ? 20 : 10)
                   .map((item) => (
                   <div key={item.id} className="flex items-start gap-1.5 sm:gap-2 group/histitem">
                     <button

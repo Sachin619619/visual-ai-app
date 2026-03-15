@@ -352,6 +352,41 @@ svg.selectAll('rect').data(root.leaves()).join('rect').attr('x',d=>d.x0).attr('y
 svg.selectAll('text').data(root.leaves()).join('text').attr('x',d=>(d.x0+d.x1)/2).attr('y',d=>(d.y0+d.y1)/2).attr('text-anchor','middle').attr('fill','white').attr('font-size','14px').text(d=>d.data.name);
 </script>
 
+🌊 ANIMATED FLOW DIAGRAM (step-by-step process):
+<div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center">
+  <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);border-radius:12px;padding:16px 20px;text-align:center;animation:fadeInUp 0.5s ease both">
+    <div style="font-size:24px">1️⃣</div>
+    <div style="font-size:13px;font-weight:600;color:#f8fafc;margin-top:6px">Step One</div>
+  </div>
+  <div style="width:32px;height:2px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);flex-shrink:0"></div>
+  <div style="background:linear-gradient(135deg,#06b6d4,#0891b2);border-radius:12px;padding:16px 20px;text-align:center;animation:fadeInUp 0.5s 0.2s ease both">
+    <div style="font-size:24px">2️⃣</div>
+    <div style="font-size:13px;font-weight:600;color:#f8fafc;margin-top:6px">Step Two</div>
+  </div>
+</div>
+
+📊 STACKED COMPARISON BARS (visual percentage comparison):
+<div style="display:flex;flex-direction:column;gap:12px">
+  <div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:13px;color:#f8fafc">Category A</span>
+      <span style="font-size:13px;color:#8b5cf6;font-weight:700">78%</span>
+    </div>
+    <div style="background:rgba(255,255,255,0.06);border-radius:100px;height:10px;overflow:hidden">
+      <div style="width:0;height:100%;background:linear-gradient(90deg,#8b5cf6,#7c3aed);border-radius:100px;transition:width 1.5s cubic-bezier(.25,.46,.45,.94)" data-target="78%"></div>
+    </div>
+  </div>
+</div>
+
+🎯 ICON CARD GRID (feature highlights):
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+  <div style="background:rgba(18,18,26,0.8);border:1px solid rgba(139,92,246,0.2);border-radius:16px;padding:20px;text-align:center;transition:transform 0.3s,box-shadow 0.3s" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(139,92,246,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+    <div style="font-size:32px;margin-bottom:12px">⚡</div>
+    <div style="font-size:15px;font-weight:600;color:#f8fafc;margin-bottom:6px">Feature Name</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.5">Brief description of the feature or benefit</div>
+  </div>
+</div>
+
 🔧 TECHNICAL REQUIREMENTS:
 - Output ONLY raw HTML — no markdown, no explanations, no code blocks, no backticks
 - Start with <!DOCTYPE html>
