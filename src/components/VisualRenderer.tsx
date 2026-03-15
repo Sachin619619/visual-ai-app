@@ -374,6 +374,9 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
     { keys: ['⌘', 'B'], description: 'Toggle theme' },
     { keys: ['⌘', '/'], description: 'Show shortcuts' },
     { keys: ['Esc'], description: 'Exit fullscreen' },
+    { keys: ['⌘', '+'], description: 'Zoom in' },
+    { keys: ['⌘', '-'], description: 'Zoom out' },
+    { keys: ['⌘', '0'], description: 'Reset zoom' },
   ];
 
   // Style frame options with icons and labels
@@ -890,7 +893,7 @@ body {
     }
   }, [html, previewTheme]);
 
-  // Handle Escape key to exit fullscreen
+  // Handle Escape key to exit fullscreen + zoom keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
@@ -900,6 +903,21 @@ body {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'C') {
         e.preventDefault();
         setShowCode(prev => !prev);
+      }
+      // Cmd/Ctrl + = or + to zoom in
+      if ((e.metaKey || e.ctrlKey) && (e.key === '=' || e.key === '+')) {
+        e.preventDefault();
+        setZoomLevel(prev => Math.min(prev + 10, 200));
+      }
+      // Cmd/Ctrl + - to zoom out
+      if ((e.metaKey || e.ctrlKey) && e.key === '-') {
+        e.preventDefault();
+        setZoomLevel(prev => Math.max(prev - 10, 25));
+      }
+      // Cmd/Ctrl + 0 to reset zoom
+      if ((e.metaKey || e.ctrlKey) && e.key === '0') {
+        e.preventDefault();
+        setZoomLevel(100);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -2265,7 +2283,7 @@ body {
             <button
               onClick={handleZoomOut}
               className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all"
-              title="Zoom out"
+              title="Zoom out (⌘-)"
               disabled={zoomLevel <= 25}
             >
               <ZoomOut className="w-4 h-4" />
@@ -2273,14 +2291,14 @@ body {
             <button
               onClick={handleZoomReset}
               className="px-2 py-1 text-xs font-mono text-text-secondary hover:text-accent-primary transition-colors min-w-[42px] text-center"
-              title="Reset zoom"
+              title="Reset zoom (⌘0)"
             >
               {zoomLevel}%
             </button>
             <button
               onClick={handleZoomIn}
               className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all"
-              title="Zoom in"
+              title="Zoom in (⌘+)"
               disabled={zoomLevel >= 200}
             >
               <ZoomIn className="w-4 h-4" />
