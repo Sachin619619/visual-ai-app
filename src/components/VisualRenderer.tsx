@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState, useCallback } from 'react';
+import { memo, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, RefreshCw, Download, Code, X, Copy, Check, Maximize2, Minimize2, FileCode, FileImage, Layout, Square, Layers, Sparkles, Wand2, FileType, Undo2, Redo2, Sun, Moon, Keyboard, Bookmark, Clipboard, Palette, Shuffle, MoreHorizontal, FileCode2, Share2, Upload, FileText, RotateCcw, Smartphone, Tablet, Monitor, MonitorPlay, Pause, Play, Star, GalleryHorizontal, ZoomIn, ZoomOut, ExternalLink } from 'lucide-react';
 import { createSandboxContent } from '../lib/sanitizer';
@@ -308,6 +308,9 @@ export const VisualRenderer = memo(function VisualRenderer({ html, isLoading, on
   const handleZoomIn = useCallback(() => setZoomLevel(prev => Math.min(prev + 10, 200)), []);
   const handleZoomOut = useCallback(() => setZoomLevel(prev => Math.max(prev - 10, 25)), []);
   const handleZoomReset = useCallback(() => setZoomLevel(100), []);
+
+  // Memoize syntax-highlighted HTML to avoid re-computing on every render
+  const highlightedResult = useMemo(() => highlightHTML(html || ''), [html]);
 
   // Load saved viewport from localStorage on mount
   useEffect(() => {
@@ -1909,7 +1912,7 @@ body {
                 <span className="text-xs sm:text-sm text-text-secondary">{isEditingCode ? 'Edit Code' : 'Generated HTML'}</span>
                 {!isEditingCode && (
                   <span className="text-[10px] sm:text-xs text-text-muted bg-bg-tertiary px-1.5 py-0.5 rounded">
-                    {highlightHTML(html).lineCount} lines
+                    {highlightedResult.lineCount} lines
                   </span>
                 )}
                 {isEditingCode && (
@@ -1988,14 +1991,14 @@ body {
               <div className="flex overflow-auto max-h-[35vh] sm:max-h-44" style={{ maxHeight: 'calc(35vh - env(safe-area-inset-bottom, 0px))' }}>
                 {/* Line Numbers */}
                 <div className="flex-shrink-0 py-2 sm:py-4 px-2 sm:px-3 bg-bg-primary/50 text-right select-none border-r border-white/5">
-                  {Array.from({ length: highlightHTML(html).lineCount }, (_, i) => (
+                  {Array.from({ length: highlightedResult.lineCount }, (_, i) => (
                     <div key={i} className="text-[10px] sm:text-xs font-mono text-text-muted leading-5 sm:leading-6">
                       {i + 1}
                     </div>
                   ))}
                 </div>
                 {/* Code Content */}
-                <pre className="flex-1 p-2 sm:p-4 overflow-x-auto text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6" dangerouslySetInnerHTML={{ __html: highlightHTML(html).html }}>
+                <pre className="flex-1 p-2 sm:p-4 overflow-x-auto text-xs sm:text-sm font-mono whitespace-pre leading-5 sm:leading-6" dangerouslySetInnerHTML={{ __html: highlightedResult.html }}>
                 </pre>
               </div>
             )}
