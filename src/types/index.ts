@@ -1,4 +1,4 @@
-export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'openrouter' | 'kimi' | 'local';
+export type ModelProvider = 'openai' | 'claude' | 'gemini' | 'openrouter' | 'kimi' | 'minimax' | 'local';
 
 // Theme options for preview
 export type PreviewTheme = 'dark' | 'light';

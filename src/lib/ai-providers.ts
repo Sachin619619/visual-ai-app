@@ -7,6 +7,7 @@ export const AI_PROVIDERS: Record<ModelProvider, { name: string; icon: string }>
   gemini: { name: 'Gemini Pro', icon: '✨' },
   openrouter: { name: 'OpenRouter (Free)', icon: '🔗' },
   kimi: { name: 'Kimi K2.5', icon: '🌙' },
+  minimax: { name: 'MiniMax M2.5', icon: '🔮' },
   local: { name: 'Local Model', icon: '💻' },
 };
 
