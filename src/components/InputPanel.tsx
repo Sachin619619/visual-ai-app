@@ -2,7 +2,7 @@ import { memo, useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image as ImageIcon, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb, ImagePlus, Trash2, Copy, Check } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
-import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
+import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey, setMinimaxApiKey } from '../lib/ai-providers';
 import { QuickRefine, PromptTemplates } from './QuickRefine';
 
 interface InputPanelProps {
@@ -441,7 +441,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const [model, setModel] = useState<ModelProvider>(() => {
     try {
       const saved = localStorage.getItem('visual-ai-model') as ModelProvider | null;
-      const validModels: ModelProvider[] = ['openai', 'claude', 'gemini', 'openrouter', 'kimi', 'local'];
+      const validModels: ModelProvider[] = ['openai', 'claude', 'gemini', 'openrouter', 'kimi', 'minimax', 'local'];
       if (saved && validModels.includes(saved)) return saved;
     } catch {}
     return 'openrouter'; // Default to free OpenRouter model
@@ -458,6 +458,9 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [minimaxKeyInput, setMinimaxKeyInput] = useState('');
+  const [hasMinimaxKey, setHasMinimaxKey] = useState(false);
+  const [showMinimaxKey, setShowMinimaxKey] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showTips, setShowTips] = useState(false);
@@ -521,7 +524,15 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     if (savedKimi) {
       setKimiApiKey(savedKimi);
     }
-    
+
+    // Load saved MiniMax API key
+    const savedMinimax = localStorage.getItem('visual-ai-minimax-key');
+    if (savedMinimax) {
+      setMinimaxApiKey(savedMinimax);
+      setMinimaxKeyInput(savedMinimax);
+      setHasMinimaxKey(true);
+    }
+
     // Load saved free model
     const savedFreeModel = localStorage.getItem('visual-ai-free-model');
     if (savedFreeModel) {
@@ -553,13 +564,34 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
     }
   };
 
+  const handleSaveMinimaxKey = () => {
+    const key = minimaxKeyInput.trim();
+    if (key) {
+      try { localStorage.setItem('visual-ai-minimax-key', key); } catch {}
+      setMinimaxApiKey(key);
+      setHasMinimaxKey(true);
+      setShowSettings(false);
+    }
+  };
+
+  const handleClearMinimaxKey = () => {
+    try { localStorage.removeItem('visual-ai-minimax-key'); } catch {}
+    setMinimaxApiKey('');
+    setMinimaxKeyInput('');
+    setHasMinimaxKey(false);
+  };
+
   const handleClearApiKey = () => {
     localStorage.removeItem('visual-ai-api-key');
     localStorage.removeItem('visual-ai-kimi-key');
+    localStorage.removeItem('visual-ai-minimax-key');
     setApiKey('');
     setKimiApiKey('');
+    setMinimaxApiKey('');
     setHasApiKey(false);
     setApiKeyInput('');
+    setMinimaxKeyInput('');
+    setHasMinimaxKey(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -1010,6 +1042,18 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
                 Requires Kimi API key
               </span>
+            ) : model === 'minimax' ? (
+              hasMinimaxKey ? (
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  MiniMax key saved
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-amber-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                  Requires MiniMax API key
+                </span>
+              )
             ) : model === 'local' ? (
               <span className="flex items-center gap-1 text-text-muted">
                 <span className="w-1.5 h-1.5 rounded-full bg-text-muted"></span>
@@ -1192,7 +1236,57 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
             <p className="text-[10px] sm:text-xs text-text-muted mt-2">
               OpenAI, Anthropic, Gemini
             </p>
-            
+
+            {/* MiniMax API Key */}
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-[10px] sm:text-xs font-medium text-text-secondary">🔮 MiniMax API Key</p>
+                {hasMinimaxKey && (
+                  <span className="text-[10px] sm:text-xs text-emerald-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                    Saved
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type={showMinimaxKey ? 'text' : 'password'}
+                    value={minimaxKeyInput}
+                    onChange={(e) => setMinimaxKeyInput(e.target.value)}
+                    placeholder="MiniMax API key..."
+                    className="input-field w-full pr-8 text-xs sm:text-sm py-2 sm:py-2.5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowMinimaxKey(!showMinimaxKey)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+                  >
+                    {showMinimaxKey ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={handleSaveMinimaxKey}
+                  className="btn-primary flex-1 text-[10px] sm:text-xs py-2 sm:py-2.5 min-h-[36px] sm:min-h-[40px]"
+                >
+                  Save
+                </button>
+                {hasMinimaxKey && (
+                  <button
+                    onClick={handleClearMinimaxKey}
+                    className="px-2 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs text-red-400 hover:text-red-300 border border-red-400/30 rounded-lg hover:bg-red-400/10 transition-colors min-h-[36px] sm:min-h-[40px]"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <p className="text-[10px] sm:text-xs text-text-muted mt-1.5">
+                Get your key at <span className="text-accent-primary">minimax.io</span>
+              </p>
+            </div>
+
             {/* Auto-enhance toggle */}
             <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5">
               <button
