@@ -1,6 +1,6 @@
 import { memo, useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image as ImageIcon, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb, ImagePlus, Trash2 } from 'lucide-react';
+import { Send, Sparkles, ChevronDown, Clock, Key, Eye, EyeOff, X, BarChart3, Calendar, LayoutGrid, Activity, Keyboard, Sun, Moon, FileText, CreditCard, Monitor, Star, Table, Navigation, MessageSquare, User, Search, Layout, Square, Layers, Maximize2, Sidebar, AppWindow, Wand2, ChevronDownCircle, Grid3X3, Zap, ShoppingBag, ShoppingCart, Briefcase, AlertCircle, Settings, Bell, Clock3, Tag, MessageCircle, Upload, CalendarDays, Sliders, Loader2, BellOff, FolderOpen, PieChart, TrendingUp, Gauge, Wallet, Users, Mail, Code2, Terminal, Database, Server, Cloud, Lock, Unlock, Image as ImageIcon, Video, Music, File, Download, Share2, Printer, HelpCircle, Rocket, Zap as ZapFast, Filter, SortDesc, Lightbulb, ImagePlus, Trash2, Copy, Check } from 'lucide-react';
 import { ModelProvider, PromptHistory, StyleFrame } from '../types';
 import { AI_PROVIDERS, setApiKey, getApiKey, enhancePrompt, FREE_MODELS, setFreeModel, setKimiApiKey } from '../lib/ai-providers';
 import { QuickRefine, PromptTemplates } from './QuickRefine';
@@ -455,6 +455,7 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
+  const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<{ id: string; url: string; name: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1277,6 +1278,24 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
                         {AI_PROVIDERS[item.model]?.icon} {item.model}
                         {item.isFavorite && <span className="ml-1 text-yellow-400">★ Pinned</span>}
                       </p>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(item.prompt).then(() => {
+                          setCopiedHistoryId(item.id);
+                          setTimeout(() => setCopiedHistoryId(null), 1500);
+                        });
+                      }}
+                      className="p-1.5 sm:p-2 rounded-lg transition-colors min-w-[32px] sm:min-w-[36px] flex items-center justify-center text-text-muted hover:text-accent opacity-0 group-hover/histitem:opacity-100"
+                      title="Copy prompt"
+                      aria-label="Copy prompt to clipboard"
+                    >
+                      {copiedHistoryId === item.id ? (
+                        <Check className="w-3.5 h-3.5 text-green-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
                     </button>
                     <button
                       onClick={(e) => {

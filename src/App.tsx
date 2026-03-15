@@ -74,6 +74,8 @@ function AppContent() {
   const [historySearch, setHistorySearch] = useState('');
   const [_currentTitle, setCurrentTitle] = useState('');
   const [galleryViewMode, setGalleryViewMode] = useState<'grid' | 'list'>('grid');
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const generationProgressTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const { showToast } = useToast();
   const cleanupRan = useRef(false);
   const promptSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -297,6 +299,15 @@ function AppContent() {
     const startTime = Date.now();
     setIsLoading(true);
     setLastModel(model);
+    // Start simulated progress bar (fast to 70%, then slows — resets on done)
+    setGenerationProgress(0);
+    if (generationProgressTimer.current) clearInterval(generationProgressTimer.current);
+    let _progress = 0;
+    generationProgressTimer.current = setInterval(() => {
+      _progress += _progress < 70 ? 2 : _progress < 90 ? 0.4 : 0.05;
+      if (_progress > 95) _progress = 95;
+      setGenerationProgress(_progress);
+    }, 300);
     
     // Add images context to prompt if provided
     let fullPrompt = prompt;
@@ -337,6 +348,11 @@ function AppContent() {
       // Track generation stats
       const generationTime = Date.now() - startTime;
       setGenerationStats({ time: generationTime, model: AI_PROVIDERS[model]?.name || model });
+
+      // Complete progress bar
+      if (generationProgressTimer.current) clearInterval(generationProgressTimer.current);
+      setGenerationProgress(100);
+      setTimeout(() => setGenerationProgress(0), 600);
 
       // Clear draft prompt after successful generation
       localStorage.removeItem('visual-ai-draft');
@@ -379,6 +395,7 @@ function AppContent() {
       showToast('error', errorMessage, retryAction);
     } finally {
       setIsLoading(false);
+      if (generationProgressTimer.current) clearInterval(generationProgressTimer.current);
     }
   }, [showToast, historyIndex, htmlHistory]);
 
@@ -858,6 +875,15 @@ function AppContent() {
       >
         Skip to main content
       </a>
+      {/* Generation progress bar */}
+      {generationProgress > 0 && (
+        <div className="fixed top-0 left-0 right-0 z-[9999] h-0.5 pointer-events-none" aria-hidden="true">
+          <div
+            className="h-full bg-gradient-to-r from-accent-primary via-accent-secondary to-accent-primary transition-all duration-300 ease-out"
+            style={{ width: `${generationProgress}%`, opacity: generationProgress === 100 ? 0 : 1 }}
+          />
+        </div>
+      )}
       {/* Ambient background gradient */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent-primary/10 rounded-full blur-3xl" />

@@ -106,24 +106,29 @@ function highlightHTML(code: string): { html: string; lineCount: number } {
 }
 
 // Memoized Quick Start Button Component
-const QuickStartButton = memo(({ item, index, onClick, disabled }: { 
-  item: { key: string; prompt: string; label: string }; 
-  index: number; 
+const QuickStartButton = memo(({ item, index, onClick, disabled }: {
+  item: { key: string; prompt: string; label: string };
+  index: number;
   onClick: (prompt: string) => void;
   disabled: boolean;
-}) => (
-  <motion.button
-    key={item.key}
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.05 }}
-    onClick={() => onClick(item.prompt)}
-    disabled={disabled}
-    className="p-3 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[64px] sm:min-h-[70px] flex flex-col justify-center gap-1"
-  >
-    <p className="text-accent-primary text-xs sm:text-xs font-medium group-hover:text-accent-secondary transition-colors truncate">{item.label}</p>
-  </motion.button>
-));
+}) => {
+  // Extract a short description from the prompt (after the first clause)
+  const shortDesc = item.prompt.split('—')[1]?.trim().split(',')[0]?.replace(/^show|create|build|design/i, '').trim().slice(0, 40) || '';
+  return (
+    <motion.button
+      key={item.key}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04 }}
+      onClick={() => onClick(item.prompt)}
+      disabled={disabled}
+      className="p-2.5 sm:p-3 rounded-xl bg-bg-secondary/80 border border-white/5 hover:border-accent-primary/50 hover:bg-accent-primary/10 transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] active:scale-[0.98] min-h-[56px] sm:min-h-[64px] flex flex-col justify-center gap-0.5 text-left"
+    >
+      <p className="text-accent-primary text-[11px] sm:text-xs font-semibold group-hover:text-accent-secondary transition-colors leading-tight">{item.label}</p>
+      {shortDesc && <p className="text-text-muted text-[9px] sm:text-[10px] leading-tight line-clamp-1 opacity-70">{shortDesc}</p>}
+    </motion.button>
+  );
+});
 
 QuickStartButton.displayName = 'QuickStartButton';
 
@@ -154,19 +159,35 @@ const QuickStartGrid = memo(({ items, onClick, disabled }: {
   items: { key: string; prompt: string; label: string }[];
   onClick: (prompt: string) => void;
   disabled: boolean;
-}) => (
-  <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto md:grid">
-    {items.map((item, index) => (
-      <QuickStartButton
-        key={item.key}
-        item={item}
-        index={index}
-        onClick={onClick}
-        disabled={disabled}
-      />
-    ))}
-  </div>
-));
+}) => {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? items : items.slice(0, 12);
+  return (
+    <div>
+      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 text-left max-w-xs xs:max-w-sm sm:max-w-md mx-auto">
+        {visible.map((item, index) => (
+          <QuickStartButton
+            key={item.key}
+            item={item}
+            index={index}
+            onClick={onClick}
+            disabled={disabled}
+          />
+        ))}
+      </div>
+      {items.length > 12 && (
+        <div className="flex justify-center mt-2">
+          <button
+            onClick={() => setShowAll(prev => !prev)}
+            className="text-[10px] sm:text-xs text-text-muted hover:text-accent-primary transition-colors px-3 py-1 rounded-full hover:bg-accent-primary/10"
+          >
+            {showAll ? '↑ Show less' : `+ Show ${items.length - 12} more prompts`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+});
 
 QuickStartGrid.displayName = 'QuickStartGrid';
 
@@ -2140,7 +2161,7 @@ body {
                 Or try one of these
               </p>
               <QuickStartGrid
-                items={QUICK_PROMPTS.slice(0, 12)}
+                items={QUICK_PROMPTS}
                 onClick={onQuickGenerate!}
                 disabled={isLoading}
               />
