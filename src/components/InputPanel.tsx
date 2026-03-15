@@ -879,6 +879,8 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
               { label: 'Compare:', placeholder: '[A vs B]', prefix: 'Create a stunning visual comparison of ' },
               { label: 'Timeline:', placeholder: '[topic]', prefix: 'Create an animated timeline of the history of: ' },
               { label: 'Data Story:', placeholder: '[dataset]', prefix: 'Create a beautiful data story visualization for: ' },
+              { label: 'Chart:', placeholder: '[data type]', prefix: 'Create beautiful Chart.js charts showing: ' },
+              { label: 'Explainer:', placeholder: '[concept]', prefix: 'Create a visual step-by-step explainer for: ' },
             ].map((tpl) => (
               <button
                 key={tpl.label}
@@ -1224,14 +1226,23 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
           >
             {/* Search Input */}
             <div className="relative mb-2.5 sm:mb-3">
-              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-muted" />
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-muted pointer-events-none" />
               <input
                 type="text"
                 value={historySearch}
                 onChange={(e) => setHistorySearch(e.target.value)}
                 placeholder="Search history..."
-                className="input-field w-full pl-8 sm:pl-10 text-[10px] sm:text-xs py-2"
+                className={`input-field w-full pl-8 sm:pl-10 text-[10px] sm:text-xs py-2 ${historySearch ? 'pr-7 sm:pr-8' : ''}`}
               />
+              {historySearch && (
+                <button
+                  onClick={() => setHistorySearch('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-text-muted hover:text-text-primary transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </button>
+              )}
             </div>
             
             {history.length === 0 ? (

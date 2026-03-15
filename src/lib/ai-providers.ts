@@ -625,14 +625,17 @@ export const enhancePrompt = async (
   model: ModelProvider,
   apiKey: string
 ): Promise<string> => {
-  const enhancementPrompt = `Transform this UI request into a detailed HTML generation prompt.
-Focus on:
-- Specific colors (dark theme, accent colors)
-- Layout structure
-- Interactive elements needed
-- Data visualization if applicable
+  const enhancementPrompt = `You are a visual design prompt enhancer for an AI HTML generator. Transform the given request into a rich, specific prompt that will produce a STUNNING visual HTML experience.
 
-Keep it concise but detailed.`;
+Enhance by adding:
+- The best visual format (infographic, dashboard, timeline, comparison, diagram, chart)
+- Specific color palette (dark premium: #0a0a0f bg, #8b5cf6 violet, #06b6d4 cyan accents)
+- Chart types to include (Chart.js bar, line, doughnut, radar, etc.)
+- Animation details (entry animations, counter animations, hover effects)
+- Layout (grid cards, timeline, split comparison, etc.)
+- Specific data points or numbers to visualize if relevant
+
+Output ONLY the enhanced prompt text. No explanations. Make it detailed but not longer than 3 sentences.`;
   
   try {
     if (model === 'openrouter') {
