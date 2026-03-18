@@ -227,6 +227,18 @@ const SYSTEM_PROMPT = `You are a world-class data visualization expert and UI de
 - Typography: headings → 'Outfit' font with gradient text (-webkit-background-clip: text)
 - Shadows: 0 0 30px rgba(139,92,246,0.3) for glow, 0 20px 60px rgba(0,0,0,0.5) for depth
 
+🎨 TOPIC-ADAPTIVE PALETTES — pick the right palette for the domain:
+- Finance / Business / Economy: bg #0a0f1c, primary #3b82f6 (blue), accent #10b981 (green), highlight #f59e0b (gold) — conveys trust and growth
+- Health / Fitness / Medical: bg #061411, primary #10b981 (emerald), accent #06b6d4 (teal), highlight #34d399 (mint) — conveys vitality
+- Technology / AI / Coding: bg #060d1a, primary #06b6d4 (cyan), accent #3b82f6 (blue), highlight #8b5cf6 (violet) — conveys precision
+- Creative / Art / Music / Entertainment: bg #120612, primary #ec4899 (pink), accent #f97316 (orange), highlight #8b5cf6 (violet) — conveys energy
+- Science / Space / Physics / Math: bg #040914, primary #6366f1 (indigo), accent #06b6d4 (cyan), highlight #a78bfa — conveys depth
+- Food / Lifestyle / Travel: bg #1a0c06, primary #f97316 (orange), accent #f59e0b (amber), highlight #10b981 (green) — conveys warmth
+- Sports / Gaming / Action: bg #060a00, primary #84cc16 (lime), accent #eab308 (yellow), highlight #ef4444 (red) — conveys excitement
+- Environment / Nature / Sustainability: bg #041209, primary #22c55e (green), accent #10b981, highlight #06b6d4 — conveys freshness
+- Default (general/mixed): bg #0a0a0f, primary #8b5cf6 (violet), accent #06b6d4 (cyan)
+RULE: Use topic-adaptive palette when the subject clearly matches a domain above. Swap ALL colors (background, cards, accents, chart colors, glow effects) to match the palette.
+
 🆕 NEW CSS UTILITIES AVAILABLE (use these for stunning visuals!):
 - Gradient classes: .gradient-sunset, .gradient-ocean, .gradient-forest, .gradient-aurora, .gradient-fire, .gradient-candy, .gradient-midnight, .gradient-pastel, .gradient-animate
 - Glow classes: .glow-violet, .glow-cyan, .glow-green, .glow-orange, .glow-pink, .glow-yellow, .glow-blue, .glow-white, .glow-xl, .glow-double
@@ -605,6 +617,110 @@ for(let ci=0;ci<weeks;ci+=4){
 - Show all numeric statistics as their FINAL values directly in the HTML — do NOT use JS counter animations that start from 0
 - Add particle effects, grid backgrounds, or ambient gradients for visual depth
 
+🖱️ INTERACTIVITY — Make visuals ALIVE and EXPLORABLE (use JavaScript freely):
+Every output MUST include at least 2 interactive JavaScript components. Choose from:
+
+TABS (switch between views):
+<div>
+  <div style="display:flex;gap:8px;margin-bottom:20px" id="tabs">
+    <button onclick="switchTab('t1')" id="btn-t1" style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;font-weight:600;cursor:pointer">Tab 1</button>
+    <button onclick="switchTab('t2')" id="btn-t2" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#94a3b8;cursor:pointer">Tab 2</button>
+  </div>
+  <div id="t1" class="tab-panel">...content 1...</div>
+  <div id="t2" class="tab-panel" style="display:none">...content 2...</div>
+</div>
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+  document.querySelectorAll('#tabs button').forEach(b => { b.style.background='transparent'; b.style.border='1px solid rgba(255,255,255,0.1)'; b.style.color='#94a3b8'; });
+  var btn = document.getElementById('btn-'+id);
+  btn.style.background='linear-gradient(135deg,#8b5cf6,#06b6d4)'; btn.style.border='none'; btn.style.color='#fff';
+}
+</script>
+
+ACCORDION (expand/collapse sections):
+<div style="display:flex;flex-direction:column;gap:8px">
+  <div style="border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden">
+    <button onclick="toggleAccordion(this)" style="width:100%;padding:16px 20px;background:rgba(18,18,26,0.8);border:none;color:#f8fafc;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+      Section Title <span style="transition:transform 0.3s">▼</span>
+    </button>
+    <div style="max-height:0;overflow:hidden;transition:max-height 0.4s ease">
+      <div style="padding:16px 20px;color:#94a3b8">Content here...</div>
+    </div>
+  </div>
+</div>
+<script>
+function toggleAccordion(btn) {
+  var body = btn.nextElementSibling;
+  var icon = btn.querySelector('span');
+  var open = body.style.maxHeight && body.style.maxHeight !== '0px';
+  body.style.maxHeight = open ? '0px' : body.scrollHeight + 'px';
+  icon.style.transform = open ? '' : 'rotate(180deg)';
+}
+</script>
+
+LIVE SEARCH / FILTER:
+<input oninput="filterItems(this.value)" placeholder="🔍 Search..." style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(18,18,26,0.8);color:#f8fafc;font-size:14px;margin-bottom:16px;box-sizing:border-box">
+<div id="item-list">
+  <div class="item" data-name="Alpha">Alpha</div>
+  <div class="item" data-name="Beta">Beta</div>
+</div>
+<script>
+function filterItems(q) {
+  document.querySelectorAll('#item-list .item').forEach(function(el) {
+    el.style.display = el.dataset.name.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+</script>
+
+SORTABLE TABLE:
+<script>
+function sortTable(col, asc) {
+  var tbody = document.querySelector('#sortable-table tbody');
+  var rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort(function(a,b){ var av=a.cells[col].textContent.trim(), bv=b.cells[col].textContent.trim(); return (isNaN(av)||isNaN(bv)) ? (asc?av.localeCompare(bv):bv.localeCompare(av)) : (asc?av-bv:bv-av); });
+  rows.forEach(function(r){ tbody.appendChild(r); });
+}
+</script>
+
+TOGGLE SWITCH (show/hide a section):
+<div style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="var t=this.querySelector('.toggle-track');var on=t.dataset.on==='1';t.dataset.on=on?'0':'1';t.style.background=on?'rgba(255,255,255,0.1)':'#8b5cf6';t.querySelector('div').style.transform=on?'':'translateX(22px)';var sec=document.getElementById('toggle-section');if(sec)sec.style.display=on?'none':'block'">
+  <div class="toggle-track" data-on="0" style="width:48px;height:26px;background:#8b5cf6;border-radius:13px;position:relative;transition:background 0.3s;flex-shrink:0">
+    <div style="position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.3s;transform:translateX(22px)"></div>
+  </div>
+  <span style="color:#94a3b8;font-size:14px">Show Advanced Details</span>
+</div>
+<div id="toggle-section" style="margin-top:12px;padding:16px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:12px">
+  Hidden content revealed by toggle...
+</div>
+
+MODAL / DETAIL POPUP:
+<button onclick="document.getElementById('modal').style.display='flex'" style="padding:10px 20px;border-radius:8px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;border:none;cursor:pointer">View Details</button>
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#12121a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px;max-width:500px;width:90%;animation:scaleIn 0.25s ease">
+    <h3 style="color:#f8fafc;margin:0 0 16px">Detail Title</h3>
+    <p style="color:#94a3b8;margin:0 0 24px">Detail content here...</p>
+    <button onclick="document.getElementById('modal').style.display='none'" style="padding:8px 20px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f8fafc;cursor:pointer">Close</button>
+  </div>
+</div>
+
+CHART FILTER BUTTONS (show/hide datasets):
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="chart-filters">
+  <button onclick="toggleDataset(0)" data-active="true" style="padding:6px 14px;border-radius:6px;border:none;background:rgba(139,92,246,0.3);border:1px solid #8b5cf6;color:#c4b5fd;font-size:12px;cursor:pointer">Dataset A</button>
+</div>
+<script>
+function toggleDataset(idx) {
+  var chart = Object.values(Chart.instances)[0];
+  if(!chart)return;
+  var meta = chart.getDatasetMeta(idx);
+  meta.hidden = !meta.hidden;
+  chart.update();
+  var btn = document.querySelectorAll('#chart-filters button')[idx];
+  btn.style.opacity = meta.hidden ? '0.4' : '1';
+}
+</script>
+
 🚨 ABSOLUTE RULES:
 1. ZERO plain text paragraphs — every word must be in a visual container
 2. ALWAYS include at least 2 charts or diagram elements
@@ -623,7 +739,75 @@ for(let ci=0;ci<weeks;ci+=4){
 15. WRAP all chart canvases in <div style="position:relative;height:Xpx"> for proper sizing — never use canvas without a height-constrained wrapper
 16. Include at least ONE data table or comparison grid in addition to charts
 17. NEVER use data-count or JS counter animations — always hardcode the final numeric value directly in the HTML
-18. Do NOT use Tailwind CSS class names — use only inline styles or CSS in <style> block`;
+18. Do NOT use Tailwind CSS class names — use only inline styles or CSS in <style> block
+19. ALWAYS include at least 2 interactive JS components (tabs, accordion, search filter, sortable table, toggle, or modal) — static-only output is a FAILURE
+20. ALWAYS end the page with a "Key Takeaways" or "Summary" callout box — a glassmorphism panel with 3-5 bullet points or insights, styled like:
+    <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:16px;padding:24px;margin-top:32px">
+      <div style="font-size:16px;font-weight:700;color:#c4b5fd;margin-bottom:12px">💡 Key Takeaways</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+        <li style="display:flex;gap:10px;color:#94a3b8;font-size:13px"><span style="color:#8b5cf6">▸</span> Insight one here</li>
+      </ul>
+    </div>
+21. USE TOPIC-ADAPTIVE PALETTE when the subject clearly belongs to a domain (finance=blue/green, health=emerald/teal, tech=cyan/blue, creative=pink/orange, etc.). Don't always use violet — vary the accent color to match the content mood
+22. EVERY PAGE must have a strong above-the-fold impact: hero banner + at least 2 stat cards visible without scrolling. Make the first 400px visually stunning.
+23. FOR DATA-HEAVY TOPICS include at least ONE comparison/summary table with colored headers, alternating rows, and sortable headers (use the sortTable() function from the INTERACTIVITY section)
+24. ALL section headers must use gradient text + an emoji icon. Never use plain black/white text for a major heading. Example: <h2 style="background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:Outfit,sans-serif;font-weight:800">📊 Section Title</h2>
+
+🌈 ADDITIONAL COMPONENT PATTERNS:
+
+3-COLUMN COMPARISON CARDS (A vs B vs C):
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+  <div style="background:rgba(18,18,26,0.9);border:1px solid rgba(139,92,246,0.25);border-radius:16px;padding:20px;text-align:center">
+    <div style="font-size:1.5rem;margin-bottom:8px">🥇</div>
+    <div style="font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:4px">Option A</div>
+    <div style="font-size:12px;color:#94a3b8;margin-bottom:12px">Best for X</div>
+    <div style="font-size:28px;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$29</div>
+  </div>
+</div>
+
+NOTIFICATION / ALERT BANNERS:
+<div style="display:flex;align-items:flex-start;gap:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:14px 16px">
+  <span style="font-size:18px;flex-shrink:0">✅</span>
+  <div><div style="font-size:13px;font-weight:600;color:#34d399;margin-bottom:2px">Success</div><div style="font-size:12px;color:#94a3b8">Your action was completed successfully.</div></div>
+</div>
+
+SCROLLABLE HORIZONTAL CHIPS / TAGS:
+<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+  <span style="flex-shrink:0;padding:4px 12px;border-radius:999px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:#c4b5fd;font-size:12px;font-weight:600;white-space:nowrap">Tag One</span>
+  <span style="flex-shrink:0;padding:4px 12px;border-radius:999px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.3);color:#67e8f9;font-size:12px;font-weight:600;white-space:nowrap">Tag Two</span>
+</div>
+
+METRIC COMPARISON ROW (side-by-side with vs separator):
+<div style="display:flex;align-items:center;gap:0;background:rgba(18,18,26,0.9);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden">
+  <div style="flex:1;padding:20px;text-align:center">
+    <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">BEFORE</div>
+    <div style="font-size:36px;font-weight:800;color:#ef4444">$120K</div>
+    <div style="font-size:11px;color:#64748b;margin-top:4px">Annual Cost</div>
+  </div>
+  <div style="width:1px;background:rgba(255,255,255,0.06);align-self:stretch"></div>
+  <div style="padding:16px 12px;text-align:center;flex-shrink:0">
+    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">VS</div>
+  </div>
+  <div style="width:1px;background:rgba(255,255,255,0.06);align-self:stretch"></div>
+  <div style="flex:1;padding:20px;text-align:center">
+    <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">AFTER</div>
+    <div style="font-size:36px;font-weight:800;color:#10b981">$48K</div>
+    <div style="font-size:11px;color:#64748b;margin-top:4px">Annual Cost</div>
+  </div>
+</div>
+
+PROGRESS STEP TRACKER (numbered stages):
+<div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px">1</div>
+    <div style="font-size:11px;color:#94a3b8;text-align:center;max-width:70px">Discovery</div>
+  </div>
+  <div style="width:60px;height:2px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);margin-bottom:14px"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#10b981);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px">2</div>
+    <div style="font-size:11px;color:#94a3b8;text-align:center;max-width:70px">Build</div>
+  </div>
+</div>`;
 
 const REVIEW_PROMPT = `You are doing a critical visual review of an HTML UI you just generated.
 ${'{screenshot}' /* placeholder replaced at runtime */}
@@ -1267,17 +1451,26 @@ export const enhancePrompt = async (
   model: ModelProvider,
   apiKey: string
 ): Promise<string> => {
-  const enhancementPrompt = `You are a visual design prompt enhancer for an AI HTML generator. Transform the given request into a rich, specific prompt that will produce a STUNNING visual HTML experience.
+  const enhancementPrompt = `You are a visual design prompt enhancer for a premium AI HTML infographic generator. Transform the user's request into a rich, specific prompt that will produce a STUNNING, magazine-quality visual HTML experience.
 
-Enhance by adding:
-- The best visual format (infographic, dashboard, timeline, comparison, diagram, chart)
-- Specific color palette (dark premium: #0a0a0f bg, #8b5cf6 violet, #06b6d4 cyan accents)
-- Chart types to include (Chart.js bar, line, doughnut, radar, etc.)
-- Animation details (entry animations, counter animations, hover effects)
-- Layout (grid cards, timeline, split comparison, etc.)
-- Specific data points or numbers to visualize if relevant
+Rules for enhancement:
+1. Pick the BEST visual format: infographic, analytics dashboard, timeline, comparison layout, diagram, or chart showcase
+2. Specify a topic-adaptive dark color palette:
+   - Finance/Business → navy bg, blue + green + gold accents
+   - Health/Medical → dark forest bg, emerald + teal accents
+   - Tech/AI/Coding → deep blue-black bg, cyan + violet accents
+   - Science/Space → near-black bg, indigo + cyan accents
+   - Creative/Art/Music → dark bg, pink + orange + violet accents
+   - Food/Lifestyle → dark warm bg, orange + amber accents
+   - Sports/Gaming → near-black, lime + red accents
+   - General → #0a0a0f bg, #8b5cf6 violet + #06b6d4 cyan accents
+3. Specify 2-4 Chart.js chart types (bar, line, doughnut, radar, bubble, stacked, etc.)
+4. Mention interactive components: tabs, accordion, sortable table, live search, or modals
+5. List 5-8 specific visual sections: stat cards, charts, timeline, comparison grid, leaderboard, hero banner, key takeaways, etc.
+6. Include specific data/numbers where possible (make up realistic sample data if needed)
+7. End with: "Include a Key Takeaways callout box at the bottom."
 
-Output ONLY the enhanced prompt text. No explanations. Make it detailed but not longer than 3 sentences.`;
+Output ONLY the enhanced prompt. No preamble. No explanations. Aim for 3-5 rich, comma-separated sentences packed with specifics.`;
   
   try {
     if (model === 'openrouter') {

@@ -9,39 +9,162 @@ import { AI_PROVIDERS } from './lib/ai-providers';
 import { captureRenderedScreenshot } from './lib/ui-reviewer';
 
 // Demo visual shown when no API key is configured — lets users instantly see what the app does
-const DEMO_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
+const DEMO_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 50%,rgba(139,92,246,.15),transparent 40%),radial-gradient(circle at 80% 30%,rgba(6,182,212,.12),transparent 40%)}
-.card{position:relative;z-index:1;text-align:center;padding:3rem 2rem;max-width:600px}
-.badge{display:inline-block;padding:.3rem 1rem;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:999px;color:#a78bfa;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem;animation:fadeUp .6s ease both}
-h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:800;background:linear-gradient(135deg,#fff 0%,#8b5cf6 50%,#06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:1rem;animation:fadeUp .6s .1s ease both;opacity:0}
-.sub{color:#64748b;font-size:1rem;margin-bottom:2.5rem;animation:fadeUp .6s .2s ease both;opacity:0}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;animation:fadeUp .6s .3s ease both;opacity:0}
-.item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:1rem;padding:1.25rem .75rem;transition:transform .2s,border-color .2s}
-.item:hover{transform:translateY(-4px);border-color:rgba(139,92,246,.4)}
-.item .icon{font-size:1.75rem;margin-bottom:.5rem}
-.item .label{color:#94a3b8;font-size:.8rem}
-.cta{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border-radius:999px;color:#fff;font-weight:600;font-size:.9rem;animation:fadeUp .6s .4s ease both;opacity:0;cursor:pointer}
-.dot{width:8px;height:8px;background:#06b6d4;border-radius:50%;animation:pulse 1.5s infinite}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+body{background:#0a0a0f;font-family:'Outfit',sans-serif;min-height:100vh;color:#f8fafc;overflow-x:hidden}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 30%,rgba(139,92,246,.12),transparent 50%),radial-gradient(circle at 80% 70%,rgba(6,182,212,.1),transparent 50%);pointer-events:none}
+.dot-pattern{position:fixed;inset:0;background-image:radial-gradient(circle,rgba(139,92,246,.08) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+.hero{text-align:center;padding:3rem 0 2rem}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:.3rem 1rem;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.35);border-radius:999px;color:#a78bfa;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.25rem;animation:fadeUp .5s ease both}
+.pulse-dot{width:7px;height:7px;background:#a78bfa;border-radius:50%;animation:pulse 1.5s infinite}
+h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;background:linear-gradient(135deg,#fff 0%,#c4b5fd 40%,#67e8f9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:.75rem;animation:fadeUp .5s .1s ease both;opacity:0}
+.sub{color:#64748b;font-size:clamp(.875rem,2vw,1.05rem);max-width:520px;margin:0 auto 2rem;animation:fadeUp .5s .2s ease both;opacity:0;line-height:1.6}
+/* Tabs */
+.tab-bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;animation:fadeUp .5s .3s ease both;opacity:0}
+.tab-btn{padding:.5rem 1.25rem;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#94a3b8;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(6,182,212,.15));border-color:rgba(139,92,246,.5);color:#c4b5fd}
+.tab-panel{display:none;animation:fadeUp .35s ease both}
+.tab-panel.visible{display:block}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat{background:rgba(18,18,26,.9);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.25rem 1rem;text-align:center;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat:nth-child(1)::before{background:linear-gradient(90deg,#8b5cf6,#06b6d4)}
+.stat:nth-child(2)::before{background:linear-gradient(90deg,#10b981,#06b6d4)}
+.stat:nth-child(3)::before{background:linear-gradient(90deg,#f59e0b,#f97316)}
+.stat:nth-child(4)::before{background:linear-gradient(90deg,#ec4899,#8b5cf6)}
+.stat:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(139,92,246,.2)}
+.stat-num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#f8fafc,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{color:#64748b;font-size:.75rem;margin-top:.25rem;text-transform:uppercase;letter-spacing:.05em}
+.stat-trend{color:#10b981;font-size:.72rem;margin-top:.3rem}
+/* Feature grid */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.feat{background:rgba(18,18,26,.8);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.1rem;display:flex;align-items:flex-start;gap:10px;transition:transform .2s,border-color .2s}
+.feat:hover{transform:translateY(-2px);border-color:rgba(139,92,246,.3)}
+.feat-icon{font-size:1.5rem;flex-shrink:0}
+.feat-text .title{font-size:.875rem;font-weight:700;color:#f1f5f9;margin-bottom:.2rem}
+.feat-text .desc{font-size:.75rem;color:#64748b;line-height:1.4}
+/* Chart preview */
+.chart-wrap{background:rgba(18,18,26,.9);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.5rem}
+.chart-title{font-size:.875rem;font-weight:700;color:#94a3b8;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.05em}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.25,.46,.45,.94)}
+.bar-lbl{font-size:.65rem;color:#64748b}
+.bar-val{font-size:.7rem;color:#94a3b8;font-weight:700}
+/* CTA */
+.cta-row{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:2rem;animation:fadeUp .5s .5s ease both;opacity:0}
+.cta-primary{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.75rem;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.cta-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,92,246,.4)}
+.cta-sec{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.5rem;background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#94a3b8;font-family:'Outfit',sans-serif;font-weight:600;font-size:.875rem;cursor:pointer;transition:all .2s}
+.cta-sec:hover{border-color:rgba(139,92,246,.4);color:#c4b5fd}
+/* Takeaways */
+.takeaways{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.25rem}
+.takeaway-title{font-size:.875rem;font-weight:700;color:#c4b5fd;margin-bottom:.75rem}
+.takeaway-list{display:flex;flex-direction:column;gap:6px}
+.takeaway-item{display:flex;gap:8px;color:#94a3b8;font-size:.8rem;line-height:1.5}
+.takeaway-item span:first-child{color:#8b5cf6;flex-shrink:0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
 </style></head><body>
 <div class="bg"></div>
-<div class="card">
-  <div class="badge">✦ Demo Preview</div>
-  <h1>Transform Any Idea into a Visual</h1>
-  <p class="sub">Type anything — a topic, a question, even just "hi" — and watch it become a stunning visual.</p>
-  <div class="grid">
-    <div class="item"><div class="icon">📊</div><div class="label">Charts & Dashboards</div></div>
-    <div class="item"><div class="icon">🗺️</div><div class="label">Diagrams & Maps</div></div>
-    <div class="item"><div class="icon">✨</div><div class="label">Infographics</div></div>
-    <div class="item"><div class="icon">🎨</div><div class="label">Creative Visuals</div></div>
-    <div class="item"><div class="icon">📈</div><div class="label">Data Stories</div></div>
-    <div class="item"><div class="icon">⚡</div><div class="label">Animations</div></div>
+<div class="dot-pattern"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><div class="pulse-dot"></div> Live Demo Preview</div>
+    <h1>Turn Any Idea Into a Stunning Visual</h1>
+    <p class="sub">Type a topic, question, or dataset — and watch AI turn it into a beautiful interactive infographic in seconds.</p>
+    <div class="tab-bar" id="tabs">
+      <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+      <button class="tab-btn" onclick="switchTab('charts')">Charts</button>
+      <button class="tab-btn" onclick="switchTab('features')">Features</button>
+    </div>
   </div>
-  <div class="cta"><div class="dot"></div> Add your free API key to start →</div>
+
+  <div id="tab-overview" class="tab-panel visible">
+    <div class="stats">
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-lbl">Visual Types</div><div class="stat-trend">▲ Charts, Dashboards, Infographics</div></div>
+      <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">AI Models</div><div class="stat-trend">▲ GPT-4, Claude, Gemini + free</div></div>
+      <div class="stat"><div class="stat-num">&lt;10s</div><div class="stat-lbl">Generation</div><div class="stat-trend">▲ Real-time streaming</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Interactive</div><div class="stat-trend">▲ Tabs, search, modals, accordions</div></div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway-title">💡 What you can build</div>
+      <div class="takeaway-list">
+        <div class="takeaway-item"><span>▸</span> Analytics dashboards with live charts, sortable tables, and KPI stat cards</div>
+        <div class="takeaway-item"><span>▸</span> Infographics with animated timelines, diagrams, and comparison charts</div>
+        <div class="takeaway-item"><span>▸</span> Interactive UI mockups — email clients, dashboards, booking flows</div>
+        <div class="takeaway-item"><span>▸</span> Data stories from any topic: science, finance, health, tech, and more</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-charts" class="tab-panel">
+    <div class="chart-wrap">
+      <div class="chart-title">📊 Sample — Monthly Revenue Trend</div>
+      <div class="bar-chart" id="barChart"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div class="chart-wrap">
+        <div class="chart-title">🎯 Conversion Rate</div>
+        <div style="text-align:center;padding:1rem 0">
+          <svg width="100" height="100" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="url(#g1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="67" style="transition:stroke-dashoffset 1.5s ease"/>
+            <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+          </svg>
+          <div style="font-size:1.75rem;font-weight:800;color:#f8fafc;margin-top:-2.5rem;margin-bottom:2.5rem">72%</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">🌍 Top Regions</div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:.5rem 0">
+          ${[['North America','82%','#8b5cf6'],['Europe','64%','#06b6d4'],['Asia','51%','#10b981'],['Other','33%','#f59e0b']].map(([r,v,c])=>`
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:.75rem;color:#94a3b8">${r}</span><span style="font-size:.75rem;color:#f8fafc;font-weight:700">${v}</span></div>
+            <div style="background:rgba(255,255,255,.06);border-radius:100px;height:6px"><div style="width:${v};height:100%;background:${c};border-radius:100px"></div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-features" class="tab-panel">
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-icon">📊</div><div class="feat-text"><div class="title">15+ Chart Types</div><div class="desc">Bar, line, pie, radar, bubble, heatmap, and more via Chart.js & D3</div></div></div>
+      <div class="feat"><div class="feat-icon">🖱️</div><div class="feat-text"><div class="title">Fully Interactive</div><div class="desc">Tabs, accordions, modals, live search, sortable tables</div></div></div>
+      <div class="feat"><div class="feat-icon">🎨</div><div class="feat-text"><div class="title">Topic Palettes</div><div class="desc">Finance, health, tech, creative — colors adapt to your content</div></div></div>
+      <div class="feat"><div class="feat-icon">📤</div><div class="feat-text"><div class="title">Export Anywhere</div><div class="desc">Download as HTML, PNG, PDF, or send to CodePen / JSFiddle</div></div></div>
+      <div class="feat"><div class="feat-icon">⚡</div><div class="feat-text"><div class="title">Real-time Stream</div><div class="desc">Preview appears as it generates — no waiting for full response</div></div></div>
+      <div class="feat"><div class="feat-icon">🔍</div><div class="feat-text"><div class="title">Web Search</div><div class="desc">AI fetches live data for stocks, weather, news, and current events</div></div></div>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <button class="cta-primary">✦ Add free API key to start →</button>
+    <button class="cta-sec" onclick="document.querySelectorAll('.tab-btn')[1].click()">See chart examples</button>
+  </div>
 </div>
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('visible'); });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('visible');
+  event.currentTarget.classList.add('active');
+}
+// Animate bar chart
+var bars = [['Jan',42,'#8b5cf6'],['Feb',58,'#8b5cf6'],['Mar',51,'#06b6d4'],['Apr',73,'#8b5cf6'],['May',68,'#10b981'],['Jun',89,'#06b6d4'],['Jul',94,'#8b5cf6']];
+var bc = document.getElementById('barChart');
+if (bc) {
+  bc.innerHTML = bars.map(function(b) {
+    return '<div class="bar-col"><div class="bar-val">'+b[1]+'K</div><div class="bar" style="height:0;background:'+b[2]+';opacity:.85" data-h="'+(b[1]/94*100)+'%"></div><div class="bar-lbl">'+b[0]+'</div></div>';
+  }).join('');
+  setTimeout(function() { bc.querySelectorAll('.bar').forEach(function(el) { el.style.height = el.dataset.h; }); }, 200);
+}
+</script>
 </body></html>`;
 import { Menu, X, Sparkles, Keyboard, Star, FolderOpen, GalleryHorizontal, Search, LayoutGrid, List } from 'lucide-react';
 

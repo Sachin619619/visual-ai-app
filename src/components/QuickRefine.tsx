@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wand2, Sparkles, Palette, Zap, Layout, Type, Grid, MousePointer, TrendingUp, AlignLeft, Star, Smartphone, BarChart3, Map, Table2, Layers, ChevronDown, PieChart } from 'lucide-react';
+import { Wand2, Sparkles, Palette, Zap, Layout, Type, Grid, MousePointer, TrendingUp, AlignLeft, Star, Smartphone, BarChart3, Map, Table2, Layers, ChevronDown, PieChart, Activity, Gauge, Flame, Sun, Moon, Cpu, Globe, Calendar, Clock, Folder, Search, Filter, SortAsc, ArrowUpRight, Maximize2, Menu, Info, Circle } from 'lucide-react';
 
 interface QuickRefineProps {
   onRefine: (refinement: string) => void;
@@ -30,6 +30,55 @@ const refinements = [
   { label: 'Polar Area', icon: PieChart, prompt: 'add a polar area chart for comparing categories with varying sizes' },
   { label: 'Bubble Chart', icon: Layers, prompt: 'add a bubble chart showing 3 variables: x, y positions and bubble size' },
   { label: 'Stacked Bar', icon: BarChart3, prompt: 'add stacked bar charts showing composition breakdown across categories' },
+  // Additional refinements
+  { label: 'Add Animations', icon: Activity, prompt: 'add smooth entry animations and hover effects throughout - fade in on load, scale on hover, smooth transitions' },
+  { label: 'Neon Glow', icon: Zap, prompt: 'add neon glow effects with bright accent colors, box-shadows with color bleeding, and glowing text effects' },
+  { label: 'Add Gauges', icon: Gauge, prompt: 'add circular gauge/progress indicators for percentages, completion rates, or performance metrics' },
+  { label: 'Weather Theme', icon: Sun, prompt: 'apply a weather-inspired design: blue gradients, cloud motifs, temperature displays, and atmospheric elements' },
+  { label: 'More Stats', icon: BarChart3, prompt: 'add 3-4 more prominent stat cards with large numbers, trend indicators, and sparkline mini-charts' },
+  { label: 'Add Timeline', icon: Clock, prompt: 'add a vertical or horizontal timeline with milestones, dates, and connected events or steps' },
+  { label: 'Compare Mode', icon: Layers, prompt: 'convert to side-by-side comparison layout with two columns showing different options or time periods' },
+  { label: 'Add Heatmap', icon: Flame, prompt: 'add a heatmap visualization showing intensity, density, or frequency patterns over time or categories' },
+  { label: 'Scroll Reveal', icon: ArrowUpRight, prompt: 'add scroll-triggered animations: elements animate in as user scrolls down the page' },
+  { label: 'Floating Cards', icon: Layers, prompt: 'make cards float with subtle shadow animation, hover lift effects, and 3D perspective' },
+  { label: 'Sidebar Nav', icon: Menu, prompt: 'add a sidebar navigation with menu items, icons, and active state indicators' },
+  { label: 'Breadcrumbs', icon: Folder, prompt: 'add breadcrumb navigation showing hierarchy path with clickable segments' },
+  { label: 'Pagination', icon: Layers, prompt: 'add pagination controls with page numbers, previous/next buttons, and page indicator' },
+  { label: 'Search Bar', icon: Search, prompt: 'add a prominent search bar with icon, placeholder text, and search results dropdown styling' },
+  { label: 'Filters', icon: Filter, prompt: 'add filter controls with dropdown menus, checkboxes, and active filter tags display' },
+  { label: 'Dark Accent', icon: Moon, prompt: 'shift to darker accent colors: deeper purples, blues instead of violets, more subdued highlights' },
+  { label: 'Light Theme', icon: Sun, prompt: 'convert to a light theme: white backgrounds, dark text, subtle shadows instead of dark mode' },
+  // Interactive component refinements
+  { label: 'Add Tabs', icon: Layers, prompt: 'add tabbed navigation with 3-4 meaningful tabs that split content into sections — clicking each tab shows different relevant content' },
+  { label: 'Add Accordion', icon: ChevronDown, prompt: 'convert sections into expandable accordion panels — click to expand/collapse each section with smooth animation' },
+  { label: 'Add Modal', icon: Maximize2, prompt: 'make key cards clickable — clicking them opens a beautiful detail modal popup with expanded information and a close button' },
+  { label: 'Sortable Table', icon: SortAsc, prompt: 'add a sortable data table where clicking column headers sorts all rows ascending/descending' },
+  { label: 'Live Search', icon: Search, prompt: 'add a live search bar at the top that instantly filters cards, list items, or table rows as the user types' },
+  { label: 'Key Takeaways', icon: Star, prompt: 'add a "Key Takeaways" summary callout box at the bottom with 4-5 insight bullet points in a glassmorphism panel' },
+  { label: 'Finance Theme', icon: TrendingUp, prompt: 'apply a finance/business color palette: deep navy background, blue and green accents, gold highlights — conveys trust and growth' },
+  { label: 'Health Theme', icon: Activity, prompt: 'apply a health/wellness color palette: dark forest green background, emerald and teal accents, mint highlights — conveys vitality' },
+  { label: 'Tech Theme', icon: Cpu, prompt: 'apply a technology/AI color palette: deep blue-black background, cyan and blue accents, subtle violet — conveys precision and innovation' },
+  { label: 'Creative Theme', icon: Palette, prompt: 'apply a creative/artistic color palette: near-black with pink, orange, and purple accents — vibrant and energetic' },
+  // D3 visualizations
+  { label: 'Force Graph', icon: Globe, prompt: 'add a D3 force-directed network graph showing relationships between nodes — interactive drag, color-coded by group, animated physics' },
+  { label: 'Treemap', icon: Grid, prompt: 'add a D3 treemap showing hierarchical data with color-coded categories, proportional sizing, and hover tooltips' },
+  { label: 'Sunburst', icon: Circle, prompt: 'add a D3 sunburst / radial hierarchy chart showing nested categories with interactive hover highlighting' },
+  { label: 'Heatmap', icon: Flame, prompt: 'add a D3 heatmap calendar grid showing activity/intensity data with color gradient scale and week labels' },
+  // More themes
+  { label: 'Science Theme', icon: Cpu, prompt: 'apply a science/space color palette: near-black with indigo and cyan accents — deep, precise, and cosmic feel' },
+  { label: 'Food Theme', icon: Star, prompt: 'apply a food/lifestyle color palette: warm dark background with orange, amber, and green accents — warm and inviting' },
+  { label: 'Sports Theme', icon: Activity, prompt: 'apply a sports/action color palette: dark background with lime, yellow, and red accents — energetic and exciting' },
+  { label: 'Nature Theme', icon: Globe, prompt: 'apply a nature/sustainability color palette: deep forest-dark background with green, emerald, and teal accents — fresh and organic' },
+  // Additional layout improvements
+  { label: '3-Col Compare', icon: Layers, prompt: 'convert the main content into a 3-column comparison layout with cards for Option A, Option B, and Option C side-by-side' },
+  { label: 'VS Comparison', icon: ArrowUpRight, prompt: 'add a bold BEFORE vs AFTER or A vs B metric comparison row with a gradient VS badge in the center' },
+  { label: 'Step Tracker', icon: TrendingUp, prompt: 'add a numbered step progress tracker with gradient circles, connecting lines, and labels for each stage' },
+  { label: 'Alert Banners', icon: Info, prompt: 'add success/warning/error alert banner components with icons, colored backgrounds, and dismiss buttons' },
+  { label: 'Chip Tags', icon: Grid, prompt: 'add scrollable chip/tag pills for categories or labels — color-coded with glow borders' },
+  { label: 'Hero Banner', icon: Maximize2, prompt: 'add a striking hero banner at the top: gradient background, dot grid pattern, badge, large gradient headline, and subtitle' },
+  { label: 'Add Gantt', icon: Calendar, prompt: 'add a Gantt/schedule chart showing tasks or phases across weeks/months as colored horizontal bars in a table' },
+  { label: 'Night Shift', icon: Moon, prompt: 'deepen the dark theme: pure black backgrounds, ultra-low contrast borders, high-contrast white text, minimal color — elegant noir style' },
+  { label: 'Neon Punk', icon: Zap, prompt: 'add neon punk aesthetics: bright electric colors, neon text shadows, glitch effects, and cyberpunk-inspired gradients' },
 ];
 
 export const QuickRefine: React.FC<QuickRefineProps> = ({ onRefine, isLoading }) => {
@@ -97,6 +146,19 @@ const templates = [
   { label: '📚 Education', category: 'Visual', prompt: 'Build an online course dashboard — course progress cards, video player with controls, quiz scores, certificate badges, and recommended next lessons. Modern dark theme with accent highlights.' },
   { label: '🍔 Food', category: 'Visual', prompt: 'Create a restaurant menu page — category tabs, food item cards with images, prices, dietary badges (vegan, gluten-free), and "Add to Order" buttons. Beautiful food photography and warm color accents.' },
   { label: '✈️ Travel', category: 'Visual', prompt: 'Design a travel destination page — hero image with overlay text, itinerary timeline, budget breakdown pie chart, packing list checklist, and photo gallery grid. Inspiring wanderlust theme.' },
+  // Science & Research
+  { label: '🧬 Biology', category: 'Science', prompt: 'Create a stunning biology infographic about cell structure — labeled cell diagram with organelles, functions table, comparison between plant/animal cells, key stats about cells in the human body. Dark theme with emerald/teal accents.' },
+  { label: '🌿 Sustainability', category: 'Science', prompt: 'Create a sustainability metrics dashboard — carbon footprint gauge, renewable energy mix pie chart, emissions reduction timeline, top polluters leaderboard, and climate action progress bars. Dark theme with green accents.' },
+  { label: '🔭 Astronomy', category: 'Science', prompt: 'Create a stunning space exploration infographic — planets size comparison chart, distance from sun bar chart, mission success timeline, key discoveries stat cards. Deep space dark theme with indigo/cyan accents.' },
+  // Business
+  { label: '📋 Case Study', category: 'Business', prompt: 'Create a business case study visual report — problem/solution/result flow diagram, before vs after metric comparison cards, key metrics dashboard, implementation timeline, and testimonial quotes in styled callouts. Finance blue/green theme.' },
+  { label: '🎯 OKR Tracker', category: 'Business', prompt: 'Create a company OKR (Objectives & Key Results) tracker — quarterly goals as cards with progress bars, KR completion percentages, team ownership tags, and a rolling 4-quarter timeline. Professional dark blue theme.' },
+  // Security
+  { label: '🔒 Security Audit', category: 'Technical', prompt: 'Create a cybersecurity audit report — vulnerability severity donut chart (critical/high/medium/low), top threats list with risk scores, compliance framework checklist, attack surface heat score, and remediation timeline Gantt. Dark red/orange threat theme.' },
+  // Art & Culture
+  { label: '🎨 Art History', category: 'Visual', prompt: 'Create a visual timeline of art history movements — from Renaissance to Modern Art, show each movement as a styled card with defining characteristics, key artists, and example color palettes. Artistic dark theme with warm accents.' },
+  // Finance
+  { label: '💹 Budget Planner', category: 'Business', prompt: 'Create a personal budget planner dashboard — income vs expenses donut chart, monthly spending by category bar chart, savings goal progress rings, debt paydown timeline, and net worth trend line chart. Finance blue/green palette.' },
 ];
 
 export const PromptTemplates: React.FC<PromptTemplatesProps> = ({ onSelect, isLoading }) => {

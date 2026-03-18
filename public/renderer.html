@@ -13,15 +13,18 @@
   <div id="root"></div>
   <script>
     window.addEventListener('message', function(event) {
-      if (!event.data || event.data.type !== 'SET_CONTENT') return;
-      var html = event.data.html;
-      // Replace the entire document with the received HTML
-      document.open();
-      document.write(html);
-      document.close();
+      if (!event.data) return;
+      if (event.data.type === 'SET_CONTENT') {
+        document.open();
+        document.write(event.data.html);
+        document.close();
+      } else if (event.data.type === 'PING_READY') {
+        // Parent is asking if we're ready — echo back RENDERER_READY
+        try { window.parent.postMessage({ type: 'RENDERER_READY' }, '*'); } catch(e) {}
+      }
     });
-    // Signal parent that renderer is ready
-    window.parent.postMessage({ type: 'RENDERER_READY' }, '*');
+    // Signal parent that renderer is ready on initial load
+    try { window.parent.postMessage({ type: 'RENDERER_READY' }, '*'); } catch(e) {}
   </script>
 </body>
 </html>

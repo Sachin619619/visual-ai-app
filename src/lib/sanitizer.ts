@@ -1101,10 +1101,26 @@ const DATA_CHART_INIT_SCRIPT = (theme: PreviewTheme) => `
     initTooltips();
   }
 
+  // Re-register message handler and signal parent FIRST — before init().
+  // This ensures communication always works even if init() throws an error.
+  window.addEventListener('message', function(evt) {
+    if (!evt.data) return;
+    if (evt.data.type === 'SET_CONTENT') {
+      document.open();
+      document.write(evt.data.html);
+      document.close();
+    } else if (evt.data.type === 'PING_READY') {
+      // Parent asking if we're ready — echo RENDERER_READY back
+      try { window.parent.postMessage({ type: 'RENDERER_READY' }, '*'); } catch(e) {}
+    }
+  });
+  try { window.parent.postMessage({ type: 'RENDERER_READY' }, '*'); } catch(e) {}
+
+  // Run visual init after signaling ready; errors here don't affect the communication layer
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function() { try { init(); } catch(e) {} });
   } else {
-    init();
+    try { init(); } catch(e) {}
   }
 })();
 </script>`;

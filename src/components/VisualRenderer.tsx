@@ -116,6 +116,19 @@ const QUICK_PROMPTS = [
   { key: 'iot-dashboard', prompt: 'Create an IoT smart home dashboard — device cards with on/off status, temperature/humidity sensors, energy usage chart, automation rules list, and device controls.', label: '🏠 Smart Home' },
   { key: 'nft-gallery', prompt: 'Create an NFT gallery — collectible cards with artwork images, collection name, floor price, owners count, and activity history. Filter by collection, sort by price.', label: '🖼️ NFT Gallery' },
   { key: 'stock-trading', prompt: 'Create a stock trading interface — live price chart with candlesticks, buy/sell buttons, order book, position summary, watchlist, and recent trades. Professional trading theme.', label: '📈 Stock Trading' },
+  // Science & Research
+  { key: 'cell-biology', prompt: 'Create a stunning biology infographic about cell structure — labeled cell diagram with organelles, plant vs animal cell comparison table, key stats about cells in the human body. Dark emerald/teal theme.', label: '🧬 Cell Biology' },
+  { key: 'sustainability', prompt: 'Create a sustainability metrics dashboard — carbon footprint gauge, renewable energy mix donut chart, emissions reduction line chart, top CO2 contributors leaderboard, and climate action goal progress bars. Dark green theme.', label: '🌿 Sustainability' },
+  { key: 'astronomy', prompt: 'Create a stunning space infographic — planets size comparison horizontal bar chart, distance from sun visualization, space mission history timeline with key milestones, discovery stat cards. Deep space dark with indigo/cyan accents.', label: '🔭 Astronomy' },
+  // Business
+  { key: 'case-study', prompt: 'Create a business case study visual report — problem/solution/result flow with connecting arrows, before vs after metric comparison (revenue, costs, efficiency), implementation timeline, and Key Takeaways panel. Finance blue/green theme.', label: '📋 Case Study' },
+  { key: 'okr-tracker', prompt: 'Create a company OKR tracker for Q1 2025 — 3 Objectives as header cards, Key Results with progress bars and % completion, team ownership badges, and a quarterly timeline. Professional dark blue theme.', label: '🎯 OKR Tracker' },
+  // Security
+  { key: 'security-audit', prompt: 'Create a cybersecurity audit report — vulnerability severity donut chart (critical/high/medium/low counts), OWASP top 10 threat checklist, risk score gauges, remediation timeline Gantt chart, and compliance framework status. Dark red/orange threat theme.', label: '🔒 Security Audit' },
+  // Art & Culture
+  { key: 'art-history', prompt: 'Create a visual timeline of art history movements from Renaissance (1400s) to Digital Art (2000s) — each era as a styled card showing defining traits, key artists, signature colors, and a movement evolution flow diagram. Warm artistic dark theme.', label: '🎨 Art History' },
+  // Finance
+  { key: 'budget-planner', prompt: 'Create a personal budget planner dashboard — monthly income vs expenses donut chart, spending by category bar chart (Housing 35%, Food 15%, Transport 12%, etc.), savings goal progress rings for Emergency Fund, Vacation, Retirement, and net worth trend line chart. Finance blue/green palette.', label: '💹 Budget Planner' },
 ];
 
 // Viewport size configurations
@@ -280,6 +293,35 @@ const LOADING_MESSAGES = [
   'Optimizing for wow moments...',
   'Bringing your vision to life...',
   'Fine-tuning color palettes...',
+  'Wiring up tabs and accordions...',
+  'Building interactive filters...',
+  'Coding click animations...',
+  'Setting up modal dialogs...',
+  'Adding live search functionality...',
+  'Programming sortable tables...',
+  'Crafting topic-matched palette...',
+  'Inserting key takeaways panel...',
+  'Tuning glassmorphism layers...',
+  'Building force-directed graph...',
+  'Animating sunburst chart...',
+  'Calculating treemap layout...',
+  'Drawing SVG flow diagram...',
+  'Rendering heatmap calendar...',
+  'Composing the hero banner...',
+  'Staggering entry animations...',
+  'Finalizing the visual story...',
+  'Laying out comparison cards...',
+  'Building the force-directed graph...',
+  'Generating the Gantt timeline...',
+  'Wiring the VS comparison panel...',
+  'Painting the gradient headlines...',
+  'Assembling step tracker flow...',
+  'Applying topic-matched dark theme...',
+  'Crafting neon glow accents...',
+  'Drawing the sunburst layers...',
+  'Constructing alert banners...',
+  'Placing chip tag pills...',
+  'Polishing the above-the-fold hero...',
 ];
 
 const LoadingMessage = memo(() => {
@@ -318,21 +360,47 @@ LoadingMessage.displayName = 'LoadingMessage';
 
 // Send HTML to the renderer.html page via postMessage — works reliably on all mobile browsers
 // renderer.html is served from the same origin so no blob URL / CSP issues
+//
+// Protocol:
+//   First load:  set iframe.src → renderer.html fires RENDERER_READY → parent sends SET_CONTENT
+//   Subsequent:  parent sends PING_READY → renderer echoes RENDERER_READY → parent sends SET_CONTENT
+//
+// PING_READY is also handled when the renderer is mid-cycle (document.write in progress):
+// the listener is dead during that window, so PING_READY is lost — but DATA_CHART_INIT_SCRIPT
+// fires RENDERER_READY when the cycle completes, which the parent's pending handler catches.
+//
+// "Latest wins": if setIframeContent is called again before the previous delivery completes,
+// the previous handler is cancelled and only the latest content is delivered.
+
+let _activeHandler: ((e: MessageEvent) => void) | null = null;
+
 function setIframeContent(iframe: HTMLIFrameElement, content: string) {
   const RENDERER = '/renderer.html';
+
+  // Cancel any in-flight delivery — latest content wins
+  if (_activeHandler) {
+    window.removeEventListener('message', _activeHandler);
+    _activeHandler = null;
+  }
+
+  // Wait for RENDERER_READY, then deliver content
+  const handler = (event: MessageEvent) => {
+    if (event.data?.type !== 'RENDERER_READY') return;
+    window.removeEventListener('message', handler);
+    if (_activeHandler === handler) _activeHandler = null;
+    iframe.contentWindow?.postMessage({ type: 'SET_CONTENT', html: content }, '*');
+  };
+  _activeHandler = handler;
+  window.addEventListener('message', handler);
+
   if (!iframe.src || !iframe.src.endsWith('/renderer.html')) {
-    // First load: point iframe at renderer, then send content once it's ready
-    const onReady = (event: MessageEvent) => {
-      if (event.data?.type === 'RENDERER_READY') {
-        window.removeEventListener('message', onReady);
-        iframe.contentWindow?.postMessage({ type: 'SET_CONTENT', html: content }, '*');
-      }
-    };
-    window.addEventListener('message', onReady);
+    // First load — RENDERER_READY fires automatically when renderer.html loads
     iframe.src = RENDERER;
   } else {
-    // Already on renderer page — just send new content directly
-    iframe.contentWindow?.postMessage({ type: 'SET_CONTENT', html: content }, '*');
+    // Already loaded — ping the renderer to echo RENDERER_READY back
+    // If renderer is mid-cycle (listener dead), PING_READY is silently lost,
+    // but DATA_CHART_INIT_SCRIPT will fire RENDERER_READY when the cycle finishes
+    iframe.contentWindow?.postMessage({ type: 'PING_READY' }, '*');
   }
 }
 
