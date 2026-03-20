@@ -1282,11 +1282,15 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
             <span>Longer prompts produce richer visuals — try adding details or a format.</span>
           </p>
         )}
-        <button
+        <motion.button
           type="submit"
           disabled={!prompt.trim() || isLoading}
           className="btn-primary w-full flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[48px] text-sm relative overflow-hidden group"
+          animate={prompt.trim() && !isLoading ? { boxShadow: ['0 0 0px rgba(139,92,246,0)', '0 0 18px rgba(139,92,246,0.55)', '0 0 0px rgba(139,92,246,0)'] } : { boxShadow: '0 0 0px rgba(139,92,246,0)' }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
         >
+          {/* shimmer sweep on hover */}
+          <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
           {isLoading ? (
             <>
               <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1295,11 +1299,11 @@ export const InputPanel = memo(function InputPanel({ onGenerate, onRefine, isLoa
             </>
           ) : (
             <>
-              <Send className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-0.5 transition-transform" />
-              <span>Generate</span>
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+              <span>Generate Visual</span>
             </>
           )}
-        </button>
+        </motion.button>
 
         <p className="text-[10px] sm:text-xs text-text-muted text-center">
           <span className="hidden sm:inline">Press ⌘ + Enter to submit</span>
