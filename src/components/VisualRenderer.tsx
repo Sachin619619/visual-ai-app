@@ -334,6 +334,28 @@ const LOADING_MESSAGES = [
   'Constructing alert banners...',
   'Placing chip tag pills...',
   'Polishing the above-the-fold hero...',
+  // New messages
+  'Sculpting circular gauge meters...',
+  'Forging the kanban board lanes...',
+  'Weaving the spotlight glow effect...',
+  'Morphing the blob background shapes...',
+  'Injecting the frosted badge pills...',
+  'Calibrating the radar chart axes...',
+  'Connecting the force-directed nodes...',
+  'Spinning up the donut rings...',
+  'Stitching the heatmap grid together...',
+  'Scripting the tab-switch interactions...',
+  'Stretching the sparkline curves...',
+  'Casting the glassmorphism shadows...',
+  'Firing up the Chart.js animations...',
+  'Aligning the gradient text headers...',
+  'Layering the ambient depth orbs...',
+];
+
+const BUILD_STAGES = [
+  { label: 'Planning', icon: '🧠', threshold: 0 },
+  { label: 'Building', icon: '🔨', threshold: 8 },
+  { label: 'Polishing', icon: '✨', threshold: 18 },
 ];
 
 const LoadingMessage = memo(() => {
@@ -346,10 +368,45 @@ const LoadingMessage = memo(() => {
     const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
     return () => { clearInterval(msg); clearInterval(timer); };
   }, []);
-  // Estimated: most generations complete in 10-30s
   const estimate = elapsed < 10 ? `~${20 - elapsed}s remaining` : elapsed < 30 ? 'almost there...' : 'taking longer than usual...';
+  const activeStage = BUILD_STAGES.reduce((acc, s) => elapsed >= s.threshold ? s : acc, BUILD_STAGES[0]);
+
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-2">
+      {/* Build stage indicator */}
+      <div className="flex items-center gap-1.5 mb-1">
+        {BUILD_STAGES.map((stage, i) => {
+          const isActive = stage.label === activeStage.label;
+          const isDone = BUILD_STAGES.indexOf(activeStage) > i;
+          return (
+            <div key={stage.label} className="flex items-center gap-1.5">
+              <motion.div
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all"
+                animate={isActive ? { scale: [1, 1.06, 1] } : {}}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                style={{
+                  background: isDone ? 'rgba(16,185,129,0.15)' : isActive ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${isDone ? 'rgba(16,185,129,0.4)' : isActive ? 'rgba(139,92,246,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                  color: isDone ? '#34d399' : isActive ? '#c4b5fd' : '#475569',
+                }}
+              >
+                <span>{isDone ? '✓' : stage.icon}</span>
+                <span>{stage.label}</span>
+                {isActive && (
+                  <motion.span
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                  >…</motion.span>
+                )}
+              </motion.div>
+              {i < BUILD_STAGES.length - 1 && (
+                <div className="w-3 h-px" style={{ background: isDone ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.1)' }} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
       <AnimatePresence mode="wait">
         <motion.p
           key={index}
