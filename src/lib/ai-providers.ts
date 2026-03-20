@@ -262,6 +262,11 @@ RULE: Use topic-adaptive palette when the subject clearly matches a domain above
 - Ticker tape: .ticker-wrap > .ticker > .ticker-item × N — auto-scrolling horizontal marquee (duplicate items for seamless loop). Pauses on hover.
 - Ping pulse ring: .ping-ring (animated expanding ring — use on live/active status dots)
 - Shimmer text: .shimmer-text (chrome/metallic sweeping highlight — ideal for hero titles and key metrics)
+- Stagger children: .stagger-children on any grid/flex container — children fade+slide in one by one with springy easing (up to 12 items). ALWAYS use this on card grids, feature lists, and stat rows.
+- Progress bars: .progress-bar > .progress-fill[style="--progress:75%"] — animated gradient bar that grows from 0. Variants: .progress-fill-green/orange/pink/red. Size variants: .progress-bar-sm (4px) / .progress-bar-lg (12px).
+- Neon borders: .neon-border-cyan / .neon-border-violet / .neon-border-green / .neon-border-pink / .neon-border-amber — glowing colored box-shadow borders for tech/gaming/cyberpunk cards.
+- Holographic gradient: .holo (background) / .holo-text (gradient text) — shifting rainbow iridescent gradient. Great for premium/special items, NFT cards, achievement badges.
+- Number pop: .number-pop-1 / .number-pop-2 / .number-pop-3 / .number-pop-4 — bouncy springy entrance animations for stat numbers in a row.
 
 🎯 DESIGN BEST PRACTICES:
 - Use generous whitespace (padding 24-48px) between sections
@@ -771,6 +776,7 @@ function toggleDataset(idx) {
 26. FOR SCORES, RATINGS, HEALTH & PERFORMANCE TOPICS — always use the CIRCULAR GAUGE SVG pattern instead of just a plain number. A row of 3-4 gauges is far more impactful than stat cards alone.
 27. FOR WORKFLOW, PROJECT STATUS, OR PROCESS TOPICS — use the KANBAN board pattern with color-coded column headers (backlog/in-progress/done) alongside any timeline or flow diagrams.
 28. USE ADVANCED ANIMATION UTILITIES for premium feel — class="aurora-bg" on hero sections for animated aurora glow, class="shimmer-text" on key metrics/hero titles for metallic chrome effect, class="flip-card" for interactive before/after or term/definition reveals, class="glitch" + data-text="..." for cyberpunk/tech/gaming headings, class="ticker-wrap" > .ticker > .ticker-item for scrolling news/stats tickers, class="ping-ring" on live status indicators.
+30. ALWAYS add class="stagger-children" to EVERY card grid, feature list, and stat row. This single class makes all children spring-animate in one-by-one and is the fastest way to make any section feel polished and alive. Add class="number-pop-1/2/3/4" to stat numbers in a row for a bouncy entrance. Use .progress-bar + .progress-fill[--progress:X%] for any metric that has a percentage. Use .neon-border-cyan/violet/green/pink on feature cards in tech/gaming themes. Use .holo-text on achievement labels, tier badges, and "featured" items.
 29. FOR MULTI-DIMENSIONAL COMPARISONS (skills, products, models, teams, options with 4+ attributes) — always use a RADAR/SPIDER CHART instead of a plain table or bar chart. It shows relative strengths at a glance. For market-share, budget, or categorical breakdowns — use a STACKED HORIZONTAL BAR CHART. For rankings/leaderboards — use the ranked leaderboard row pattern with a delta indicator (↑↓) and gradient rank badge.
 
 🌈 ADDITIONAL COMPONENT PATTERNS:

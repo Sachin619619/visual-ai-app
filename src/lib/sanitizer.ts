@@ -993,6 +993,57 @@ const getThemeStyles = (theme: PreviewTheme) => {
     /* NEW: Shimmer text (chrome/metallic look) */
     .shimmer-text { background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 40%, #c4b5fd 60%, #06b6d4 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer-sweep 3s linear infinite; }
     @keyframes shimmer-sweep { from { background-position: 200% center; } to { background-position: -200% center; } }
+
+    /* NEW: Staggered fade-in for grids & lists — add class="stagger-children" to any grid/flex container */
+    .stagger-children > * { opacity: 0; animation: stagger-in 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .stagger-children > *:nth-child(1)  { animation-delay: 0.04s; }
+    .stagger-children > *:nth-child(2)  { animation-delay: 0.10s; }
+    .stagger-children > *:nth-child(3)  { animation-delay: 0.16s; }
+    .stagger-children > *:nth-child(4)  { animation-delay: 0.22s; }
+    .stagger-children > *:nth-child(5)  { animation-delay: 0.28s; }
+    .stagger-children > *:nth-child(6)  { animation-delay: 0.34s; }
+    .stagger-children > *:nth-child(7)  { animation-delay: 0.40s; }
+    .stagger-children > *:nth-child(8)  { animation-delay: 0.46s; }
+    .stagger-children > *:nth-child(9)  { animation-delay: 0.52s; }
+    .stagger-children > *:nth-child(10) { animation-delay: 0.58s; }
+    .stagger-children > *:nth-child(11) { animation-delay: 0.64s; }
+    .stagger-children > *:nth-child(12) { animation-delay: 0.70s; }
+    @keyframes stagger-in { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    /* NEW: Animated gradient progress bar — usage: <div class="progress-bar"><div class="progress-fill" style="--progress:75%"></div></div> */
+    .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+    .progress-bar-sm { height: 4px; }
+    .progress-bar-lg { height: 12px; }
+    .progress-fill { height: 100%; width: var(--progress, 70%); border-radius: 999px; background: linear-gradient(90deg, #8b5cf6, #06b6d4); animation: progress-grow 1.2s cubic-bezier(0.22,1,0.36,1) forwards; transform-origin: left; position: relative; overflow: hidden; }
+    .progress-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%); animation: progress-shine 2s ease-in-out infinite 1.2s; }
+    @keyframes progress-grow { from { width: 0 !important; } to { width: var(--progress, 70%); } }
+    @keyframes progress-shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    /* Color variants */
+    .progress-fill-green { background: linear-gradient(90deg, #10b981, #34d399); }
+    .progress-fill-orange { background: linear-gradient(90deg, #f97316, #fbbf24); }
+    .progress-fill-pink { background: linear-gradient(90deg, #ec4899, #f43f5e); }
+    .progress-fill-red { background: linear-gradient(90deg, #ef4444, #f97316); }
+
+    /* NEW: Neon borders — glowing colored outlines for tech/gaming/cyberpunk themes */
+    .neon-border-cyan   { border: 1px solid rgba(6,182,212,0.7);   box-shadow: 0 0 8px rgba(6,182,212,0.5),  0 0 24px rgba(6,182,212,0.15),  inset 0 0 8px rgba(6,182,212,0.04); }
+    .neon-border-violet { border: 1px solid rgba(139,92,246,0.7);  box-shadow: 0 0 8px rgba(139,92,246,0.5), 0 0 24px rgba(139,92,246,0.15), inset 0 0 8px rgba(139,92,246,0.04); }
+    .neon-border-green  { border: 1px solid rgba(16,185,129,0.7);  box-shadow: 0 0 8px rgba(16,185,129,0.5), 0 0 24px rgba(16,185,129,0.15), inset 0 0 8px rgba(16,185,129,0.04); }
+    .neon-border-pink   { border: 1px solid rgba(236,72,153,0.7);  box-shadow: 0 0 8px rgba(236,72,153,0.5), 0 0 24px rgba(236,72,153,0.15), inset 0 0 8px rgba(236,72,153,0.04); }
+    .neon-border-amber  { border: 1px solid rgba(245,158,11,0.7);  box-shadow: 0 0 8px rgba(245,158,11,0.5), 0 0 24px rgba(245,158,11,0.15), inset 0 0 8px rgba(245,158,11,0.04); }
+
+    /* NEW: Holographic / iridescent rainbow gradient */
+    .holo { background: linear-gradient(135deg, #f43f5e, #f97316, #eab308, #22c55e, #06b6d4, #6366f1, #ec4899); background-size: 300% 300%; animation: holo-shift 6s ease infinite; }
+    .holo-text { background: linear-gradient(135deg, #f43f5e, #f97316, #eab308, #22c55e, #06b6d4, #6366f1, #ec4899); background-size: 300% 300%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: holo-shift 6s ease infinite; }
+    @keyframes holo-shift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+    /* NEW: Number pop-in — bouncy entrance for stat numbers */
+    .number-pop { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    @keyframes number-pop { from { opacity: 0; transform: scale(0.4) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    /* Staggered number pops for a row of stats */
+    .number-pop-1 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both; }
+    .number-pop-2 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s both; }
+    .number-pop-3 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
+    .number-pop-4 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
 `;
 };
 
