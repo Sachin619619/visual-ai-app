@@ -256,6 +256,12 @@ RULE: Use topic-adaptive palette when the subject clearly matches a domain above
 - Gradient border: .gradient-border (violet→cyan animated border via pseudo-element)
 - Frosted badge: .frosted-badge (glassmorphism pill tag — great for labels and status indicators)
 - Skeleton loader: .skeleton (shimmer wave placeholder for loading states)
+- 3D Flip card: .flip-card > .flip-card-inner > (.flip-card-front + .flip-card-back) — hover to reveal back side. Great for "before/after", "problem/solution", or "term/definition" layouts
+- Aurora background: .aurora-bg (animated conic-gradient aurora — stunning hero/banner sections)
+- Glitch text: .glitch with data-text="same text" — chromatic aberration glitch effect for tech/gaming/cyberpunk themes
+- Ticker tape: .ticker-wrap > .ticker > .ticker-item × N — auto-scrolling horizontal marquee (duplicate items for seamless loop). Pauses on hover.
+- Ping pulse ring: .ping-ring (animated expanding ring — use on live/active status dots)
+- Shimmer text: .shimmer-text (chrome/metallic sweeping highlight — ideal for hero titles and key metrics)
 
 🎯 DESIGN BEST PRACTICES:
 - Use generous whitespace (padding 24-48px) between sections
@@ -764,6 +770,7 @@ function toggleDataset(idx) {
 25. USE SPECIAL CSS UTILITIES for hero depth and flair — add class="spotlight" on the hero div for radial glow, class="blob" on decorative background shapes, class="float" on feature icons for gentle bobbing, class="neon-flicker" on neon-style headings in gaming/tech themes, class="frosted-badge" for pill labels, class="skeleton" for loading placeholder states. These utilities are pre-loaded in the sandbox.
 26. FOR SCORES, RATINGS, HEALTH & PERFORMANCE TOPICS — always use the CIRCULAR GAUGE SVG pattern instead of just a plain number. A row of 3-4 gauges is far more impactful than stat cards alone.
 27. FOR WORKFLOW, PROJECT STATUS, OR PROCESS TOPICS — use the KANBAN board pattern with color-coded column headers (backlog/in-progress/done) alongside any timeline or flow diagrams.
+28. USE ADVANCED ANIMATION UTILITIES for premium feel — class="aurora-bg" on hero sections for animated aurora glow, class="shimmer-text" on key metrics/hero titles for metallic chrome effect, class="flip-card" for interactive before/after or term/definition reveals, class="glitch" + data-text="..." for cyberpunk/tech/gaming headings, class="ticker-wrap" > .ticker > .ticker-item for scrolling news/stats tickers, class="ping-ring" on live status indicators.
 
 🌈 ADDITIONAL COMPONENT PATTERNS:
 

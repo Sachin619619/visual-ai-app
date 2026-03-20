@@ -956,6 +956,43 @@ const getThemeStyles = (theme: PreviewTheme) => {
     /* NEW: Skeleton shimmer */
     .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: skeleton-wave 1.5s ease-in-out infinite; border-radius: 6px; }
     @keyframes skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* NEW: 3D Flip card — add class="flip-card" wrapper, flip-card-inner, flip-card-front, flip-card-back */
+    .flip-card { perspective: 1000px; cursor: pointer; }
+    .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(0.4,0.2,0.2,1); transform-style: preserve-3d; }
+    .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: inherit; }
+    .flip-card-back { transform: rotateY(180deg); }
+
+    /* NEW: Aurora animated background */
+    .aurora-bg { position: relative; overflow: hidden; }
+    .aurora-bg::before { content: ''; position: absolute; inset: -50%; width: 200%; height: 200%; background: conic-gradient(from 180deg at 50% 70%, #8b5cf680 0deg, #06b6d480 60deg, #10b98180 120deg, #8b5cf680 180deg, #6366f180 240deg, #06b6d480 300deg, #8b5cf680 360deg); animation: aurora-spin 12s linear infinite; filter: blur(60px); opacity: 0.35; pointer-events: none; z-index: 0; }
+    .aurora-bg > * { position: relative; z-index: 1; }
+    @keyframes aurora-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* NEW: Glitch text effect for tech/gaming */
+    .glitch { position: relative; }
+    .glitch::before, .glitch::after { content: attr(data-text); position: absolute; inset: 0; }
+    .glitch::before { color: #06b6d4; animation: glitch-1 3s infinite linear; clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+    .glitch::after { color: #ec4899; animation: glitch-2 3s infinite linear; clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+    @keyframes glitch-1 { 0%,90%,100% { transform: translate(0); opacity: 0; } 92% { transform: translate(-3px, 1px); opacity: 0.8; } 96% { transform: translate(3px, -1px); opacity: 0.8; } }
+    @keyframes glitch-2 { 0%,85%,100% { transform: translate(0); opacity: 0; } 87% { transform: translate(3px, 2px); opacity: 0.7; } 93% { transform: translate(-3px, -2px); opacity: 0.7; } }
+
+    /* NEW: Horizontal scrolling ticker tape */
+    .ticker-wrap { overflow: hidden; width: 100%; }
+    .ticker { display: flex; width: max-content; animation: ticker-scroll 20s linear infinite; }
+    .ticker-item { padding: 0 2rem; white-space: nowrap; }
+    .ticker-wrap:hover .ticker { animation-play-state: paused; }
+    @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* NEW: Ping pulse ring (for live/active indicators) */
+    .ping-ring { position: relative; display: inline-flex; }
+    .ping-ring::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid currentColor; animation: ping-pulse 1.5s ease-out infinite; opacity: 0.6; }
+    @keyframes ping-pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.8); opacity: 0; } }
+
+    /* NEW: Shimmer text (chrome/metallic look) */
+    .shimmer-text { background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 40%, #c4b5fd 60%, #06b6d4 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer-sweep 3s linear infinite; }
+    @keyframes shimmer-sweep { from { background-position: 200% center; } to { background-position: -200% center; } }
 `;
 };
 
