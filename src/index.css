@@ -1456,3 +1456,94 @@ h1, h2, h3, .font-heading {
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* ====== END ADDITIONAL CSS UTILITIES ====== */
+
+/* ====== PREMIUM UI POLISH ====== */
+
+/* 1. Ambient depth backdrop — subtle violet radial spotlight at top of page.
+      Inspired by Linear, Vercel, Raycast. Barely visible but adds significant depth. */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(900px, 120vw);
+  height: 500px;
+  background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(139, 92, 246, 0.10) 0%, rgba(6, 182, 212, 0.04) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+/* Suppress the orb in light mode where it's not needed */
+.light body::before,
+[data-theme="light"] body::before {
+  opacity: 0;
+}
+
+/* 2. Premium multi-layer focus ring on the prompt input.
+      Stacks a hard ring, soft glow, and ambient spread for depth. */
+.input-field:focus {
+  outline: none;
+  border-color: rgba(139, 92, 246, 0.7);
+  box-shadow:
+    0 0 0 1px rgba(139, 92, 246, 0.35),
+    0 0 0 4px rgba(139, 92, 246, 0.10),
+    0 4px 20px rgba(139, 92, 246, 0.18),
+    0 0 50px rgba(139, 92, 246, 0.06);
+  transition: border-color 0.2s ease, box-shadow 0.25s ease;
+}
+
+/* 3. Upgrade .focus-gradient:focus-within to match */
+.focus-gradient:focus-within {
+  box-shadow:
+    0 0 0 1px rgba(139, 92, 246, 0.35),
+    0 0 0 4px rgba(139, 92, 246, 0.10),
+    0 4px 20px rgba(139, 92, 246, 0.18);
+}
+
+/* 4. Enhanced card hover — stronger lift + dual-color glow (violet + cyan at corners) */
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(139, 92, 246, 0.12),
+    0 0 24px rgba(139, 92, 246, 0.07),
+    0 0 6px rgba(6, 182, 212, 0.05);
+}
+
+/* 5. New utility: .glow-on-hover — adds a soft violet aura on hover (use on quick-prompt chips, cards, etc.) */
+.glow-on-hover {
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+.glow-on-hover:hover {
+  box-shadow: 0 0 18px rgba(139, 92, 246, 0.25), 0 0 6px rgba(6, 182, 212, 0.12);
+  transform: translateY(-1px);
+}
+
+/* 6. Conic-gradient spotlight border — premium interactive element ring (opt-in class) */
+.spotlight-border {
+  position: relative;
+}
+.spotlight-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--angle, 0deg), transparent 60%, rgba(139,92,246,0.5) 70%, rgba(6,182,212,0.5) 80%, transparent 90%);
+  animation: rotate-conic 4s linear infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.spotlight-border:hover::before {
+  opacity: 1;
+}
+@keyframes rotate-conic {
+  to { --angle: 360deg; }
+}
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ====== END PREMIUM UI POLISH ====== */
