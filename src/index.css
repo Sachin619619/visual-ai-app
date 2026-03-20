@@ -258,9 +258,10 @@ a, button, [role="button"], input, select, textarea {
 
 /* Glass effect */
 .glass {
-  backdrop-filter: blur(12px);
-  background: rgba(18, 18, 26, 0.8);
-  border: 1px solid var(--border-color);
+  backdrop-filter: blur(16px) saturate(1.4);
+  background: rgba(18, 18, 26, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 [data-theme="light"] .glass {
@@ -269,15 +270,29 @@ a, button, [role="button"], input, select, textarea {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #e0d7ff 0%, #8b5cf6 40%, #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Animated gradient text variant */
+.gradient-text-animate {
+  background: linear-gradient(135deg, #e0d7ff, #8b5cf6, #06b6d4, #8b5cf6, #e0d7ff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-text-flow 5s ease infinite;
+}
+@keyframes gradient-text-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 /* Button styles */
 .btn-primary {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 40%, #0891b2 100%);
   color: white;
   padding: 12px 24px;
   border-radius: 12px;
@@ -287,24 +302,29 @@ a, button, [role="button"], input, select, textarea {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
 }
 
+/* Shimmer sweep on btn-primary */
 .btn-primary::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-  opacity: 0;
-  transition: opacity 0.25s;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transition: left 0.5s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5), 0 4px 12px rgba(6, 182, 212, 0.2);
+  background: linear-gradient(135deg, #9d6df8 0%, #7c3aed 40%, #0ea5e9 100%);
 }
 
 .btn-primary:hover::before {
-  opacity: 1;
+  left: 150%;
 }
 
 .btn-primary:active {
@@ -324,7 +344,7 @@ a, button, [role="button"], input, select, textarea {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%);
   transform: scale(0);
   opacity: 0;
   transition: transform 0.5s, opacity 0.3s;
