@@ -771,6 +771,7 @@ function toggleDataset(idx) {
 26. FOR SCORES, RATINGS, HEALTH & PERFORMANCE TOPICS — always use the CIRCULAR GAUGE SVG pattern instead of just a plain number. A row of 3-4 gauges is far more impactful than stat cards alone.
 27. FOR WORKFLOW, PROJECT STATUS, OR PROCESS TOPICS — use the KANBAN board pattern with color-coded column headers (backlog/in-progress/done) alongside any timeline or flow diagrams.
 28. USE ADVANCED ANIMATION UTILITIES for premium feel — class="aurora-bg" on hero sections for animated aurora glow, class="shimmer-text" on key metrics/hero titles for metallic chrome effect, class="flip-card" for interactive before/after or term/definition reveals, class="glitch" + data-text="..." for cyberpunk/tech/gaming headings, class="ticker-wrap" > .ticker > .ticker-item for scrolling news/stats tickers, class="ping-ring" on live status indicators.
+29. FOR MULTI-DIMENSIONAL COMPARISONS (skills, products, models, teams, options with 4+ attributes) — always use a RADAR/SPIDER CHART instead of a plain table or bar chart. It shows relative strengths at a glance. For market-share, budget, or categorical breakdowns — use a STACKED HORIZONTAL BAR CHART. For rankings/leaderboards — use the ranked leaderboard row pattern with a delta indicator (↑↓) and gradient rank badge.
 
 🌈 ADDITIONAL COMPONENT PATTERNS:
 
@@ -870,6 +871,64 @@ KANBAN / STATUS COLUMN BOARD (for processes, project status, workflow topics):
         <div style="font-size:11px;color:#94a3b8">Brief description of this task</div>
       </div>
     </div>
+  </div>
+</div>
+
+RADAR / SPIDER CHART (Chart.js — great for skill assessments, product comparisons, multi-axis scoring):
+<canvas id="radarChart" style="max-height:360px"></canvas>
+<script>
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Speed', 'Accuracy', 'Cost', 'Scalability', 'Ease of Use', 'Support'],
+    datasets: [
+      { label: 'Product A', data: [85,72,60,90,78,65],
+        backgroundColor: 'rgba(139,92,246,0.15)', borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', borderWidth: 2 },
+      { label: 'Product B', data: [60,88,80,70,92,85],
+        backgroundColor: 'rgba(6,182,212,0.12)', borderColor: '#06b6d4', pointBackgroundColor: '#06b6d4', borderWidth: 2 }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.07)' },
+      angleLines: { color: 'rgba(255,255,255,0.07)' }, pointLabels: { color: '#94a3b8', font: { size: 12, family: 'Outfit' } } } },
+    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } }
+  }
+});
+</script>
+
+STACKED HORIZONTAL BAR CHART (Chart.js — great for market share, budget splits, category breakdowns):
+<canvas id="stackedBar" style="max-height:320px"></canvas>
+<script>
+new Chart(document.getElementById('stackedBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Category A', 'Category B', 'Category C', 'Category D'],
+    datasets: [
+      { label: 'Segment 1', data: [35,48,22,60], backgroundColor: 'rgba(139,92,246,0.8)' },
+      { label: 'Segment 2', data: [25,20,38,15], backgroundColor: 'rgba(6,182,212,0.75)' },
+      { label: 'Segment 3', data: [40,32,40,25], backgroundColor: 'rgba(16,185,129,0.7)' }
+    ]
+  },
+  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: { stacked: true, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { stacked: true, ticks: { color: '#94a3b8' }, grid: { display: false } }
+    },
+    plugins: { legend: { labels: { color: '#94a3b8' } } }
+  }
+});
+</script>
+
+RANKED LEADERBOARD ROW (with delta indicator — use for top-N lists, rankings, scoreboards):
+<div style="display:flex;flex-direction:column;gap:8px">
+  <div style="display:flex;align-items:center;gap:12px;background:rgba(18,18,26,0.9);border:1px solid rgba(139,92,246,0.2);border-radius:12px;padding:12px 16px">
+    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f97316);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">1</div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:#f8fafc">Entry Name</div>
+      <div style="font-size:11px;color:#94a3b8">Subtitle or category</div>
+    </div>
+    <div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent">98.4</div>
+    <div style="font-size:11px;font-weight:700;color:#10b981">↑ 2.1</div>
   </div>
 </div>`;
 
