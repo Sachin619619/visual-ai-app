@@ -761,6 +761,9 @@ function toggleDataset(idx) {
 22. EVERY PAGE must have a strong above-the-fold impact: hero banner + at least 2 stat cards visible without scrolling. Make the first 400px visually stunning.
 23. FOR DATA-HEAVY TOPICS include at least ONE comparison/summary table with colored headers, alternating rows, and sortable headers (use the sortTable() function from the INTERACTIVITY section)
 24. ALL section headers must use gradient text + an emoji icon. Never use plain black/white text for a major heading. Example: <h2 style="background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:Outfit,sans-serif;font-weight:800">📊 Section Title</h2>
+25. USE SPECIAL CSS UTILITIES for hero depth and flair — add class="spotlight" on the hero div for radial glow, class="blob" on decorative background shapes, class="float" on feature icons for gentle bobbing, class="neon-flicker" on neon-style headings in gaming/tech themes, class="frosted-badge" for pill labels, class="skeleton" for loading placeholder states. These utilities are pre-loaded in the sandbox.
+26. FOR SCORES, RATINGS, HEALTH & PERFORMANCE TOPICS — always use the CIRCULAR GAUGE SVG pattern instead of just a plain number. A row of 3-4 gauges is far more impactful than stat cards alone.
+27. FOR WORKFLOW, PROJECT STATUS, OR PROCESS TOPICS — use the KANBAN board pattern with color-coded column headers (backlog/in-progress/done) alongside any timeline or flow diagrams.
 
 🌈 ADDITIONAL COMPONENT PATTERNS:
 
@@ -815,6 +818,51 @@ PROGRESS STEP TRACKER (numbered stages):
   <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
     <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#10b981);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px">2</div>
     <div style="font-size:11px;color:#94a3b8;text-align:center;max-width:70px">Build</div>
+  </div>
+</div>
+
+CIRCULAR GAUGE / SCORE METER (SVG arc — use for scores, health, performance, ratings):
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+  <svg width="160" height="100" viewBox="0 0 160 100" style="overflow:visible">
+    <defs>
+      <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#8b5cf6"/>
+        <stop offset="100%" stop-color="#06b6d4"/>
+      </linearGradient>
+    </defs>
+    <!-- Track arc (180° semicircle) -->
+    <path d="M 16 88 A 64 64 0 0 1 144 88" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="14" stroke-linecap="round"/>
+    <!-- Value arc — stroke-dasharray total for r=64 half-circle ≈ 201; adjust stroke-dashoffset for value: offset = 201*(1-pct) -->
+    <path d="M 16 88 A 64 64 0 0 1 144 88" fill="none" stroke="url(#gauge-grad)" stroke-width="14" stroke-linecap="round"
+      stroke-dasharray="201" stroke-dashoffset="50" style="transition:stroke-dashoffset 1.4s ease-out"/>
+    <!-- Center value label -->
+    <text x="80" y="78" text-anchor="middle" font-family="Outfit,sans-serif" font-size="28" font-weight="800" fill="#f8fafc">87</text>
+    <text x="80" y="98" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#94a3b8" letter-spacing="1">SCORE</text>
+  </svg>
+  <div style="font-size:12px;color:#8b5cf6;font-weight:600;letter-spacing:0.5px">Excellent</div>
+</div>
+<!-- USAGE NOTE: Set stroke-dashoffset = 201 * (1 - score/100). E.g. score 87% → offset = 201*0.13 ≈ 26. For a 4-gauge row, use a grid of 4 such SVGs side by side with different gradients and scores. -->
+
+MULTI-GAUGE ROW (4 scores side by side — great for health, performance, ratings dashboards):
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center">
+  <!-- Repeat the circular gauge SVG above for each metric, changing gradient colors & values -->
+  <!-- Colors: violet=#8b5cf6, cyan=#06b6d4, green=#10b981, amber=#f59e0b, red=#ef4444, pink=#ec4899 -->
+</div>
+
+KANBAN / STATUS COLUMN BOARD (for processes, project status, workflow topics):
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+  <div style="background:rgba(18,18,26,0.9);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b"></div>
+      <span style="font-size:12px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px">In Progress</span>
+      <span style="margin-left:auto;background:rgba(245,158,11,0.15);color:#f59e0b;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px">3</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px">
+        <div style="font-size:13px;font-weight:600;color:#f8fafc;margin-bottom:4px">Task Title</div>
+        <div style="font-size:11px;color:#94a3b8">Brief description of this task</div>
+      </div>
+    </div>
   </div>
 </div>`;
 
