@@ -1044,6 +1044,133 @@ const getThemeStyles = (theme: PreviewTheme) => {
     .number-pop-2 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s both; }
     .number-pop-3 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
     .number-pop-4 { animation: number-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
+
+    /* NEW: CSS-only donut/ring chart — no JS required
+       Usage: <div class="donut" style="--pct:72;--clr:#8b5cf6;--size:120px"><span class="donut-label">72%</span></div>
+       --pct: 0–100, --clr: fill color, --size: diameter (optional, default 100px) */
+    .donut {
+      --_pct: calc(var(--pct, 0) * 1%);
+      --_bg: rgba(255,255,255,0.08);
+      width: var(--size, 100px);
+      height: var(--size, 100px);
+      border-radius: 50%;
+      background: conic-gradient(var(--clr, #8b5cf6) var(--_pct), var(--_bg) var(--_pct));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: donut-spin-in 1.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .donut::before {
+      content: '';
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      background: #0a0a0f;
+    }
+    .donut-label {
+      position: relative;
+      z-index: 1;
+      font-size: 0.85em;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      color: var(--clr, #8b5cf6);
+    }
+    @keyframes donut-spin-in {
+      from { background: conic-gradient(var(--clr, #8b5cf6) 0%, var(--_bg, rgba(255,255,255,0.08)) 0%); }
+      to   { background: conic-gradient(var(--clr, #8b5cf6) var(--_pct), var(--_bg, rgba(255,255,255,0.08)) var(--_pct)); }
+    }
+
+    /* NEW: Heat-map cells — color intensity via --intensity: 0.0–1.0
+       Usage: <div class="heat-grid"><div class="heat-cell" style="--intensity:0.8" data-tooltip="Mon 3pm: 42">42</div>…</div> */
+    .heat-grid {
+      display: grid;
+      gap: 3px;
+    }
+    .heat-cell {
+      aspect-ratio: 1;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: default;
+      transition: transform 0.15s, box-shadow 0.15s;
+      background: rgba(139,92,246, calc(var(--intensity, 0.1) * 0.85 + 0.05));
+      color: rgba(255,255,255, calc(var(--intensity, 0.1) * 0.9 + 0.3));
+    }
+    .heat-cell:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 10px rgba(139,92,246,0.5);
+      z-index: 10;
+    }
+    /* Cyan heat variant */
+    .heat-cell-cyan {
+      background: rgba(6,182,212, calc(var(--intensity, 0.1) * 0.85 + 0.05));
+      color: rgba(255,255,255, calc(var(--intensity, 0.1) * 0.9 + 0.3));
+    }
+    /* Green heat variant */
+    .heat-cell-green {
+      background: rgba(16,185,129, calc(var(--intensity, 0.1) * 0.85 + 0.05));
+      color: rgba(255,255,255, calc(var(--intensity, 0.1) * 0.9 + 0.3));
+    }
+
+    /* NEW: CSS-only funnel steps — for conversion / pipeline visuals
+       Usage: <div class="funnel"><div class="funnel-step" style="--w:100%;--clr:#8b5cf6">Top of Funnel<span>10,000</span></div>…</div> */
+    .funnel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+    }
+    .funnel-step {
+      width: var(--w, 80%);
+      padding: 10px 20px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--clr, #8b5cf6) 0%, color-mix(in srgb, var(--clr, #8b5cf6) 60%, #06b6d4) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      transition: transform 0.2s;
+      animation: funnel-in 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .funnel-step:hover { transform: scaleX(1.02); }
+    .funnel-step span { font-size: 15px; opacity: 0.9; }
+    .funnel-step:nth-child(1) { animation-delay: 0.05s; }
+    .funnel-step:nth-child(2) { animation-delay: 0.12s; }
+    .funnel-step:nth-child(3) { animation-delay: 0.19s; }
+    .funnel-step:nth-child(4) { animation-delay: 0.26s; }
+    .funnel-step:nth-child(5) { animation-delay: 0.33s; }
+    @keyframes funnel-in { from { opacity:0; transform: scaleX(0.7); } to { opacity:1; transform: scaleX(1); } }
+
+    /* NEW: Sparkline — tiny inline bar chart for tables/cards
+       Usage: <div class="sparkline"><span style="--h:60%"></span><span style="--h:80%"></span>…</div> */
+    .sparkline {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 32px;
+    }
+    .sparkline > span {
+      flex: 1;
+      height: var(--h, 50%);
+      min-width: 4px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+      transition: height 0.8s cubic-bezier(0.22,1,0.36,1);
+      animation: spark-grow 0.8s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .sparkline > span:hover { background: linear-gradient(180deg, #a78bfa, #22d3ee); }
+    @keyframes spark-grow { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); } }
+    /* Color variants */
+    .sparkline-green > span { background: linear-gradient(180deg, #10b981, #34d399); }
+    .sparkline-orange > span { background: linear-gradient(180deg, #f97316, #fbbf24); }
+    .sparkline-pink > span { background: linear-gradient(180deg, #ec4899, #f43f5e); }
 `;
 };
 
