@@ -2618,32 +2618,66 @@ body {
               </p>
             </motion.div>
 
-            {/* Example prompt chips */}
-            <motion.div
-              className="hidden sm:flex flex-wrap justify-center gap-2 mb-5 max-w-lg mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {[
+            {/* Scrolling topic marquee — two rows, opposite directions */}
+            {(() => {
+              const row1 = [
                 { label: '🌍 World GDP', prompt: 'Create a stunning world GDP dashboard with bar chart showing top 10 economies, growth trends line chart, and regional breakdown pie chart' },
-                { label: '📱 iPhone vs Android', prompt: 'Create a beautiful side-by-side comparison of iPhone vs Android — radar chart, feature table, pricing tiers, market share pie' },
                 { label: '🤖 AI History', prompt: 'Create a stunning animated timeline of AI milestones from 1950 to 2025 with icons, year markers, and key events' },
-                { label: '☕ Coffee Facts', prompt: 'Create a beautiful infographic about coffee — origin to cup journey, caffeine content comparison chart, top producer countries' },
-                { label: '💹 Crypto Dash', prompt: 'Create a dark cryptocurrency dashboard with BTC, ETH, SOL price sparklines, portfolio pie chart, and fear & greed gauge' },
-                { label: '🧬 DNA Explainer', prompt: 'Create a stunning animated infographic about DNA and genetics — double helix diagram, replication steps, genome stats' },
-              ].map((ex, i) => (
+                { label: '₿ Crypto Dashboard', prompt: 'Create a dark cryptocurrency dashboard with BTC, ETH, SOL price sparklines, portfolio pie chart, and fear & greed gauge' },
+                { label: '🧬 DNA & Genetics', prompt: 'Create a stunning animated infographic about DNA and genetics — double helix diagram, replication steps, genome stats' },
+                { label: '🚀 Space Exploration', prompt: 'Create a stunning animated timeline of space exploration milestones from Sputnik 1957 to Mars missions 2030s' },
+                { label: '⚽ Premier League', prompt: 'Create a Premier League 2024/25 dashboard — standings leaderboard with progress bars, top scorers chart, form guide grid, and stat cards. Dark football theme.' },
+                { label: '🧠 LLM Comparison', prompt: 'Create a stunning AI model comparison dashboard — radar chart comparing GPT-4o, Claude 3.5, Gemini 1.5, Llama 3 across reasoning, coding, creativity, speed, and cost. Dark tech theme.' },
+                { label: '💹 Budget Planner', prompt: 'Create a personal budget planner dashboard — income vs expenses donut chart, spending by category bar chart, savings goal progress rings, net worth trend. Finance theme.' },
+                { label: '🌡️ Climate Data', prompt: 'Create a climate change data dashboard — global temperature rise line chart, CO2 levels, sea level rise, alarming stat cards in red/orange theme' },
+                { label: '🏋️ Workout Science', prompt: 'Create a workout science infographic — muscle fiber types flip cards, training periodization stacked bar, top exercises leaderboard, heart rate zone gauges. Athletic theme.' },
+              ];
+              const row2 = [
+                { label: '📱 iPhone vs Android', prompt: 'Create a beautiful side-by-side comparison of iPhone vs Android — radar chart, feature table, pricing tiers, market share pie' },
+                { label: '☕ Coffee Infographic', prompt: 'Create a beautiful infographic about coffee — origin to cup journey, caffeine comparison chart, top producer countries, fun facts' },
+                { label: '🪐 Solar System', prompt: 'Create a stunning animated solar system infographic showing all planets with relative sizes, orbital paths, and key facts' },
+                { label: '🔥 FIRE Calculator', prompt: 'Create a FIRE financial independence visual — split hero with compound growth chart, waterfall of income→savings→FIRE number, milestone progress bars. Gold/emerald theme.' },
+                { label: '🌆 City Rankings', prompt: 'Create a global city comparison — compare Tokyo, NYC, London, Singapore, Dubai, Bangalore on a radar chart. Leaderboard with delta indicators. Aurora hero.' },
+                { label: '🧩 Cognitive Biases', prompt: 'Create a cognitive biases guide — 8 major biases as 3D flip cards (name front, definition + example back). Leaderboard of most costly biases in investing. Dark violet theme.' },
+                { label: '🎵 Spotify Wrapped', prompt: 'Create a Spotify Wrapped music year-in-review — aurora-bg hero with shimmer-text, top artists stagger-cards, listening heatmap, sound personality radar. Spotify dark theme.' },
+                { label: '🏛️ Stoicism Guide', prompt: 'Create a Stoicism philosophy guide — 4 virtues as flip cards, 8 Stoic exercises grid, Dichotomy of Control visual, timeline of great Stoics. Gold/stone dark theme.' },
+                { label: '🦴 Human Evolution', prompt: 'Create a human evolution timeline — species cards from Australopithecus to Homo Sapiens, brain volume chart, migration SVG map, skull flip cards. Amber/ochre theme.' },
+                { label: '💼 Tech Salaries', prompt: 'Create a tech salary guide — split hero + company pay bar chart, waterfall of base→equity→bonus→total comp, role comparison progress bars, FAANG vs startup radar.' },
+              ];
+              const ChipButton = ({ item, disabled }: { item: typeof row1[0]; disabled: boolean }) => (
                 <button
-                  key={ex.label}
-                  onClick={() => onQuickGenerate && onQuickGenerate(ex.prompt)}
-                  disabled={isLoading}
-                  className="px-3 py-1.5 text-xs rounded-full bg-bg-secondary/80 border border-white/8 text-text-secondary hover:border-accent-primary/50 hover:text-accent-primary hover:bg-accent-primary/10 transition-all disabled:opacity-50"
-                  style={{ transitionDelay: `${i * 30}ms` }}
+                  onClick={() => onQuickGenerate && onQuickGenerate(item.prompt)}
+                  disabled={disabled}
+                  className="flex-shrink-0 px-3 py-1.5 text-xs rounded-full bg-bg-secondary/80 border border-white/8 text-text-secondary hover:border-accent-primary/50 hover:text-accent-primary hover:bg-accent-primary/8 transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
                 >
-                  {ex.label}
+                  {item.label}
                 </button>
-              ))}
-            </motion.div>
+              );
+              return (
+                <motion.div
+                  className="hidden sm:block mb-5 overflow-hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  style={{ maskImage: 'linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)', WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)' }}
+                >
+                  {/* Row 1 — scrolls left */}
+                  <div className="flex gap-2 mb-2" style={{ animation: 'marquee-left 40s linear infinite' }}
+                    onMouseEnter={e => (e.currentTarget.style.animationPlayState = 'paused')}
+                    onMouseLeave={e => (e.currentTarget.style.animationPlayState = 'running')}
+                  >
+                    {[...row1, ...row1].map((item, i) => <ChipButton key={`r1-${i}`} item={item} disabled={isLoading} />)}
+                  </div>
+                  {/* Row 2 — scrolls right */}
+                  <div className="flex gap-2" style={{ animation: 'marquee-right 46s linear infinite' }}
+                    onMouseEnter={e => (e.currentTarget.style.animationPlayState = 'paused')}
+                    onMouseLeave={e => (e.currentTarget.style.animationPlayState = 'running')}
+                  >
+                    {[...row2, ...row2].map((item, i) => <ChipButton key={`r2-${i}`} item={item} disabled={isLoading} />)}
+                  </div>
+                </motion.div>
+              );
+            })()}
 
             {/* Quick Start Grid */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>

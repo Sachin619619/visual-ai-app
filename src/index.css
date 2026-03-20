@@ -784,6 +784,16 @@ button,
   100% { background-position: 40px 40px, 40px 40px; }
 }
 
+/* Marquee animations for scrolling chip rows in the empty state */
+@keyframes marquee-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
 /* Better empty state animations */
 @keyframes float {
   0%, 100% {
