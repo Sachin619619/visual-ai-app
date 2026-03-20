@@ -917,6 +917,45 @@ const getThemeStyles = (theme: PreviewTheme) => {
     /* NEW: Number counter animation */
     .counter-animate { animation: counter-pop 0.3s ease-out; }
     @keyframes counter-pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    /* NEW: Noise/grain texture overlay for depth */
+    .noise-overlay { position: relative; }
+    .noise-overlay::after { content: ''; position: absolute; inset: 0; border-radius: inherit; opacity: 0.04; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); background-size: 128px 128px; }
+
+    /* NEW: Morphing animated blob */
+    .blob { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: morph 8s ease-in-out infinite; }
+    .blob-sm { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: morph 6s ease-in-out infinite; }
+    @keyframes morph { 0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } 25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } 50% { border-radius: 50% 60% 30% 60% / 30% 50% 60% 40%; } 75% { border-radius: 40% 50% 60% 30% / 70% 30% 50% 60%; } }
+
+    /* NEW: Neon flicker animation */
+    .neon-flicker { animation: neon-flicker 3s ease-in-out infinite; }
+    @keyframes neon-flicker { 0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; filter: brightness(1.2); } 20%,24%,55% { opacity: 0.7; filter: brightness(0.9); } }
+
+    /* NEW: Typewriter cursor */
+    .typewriter { overflow: hidden; border-right: 2px solid #8b5cf6; white-space: nowrap; animation: typewriter-cursor 1s step-end infinite; }
+    @keyframes typewriter-cursor { 0%,100% { border-color: #8b5cf6; } 50% { border-color: transparent; } }
+
+    /* NEW: Radial spotlight glow background */
+    .spotlight { background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,92,246,0.15) 0%, transparent 70%); }
+    .spotlight-cyan { background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(6,182,212,0.15) 0%, transparent 70%); }
+    .spotlight-green { background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(16,185,129,0.15) 0%, transparent 70%); }
+
+    /* NEW: Float animation for cards/elements */
+    .float { animation: float 4s ease-in-out infinite; }
+    .float-slow { animation: float 6s ease-in-out infinite; }
+    .float-fast { animation: float 2.5s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+    /* NEW: Gradient border via outline trick */
+    .gradient-border { border: 1px solid transparent; background-clip: padding-box; position: relative; }
+    .gradient-border::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; background: linear-gradient(135deg, #8b5cf6, #06b6d4); z-index: -1; }
+
+    /* NEW: Frosted badge (improved pill) */
+    .frosted-badge { backdrop-filter: blur(12px); background: rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.35); border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; color: #c4b5fd; display: inline-flex; align-items: center; gap: 4px; }
+
+    /* NEW: Skeleton shimmer */
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: skeleton-wave 1.5s ease-in-out infinite; border-radius: 6px; }
+    @keyframes skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 `;
 };
 

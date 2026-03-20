@@ -247,6 +247,15 @@ RULE: Use topic-adaptive palette when the subject clearly matches a domain above
 - Effects: .border-animate, .shine-hover, .pulse-dot
 - Icon boxes: .icon-box, .icon-box-sm, .icon-box-lg
 - Animation: .counter-animate, .animate-pulse-glow, .delay-100 through .delay-800
+- Blob shapes: .blob, .blob-sm (morphing organic animated shapes — great for hero backgrounds)
+- Noise texture: .noise-overlay (add subtle grain/depth to any card or section)
+- Neon flicker: .neon-flicker (neon-sign flicker animation — perfect for gaming/tech themes)
+- Typewriter cursor: .typewriter (blinking cursor effect for animated text intros)
+- Spotlight backgrounds: .spotlight, .spotlight-cyan, .spotlight-green (radial glow from top)
+- Float animation: .float, .float-slow, .float-fast (gentle bobbing for cards, icons, elements)
+- Gradient border: .gradient-border (violet→cyan animated border via pseudo-element)
+- Frosted badge: .frosted-badge (glassmorphism pill tag — great for labels and status indicators)
+- Skeleton loader: .skeleton (shimmer wave placeholder for loading states)
 
 🎯 DESIGN BEST PRACTICES:
 - Use generous whitespace (padding 24-48px) between sections
