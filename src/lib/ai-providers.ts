@@ -267,6 +267,10 @@ RULE: Use topic-adaptive palette when the subject clearly matches a domain above
 - Neon borders: .neon-border-cyan / .neon-border-violet / .neon-border-green / .neon-border-pink / .neon-border-amber — glowing colored box-shadow borders for tech/gaming/cyberpunk cards.
 - Holographic gradient: .holo (background) / .holo-text (gradient text) — shifting rainbow iridescent gradient. Great for premium/special items, NFT cards, achievement badges.
 - Number pop: .number-pop-1 / .number-pop-2 / .number-pop-3 / .number-pop-4 — bouncy springy entrance animations for stat numbers in a row.
+- CSS donut chart: .donut[style="--pct:72;--clr:#8b5cf6;--size:120px"] with inner <span class="donut-label">72%</span> — zero JS, animated conic-gradient ring. Use for single-metric gauges, completion rates, category percentages.
+- Heatmap grid: .heat-grid (CSS grid container) + .heat-cell[style="--intensity:0.8"][data-tooltip="..."] — intensity-scaled cells (0.0–1.0). Variants: .heat-cell-cyan, .heat-cell-green. Use for activity patterns, calendar data, frequency matrices.
+- CSS funnel: .funnel wrapper + .funnel-step[style="--w:100%;--clr:#8b5cf6"] with <span>value</span> — tapered conversion steps, zero JS. Use for sales funnels, onboarding flows, pipeline stages.
+- Sparkline bars: .sparkline wrapper + <span style="--h:60%"></span> per bar — tiny inline bar chart for tables and KPI cards. Variants: .sparkline-green, .sparkline-orange, .sparkline-pink.
 
 🎯 DESIGN BEST PRACTICES:
 - Use generous whitespace (padding 24-48px) between sections
@@ -783,6 +787,11 @@ function toggleDataset(idx) {
 30. ALWAYS add class="stagger-children" to EVERY card grid, feature list, and stat row. This single class makes all children spring-animate in one-by-one and is the fastest way to make any section feel polished and alive. Add class="number-pop-1/2/3/4" to stat numbers in a row for a bouncy entrance. Use .progress-bar + .progress-fill[--progress:X%] for any metric that has a percentage. Use .neon-border-cyan/violet/green/pink on feature cards in tech/gaming themes. Use .holo-text on achievement labels, tier badges, and "featured" items.
 31. FOR FINANCIAL, BUDGET, or COST-FLOW TOPICS — use the WATERFALL/BRIDGE CHART pattern (pure HTML/CSS, no Chart.js needed) to show how components add up or subtract from a starting value. Far more visual than a plain bar chart for P&L, budget breakdowns, conversion funnels. See the WATERFALL CHART pattern in the ADDITIONAL COMPONENT PATTERNS section.
 32. VARY HERO LAYOUTS — for data-heavy topics, use the SPLIT HERO (content left + live chart/gauge right) instead of the centered hero. Side-by-side layout uses space better and puts a visual in the first fold immediately.
+33. USE CSS-ONLY VIZ PRIMITIVES for lightweight inline visuals that need no JavaScript — these are pre-loaded in the sandbox and pair perfectly with Chart.js visuals:
+    • .donut[--pct:X;--clr:#color] — single-metric ring gauge (completion %, pass rate, allocation). Use 3-4 in a row for a gauge bank.
+    • .heat-grid + .heat-cell[--intensity:0.0–1.0] — activity heatmap, engagement matrix, correlation grid. Always add data-tooltip for interactive label on hover.
+    • .funnel + .funnel-step[--w:X%;--clr:#color] — conversion/pipeline funnel. Set --w proportional to each stage's volume (100%, 75%, 52%, 30%…). Far more visual than a numbered list.
+    • .sparkline + <span style="--h:X%"> bars — inline mini bar chart. Embed inside stat cards and table rows to show a trend beside the number. Combine with .sparkline-green/.orange/.pink for color coding.
 
 🌈 ADDITIONAL COMPONENT PATTERNS:
 
