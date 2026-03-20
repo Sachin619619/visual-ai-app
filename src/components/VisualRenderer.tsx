@@ -386,18 +386,45 @@ const BUILD_STAGES = [
   { label: 'Rendering', icon: '🎨', threshold: 28 },
 ];
 
+// Design tips shown while waiting — educational & engaging
+const LOADING_TIPS = [
+  { icon: '📊', tip: 'Chart.js, D3.js, and Lottie are pre-loaded — your visual can use all three in one page.' },
+  { icon: '🌈', tip: 'Topic-adaptive palettes auto-match your subject: finance → blue/gold, health → emerald, space → indigo.' },
+  { icon: '🪄', tip: 'Add "as a dark dashboard" or "with Chart.js charts" to your prompt for more specific output.' },
+  { icon: '💡', tip: 'The longer and more specific your prompt, the richer the visual — try describing sections explicitly.' },
+  { icon: '🔮', tip: '.aurora-bg + .shimmer-text in the hero section makes any title feel premium and alive.' },
+  { icon: '🃏', tip: 'Flip cards (.flip-card) are perfect for "before/after", "term/definition", and "problem/solution" layouts.' },
+  { icon: '🔥', tip: '.heat-grid renders a full heatmap calendar with pure CSS — no Chart.js needed.' },
+  { icon: '🍩', tip: '.donut[--pct:72;--clr:#8b5cf6] makes an animated ring gauge with zero JavaScript.' },
+  { icon: '⚡', tip: '.stagger-children makes every child element spring-animate in one by one — instant polish.' },
+  { icon: '📡', tip: 'D3 force-directed graphs, treemaps, and sunburst charts are all available out of the box.' },
+  { icon: '🎯', tip: 'Use "split hero" layout in your prompt for data-heavy topics — chart right, title left.' },
+  { icon: '🏆', tip: 'Ranked leaderboard rows with delta indicators (↑↓) are more engaging than plain ordered lists.' },
+  { icon: '✨', tip: 'Every output gets auto-initialized counters, progress bar animations, and stagger animations.' },
+  { icon: '🌀', tip: '.funnel shows a conversion pipeline as a tapered CSS shape — great for sales or onboarding flows.' },
+  { icon: '📈', tip: 'Sparklines (.sparkline) can be embedded inside table rows to show trends beside numbers.' },
+  { icon: '🎨', tip: 'Try asking for a "dark cyberpunk theme" or "warm editorial style" — the AI will adapt the palette.' },
+  { icon: '🔭', tip: 'Request "circular gauge SVG" for any score or percentage — far more visual than a plain number.' },
+  { icon: '🧲', tip: 'Tabs, accordions, modals, and live search are all built-in interactive patterns you can request.' },
+  { icon: '🌊', tip: 'The waterfall/bridge chart (pure HTML/CSS) shows P&L and budget flows better than any bar chart.' },
+  { icon: '💎', tip: 'Combine .holo-text with .neon-border-violet on a card for a premium "featured" tier effect.' },
+];
+
 const LoadingMessage = memo(() => {
   const [index, setIndex] = useState(0);
+  const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * LOADING_TIPS.length));
   const [elapsed, setElapsed] = useState(0);
   const startRef = useRef(Date.now());
   useEffect(() => {
     startRef.current = Date.now();
     const msg = setInterval(() => setIndex(i => (i + 1) % LOADING_MESSAGES.length), 2200);
+    const tip = setInterval(() => setTipIndex(i => (i + 1) % LOADING_TIPS.length), 5000);
     const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
-    return () => { clearInterval(msg); clearInterval(timer); };
+    return () => { clearInterval(msg); clearInterval(tip); clearInterval(timer); };
   }, []);
   const estimate = elapsed < 10 ? `~${20 - elapsed}s remaining` : elapsed < 30 ? 'almost there...' : 'taking longer than usual...';
   const activeStage = BUILD_STAGES.reduce((acc, s) => elapsed >= s.threshold ? s : acc, BUILD_STAGES[0]);
+  const currentTip = LOADING_TIPS[tipIndex];
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -450,6 +477,28 @@ const LoadingMessage = memo(() => {
       <p className="text-[10px] sm:text-xs text-text-muted/50 tabular-nums">
         {elapsed}s elapsed · {estimate}
       </p>
+
+      {/* Cycling design tip */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tipIndex}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-start gap-2 max-w-[280px] sm:max-w-xs px-3 py-2 rounded-xl text-left"
+          style={{
+            background: 'rgba(139,92,246,0.07)',
+            border: '1px solid rgba(139,92,246,0.18)',
+          }}
+        >
+          <span className="text-base leading-none mt-0.5 flex-shrink-0">{currentTip.icon}</span>
+          <p className="text-[10px] sm:text-xs text-text-muted/70 leading-relaxed">
+            <span className="text-accent-primary/80 font-semibold">Tip: </span>
+            {currentTip.tip}
+          </p>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 });
