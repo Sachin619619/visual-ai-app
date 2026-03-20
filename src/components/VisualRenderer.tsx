@@ -365,6 +365,7 @@ const BUILD_STAGES = [
   { label: 'Planning', icon: '🧠', threshold: 0 },
   { label: 'Building', icon: '🔨', threshold: 8 },
   { label: 'Polishing', icon: '✨', threshold: 18 },
+  { label: 'Rendering', icon: '🎨', threshold: 28 },
 ];
 
 const LoadingMessage = memo(() => {
@@ -2439,23 +2440,39 @@ body {
 
               <div className="text-center px-4">
                 <motion.p
-                  className="text-lg sm:text-xl font-semibold text-text-primary mb-2"
-                  animate={{ opacity: [1, 0.6, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-lg sm:text-xl font-bold mb-2"
+                  style={{
+                    background: 'linear-gradient(90deg, #c4b5fd, #8b5cf6, #06b6d4, #c4b5fd)',
+                    backgroundSize: '200% auto',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                  animate={{ backgroundPosition: ['0% center', '200% center'] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                 >
                   Crafting your visual...
                 </motion.p>
                 <LoadingMessage />
               </div>
 
-              {/* Animated progress bar */}
-              <div className="w-48 sm:w-64 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              {/* Elapsed-fill progress bar — races to 88% over 25s, holds with shimmer */}
+              <div className="w-48 sm:w-64 h-1.5 bg-white/8 rounded-full overflow-hidden relative">
                 <motion.div
-                  className="h-full rounded-full"
-                  style={{ background: 'linear-gradient(90deg, #8b5cf6, #06b6d4)' }}
-                  animate={{ x: ['-100%', '100%'] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                />
+                  className="h-full rounded-full relative overflow-hidden"
+                  style={{ background: 'linear-gradient(90deg, #8b5cf6, #06b6d4, #10b981)' }}
+                  initial={{ width: '4%' }}
+                  animate={{ width: '88%' }}
+                  transition={{ duration: 25, ease: [0.08, 0.42, 0.58, 0.96] }}
+                >
+                  {/* shimmer sweep on the fill */}
+                  <motion.div
+                    className="absolute inset-0 rounded-full"
+                    style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%)' }}
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.4 }}
+                  />
+                </motion.div>
               </div>
 
               {/* Cancel button */}
