@@ -295,6 +295,9 @@ RULE: Use topic-adaptive palette when the subject clearly matches a domain above
 - NETWORK/RELATIONSHIPS → D3 force-directed graph for connections, dependencies, social graphs
 - RANKINGS/TOP-N → Numbered leaderboard with animated progress bars and score badges
 - ARCHITECTURE/SYSTEMS → SVG arrow flow diagram connecting boxes with dashed connector lines
+- FINANCIAL/P&L/BUDGET → Waterfall/bridge chart showing start→items→end, colored green for additions, red for subtractions
+- PRODUCT/SERVICE/PRICING → 3-column pricing table with featured "recommended" tier highlighted, feature checkmark grid below
+- PERSONAL/PROFILE/RESUME → Split hero (photo left, name+role+stats right) + timeline + radar chart for skills
 
 📊 CHART.JS EXCELLENCE (Chart.js v4 is always available as window.Chart):
 Always use Chart.js for ALL data visualizations. Here are complete examples:
@@ -776,8 +779,10 @@ function toggleDataset(idx) {
 26. FOR SCORES, RATINGS, HEALTH & PERFORMANCE TOPICS — always use the CIRCULAR GAUGE SVG pattern instead of just a plain number. A row of 3-4 gauges is far more impactful than stat cards alone.
 27. FOR WORKFLOW, PROJECT STATUS, OR PROCESS TOPICS — use the KANBAN board pattern with color-coded column headers (backlog/in-progress/done) alongside any timeline or flow diagrams.
 28. USE ADVANCED ANIMATION UTILITIES for premium feel — class="aurora-bg" on hero sections for animated aurora glow, class="shimmer-text" on key metrics/hero titles for metallic chrome effect, class="flip-card" for interactive before/after or term/definition reveals, class="glitch" + data-text="..." for cyberpunk/tech/gaming headings, class="ticker-wrap" > .ticker > .ticker-item for scrolling news/stats tickers, class="ping-ring" on live status indicators.
-30. ALWAYS add class="stagger-children" to EVERY card grid, feature list, and stat row. This single class makes all children spring-animate in one-by-one and is the fastest way to make any section feel polished and alive. Add class="number-pop-1/2/3/4" to stat numbers in a row for a bouncy entrance. Use .progress-bar + .progress-fill[--progress:X%] for any metric that has a percentage. Use .neon-border-cyan/violet/green/pink on feature cards in tech/gaming themes. Use .holo-text on achievement labels, tier badges, and "featured" items.
 29. FOR MULTI-DIMENSIONAL COMPARISONS (skills, products, models, teams, options with 4+ attributes) — always use a RADAR/SPIDER CHART instead of a plain table or bar chart. It shows relative strengths at a glance. For market-share, budget, or categorical breakdowns — use a STACKED HORIZONTAL BAR CHART. For rankings/leaderboards — use the ranked leaderboard row pattern with a delta indicator (↑↓) and gradient rank badge.
+30. ALWAYS add class="stagger-children" to EVERY card grid, feature list, and stat row. This single class makes all children spring-animate in one-by-one and is the fastest way to make any section feel polished and alive. Add class="number-pop-1/2/3/4" to stat numbers in a row for a bouncy entrance. Use .progress-bar + .progress-fill[--progress:X%] for any metric that has a percentage. Use .neon-border-cyan/violet/green/pink on feature cards in tech/gaming themes. Use .holo-text on achievement labels, tier badges, and "featured" items.
+31. FOR FINANCIAL, BUDGET, or COST-FLOW TOPICS — use the WATERFALL/BRIDGE CHART pattern (pure HTML/CSS, no Chart.js needed) to show how components add up or subtract from a starting value. Far more visual than a plain bar chart for P&L, budget breakdowns, conversion funnels. See the WATERFALL CHART pattern in the ADDITIONAL COMPONENT PATTERNS section.
+32. VARY HERO LAYOUTS — for data-heavy topics, use the SPLIT HERO (content left + live chart/gauge right) instead of the centered hero. Side-by-side layout uses space better and puts a visual in the first fold immediately.
 
 🌈 ADDITIONAL COMPONENT PATTERNS:
 
@@ -936,7 +941,73 @@ RANKED LEADERBOARD ROW (with delta indicator — use for top-N lists, rankings, 
     <div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent">98.4</div>
     <div style="font-size:11px;font-weight:700;color:#10b981">↑ 2.1</div>
   </div>
-</div>`;
+</div>
+
+WATERFALL / BRIDGE CHART (pure HTML/CSS — for P&L, budget, conversion funnels, cost breakdowns):
+<!-- Each bar is a positioned div; green = positive, red = negative, purple = total -->
+<div style="display:flex;align-items:flex-end;gap:6px;height:220px;padding:0 8px;position:relative">
+  <!-- Baseline rule -->
+  <div style="position:absolute;bottom:40px;left:0;right:0;height:1px;background:rgba(255,255,255,0.1)"></div>
+  <!-- Bar: Starting value (total bar from baseline) -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+    <div style="font-size:11px;color:#f8fafc;font-weight:700">$500K</div>
+    <div style="width:100%;background:linear-gradient(180deg,#8b5cf6,#6d28d9);border-radius:6px 6px 0 0;height:140px;position:relative">
+      <div style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:#94a3b8;white-space:nowrap">Revenue</div>
+    </div>
+  </div>
+  <!-- Bar: Negative item (red, floated from top) -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+    <div style="font-size:11px;color:#ef4444;font-weight:700">-$120K</div>
+    <div style="width:100%;margin-top:auto;margin-bottom:calc(140px - 40px - 34px);background:linear-gradient(180deg,#ef4444,#dc2626);border-radius:6px 6px 0 0;height:34px;position:relative">
+      <div style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:#94a3b8;white-space:nowrap">COGS</div>
+    </div>
+  </div>
+  <!-- Bar: Positive item (green) -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+    <div style="font-size:11px;color:#10b981;font-weight:700">+$40K</div>
+    <div style="width:100%;margin-top:auto;margin-bottom:calc(140px-40px-34px);background:linear-gradient(180deg,#10b981,#059669);border-radius:6px 6px 0 0;height:11px;position:relative">
+      <div style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:#94a3b8;white-space:nowrap">Other</div>
+    </div>
+  </div>
+  <!-- Bar: Net result total -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+    <div style="font-size:11px;color:#f8fafc;font-weight:700">$420K</div>
+    <div style="width:100%;background:linear-gradient(180deg,#06b6d4,#0891b2);border-radius:6px 6px 0 0;height:117px;position:relative">
+      <div style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:#06b6d4;white-space:nowrap;font-weight:700">Net</div>
+    </div>
+  </div>
+</div>
+<!-- NOTE: Adjust margin-bottom offsets so each floating bar sits at the right "connected" height above baseline -->
+
+SPLIT HERO (content left + live chart/gauge right — use for data-heavy topics):
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;background:linear-gradient(135deg,#0a0a0f,#13102a);border-radius:20px;padding:40px 36px;margin-bottom:28px;position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(139,92,246,0.1) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+  <!-- Left: text content -->
+  <div style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:100px;padding:6px 14px;font-size:12px;color:#8b5cf6;font-weight:600;margin-bottom:16px">📊 LIVE DATA</div>
+    <h1 style="font-family:Outfit,sans-serif;font-size:clamp(26px,4vw,44px);font-weight:800;background:linear-gradient(135deg,#f8fafc,#c4b5fd,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.15;margin-bottom:12px">Topic Title Here</h1>
+    <p style="color:#94a3b8;font-size:15px;line-height:1.6;margin-bottom:20px">Brief description of the topic with key context.</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#8b5cf6">142K</div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Stat 1</div></div>
+      <div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#06b6d4">89%</div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Stat 2</div></div>
+      <div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#10b981">4.8★</div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Stat 3</div></div>
+    </div>
+  </div>
+  <!-- Right: chart or gauge -->
+  <div style="position:relative;z-index:1;height:240px">
+    <canvas id="hero-chart"></canvas>
+  </div>
+</div>
+<script>
+new Chart(document.getElementById('hero-chart'), {
+  type: 'line',
+  data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul'],
+    datasets: [{ data: [42,58,53,71,65,88,94], borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.15)', fill: true, tension: 0.5, pointRadius: 0, borderWidth: 3 }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+    scales: { x: { ticks: { color: '#475569' }, grid: { display: false } }, y: { ticks: { color: '#475569' }, grid: { color: 'rgba(255,255,255,0.04)' } } },
+    animation: { duration: 1200, easing: 'easeOutQuart' } }
+});
+</script>`;
 
 const REVIEW_PROMPT = `You are doing a critical visual review of an HTML UI you just generated.
 ${'{screenshot}' /* placeholder replaced at runtime */}
